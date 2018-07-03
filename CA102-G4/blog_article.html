@@ -31,6 +31,7 @@
     <!-- bootstrap css、JS檔案 -->
     <link href="css/index_bootstrap.css" rel="stylesheet" type="text/css" media="all" />
     <script src="js/index_bootstrap.js"></script>
+    <link rel="stylesheet" href="css/blog_self/blog_grid.css">
     <!-- //bootstrap-css -->
 
     <!-- 套首頁herder和footer css -->
@@ -124,17 +125,40 @@
     <!-- 我是隔板 -->
     <div class="ui hidden divider"></div>
     <!-- //我是隔板 -->
+
+
+
     <!-- 內容 -->
-    <div class="ui container">
+    <div class="container">
 
         <div class="row">
             <!-- 左邊內容 -->
-            <div class="col-md-8">
+            <div class="col-8" style="border: solid">
+                <!-- 左邊文章標題 -->
+                <h1 class="article_title">
+                    日本★不自駕也能暢遊北海道~GOGO!★札幌~小樽~支笏湖~青池~旭山動物園~T38展望台夜景☆
+                </h1>
+                <!-- //左邊文章標題 -->
+                <!-- 左邊文章標題下方統計數字 -->
+                <div class="article_brief_info">
+                    <ul class="helper-clear">
+                        <li class="brief_info author fa fa-user"><a href="#">&nbsp;黃世銘</a></li>
+                        <li class="brief_info_divider"></li>
+                        <li class="brief_info date_icon release_date fa fa-user"><label>&nbsp;發表日期：</label>2018/07/03</li>
+                        <li class="brief_info_divider"></li>
+                        <li class="brief_info view_cnt fa fa-user">&nbsp;298&nbsp;次瀏覽</li>
+                        <li class="brief_info_gap"></li>
+                        <li class="brief_info reply_cnt fa fa-user">&nbsp;3&nbsp;個留言</li>
+                        <li class="brief_info_gap"></li>
+                        <li class="brief_info like_cnt fa fa-user" data-like_cnt="0">&nbsp;5&nbsp;人收藏</li>
+                    </ul>
+                </div>
+                <!-- //左邊文章標題下方統計數字 -->
 
             </div>
             <!-- //左邊內容 -->
             <!-- 右邊內容 -->
-            <div class="col-md-4">
+            <div class="col-4" style="border: solid">
                 <!-- 檢舉、收藏、留言按鈕 -->
                 <div class="ui basic buttons">
                     <button class="ui button"><i class="fas fa-ban"></i> 檢舉</button>
@@ -187,10 +211,17 @@
                             </ul>
                         </div>
                         <!-- //作者區下半部 -->
-
                     </div>
                 </div>
                 <!-- 作者區 -->
+                <!-- 我是隔板 -->
+                <div class="ui hidden divider"></div>
+                <!-- //我是隔板 -->
+                <!-- 作者的最近文章 -->
+                <div class="widgetcontainerheader">
+                    黃世銘的最近文章
+                </div>
+                <!-- //作者的最近文章 -->
             </div>
             <!-- //右邊內容 -->
         </div>
