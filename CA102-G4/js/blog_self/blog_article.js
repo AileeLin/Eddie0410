@@ -10,4 +10,18 @@ $(document).ready(function () {
         }
     });
 
+    $(window).scroll(function () {
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            $("#myBtn").fadeIn("slow");
+        } else {
+            $("#myBtn").fadeOut("slow");
+        }
+    });
+
+    $("#myBtn").click(function () {
+        $('html,body').animate({
+            scrollTop: 0
+        }, 'slow');
+    });
+
 });

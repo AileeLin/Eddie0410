@@ -8,15 +8,18 @@
     text-align: center;
     margin-top: 10px !important;
 }
+
 .right {
     margin-top: 0px !important;
     line-height: 22px;
     font-size: 15px;
     text-align: left;
 }
+
 .right > a:hover {
     color: red;
 }
+
 html {
     height: 100%;
 }
@@ -204,17 +207,14 @@ ul {
     display: grid;
 }
 
-.helper-clear {
-    height: 21px;
-    margin: 0 auto;
-}
-
 .brief_info.author {
+    height: 20px;
+    background: url(https://travel98.com/images/icons/icon_people_light.png) no-repeat 0 center;
+    background-size: 16px 16px;
     height: 20px;
 }
 
-.brief_info.author:hover a,
-.brief_info.author:hover {
+.brief_info.author > a:hover{
     color: red;
     transition: .5s ease;
 }
@@ -279,13 +279,14 @@ body a {
     margin-bottom: 20px;
 }
 
-a:hover img{
+a:hover img {
     transform: none;
 }
 
 .ui.basic.buttons .button:hover {
     background-color: #ccc !important;
 }
+
 .ui.basic.buttons .button:focus {
     color: rgba(0, 0, 0, .6) !important;
 }
@@ -293,22 +294,31 @@ a:hover img{
 .article {
     border-bottom: 1px #d1d1d1 dotted;
     position: relative;
-    
+
 }
+
 .widgetcontainer {
     border: 1px solid #D1D3D4;
     border-radius: 5px 5px 5px 5px;
-    height: auto;
+    height: 100%;
     overflow: hidden;
+    margin-bottom: 10px;
 }
+
+.article:last-child {
+    border-bottom: none;
+}
+
 .helper-clear.sidebar_list {
     width: 305px;
-    height: auto;
+    height: 100%;
 }
+
 .article_title a {
     font-size: 14px;
     line-height: 20px;
 }
+
 .article .cover_border {
     position: absolute;
     left: 10px;
@@ -316,51 +326,93 @@ a:hover img{
     background: #e2e2e2 url(https://travel98.com/images/blank_image/image_blank_300x225.png) center center no-repeat;
     background-size: cover;
 }
+
 .sidebar_list .article .article_cover {
     width: 80px;
     height: 60px;
     background-size: cover;
 }
+
 .sidebar_list .article {
     padding: 7px 10px 11px 100px;
 }
+
 .sidebar_list .article .article_title a {
     line-height: 20px;
     font-size: 14px;
 }
+
 .sidebar_list .article .article_info_container .brief_info.author {
     margin-bottom: 2px;
 }
+
 .article_body {
     text-align: left;
 }
+
 .brief_info.author.fas.fa-user {
     padding: 0px;
 }
-.helper-clear:before, .helper-clear:after {
+
+.helper-clear:before,
+.helper-clear:after {
+    content: "";
     display: table;
-    
+    border-collapse: collapse;
+
 }
+
 .helper-clear:after {
     clear: both;
 }
+
 .brief_info.view_cnt.fas.fa-eye {
     padding: 0px;
     display: block;
 }
+
+.brief_info.view_cnt {
+    background: url(https://travel98.com/images/icons/following_icon.png) no-repeat 0 2px;
+}
+.brief_info.like_cnt {
+    background: url(https://travel98.com/images/icons/follower_icon.png) no-repeat 0 2px;
+}
+}
 .article_info_container.helper-clear {
-    float: left;
     width: 100%;
     font-size: 15px;
 }
+
 .brief_info_divider_right {
     width: 0px;
     height: 12px;
     margin: 3px 6px;
+    float: left;
 }
+
 .brief_info.like_cnt.fas.fa-heart {
     padding: 0px;
 }
-.article.journal {
-    height: 150px;
+
+#myBtn {
+    display: none;
+    position: fixed;
+    bottom: 50%;
+    right: 5%;
+    z-index: 99;
+    font-size: 18px;
+    border: none;
+    outline: none;
+    background-color: rgba(0, 0, 0, 0.2);
+    color: white;
+    cursor: pointer;
+    padding: 0 15px;
+    border-radius: 4px;
+    font-size: 30px;
+    width: 55px;
+    height: 55px;
+}
+
+#myBtn:hover {
+    background-color: #555;
 }
