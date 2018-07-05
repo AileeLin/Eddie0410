@@ -214,7 +214,7 @@ ul {
     height: 20px;
 }
 
-.brief_info.author > a:hover{
+.brief_info.author > a:hover {
     color: red;
     transition: .5s ease;
 }
@@ -374,10 +374,13 @@ a:hover img {
 .brief_info.view_cnt {
     background: url(https://travel98.com/images/icons/following_icon.png) no-repeat 0 2px;
 }
+
 .brief_info.like_cnt {
     background: url(https://travel98.com/images/icons/follower_icon.png) no-repeat 0 2px;
 }
+
 }
+
 .article_info_container.helper-clear {
     width: 100%;
     font-size: 15px;
@@ -415,4 +418,28 @@ a:hover img {
 
 #myBtn:hover {
     background-color: #555;
+}
+
+label {
+    margin-bottom: 0;
+}
+
+.article_author_info li:hover,
+.cntlabel:hover {
+    cursor: pointer;
+}
+
+.helper-clear {
+    margin: 0 auto;
+}
+
+.far.fa-user {
+    background: none;
+}
+
+.far.fa-eye {
+    background: none;
+}
+.far.fa-heart {
+    background: none;
 }
