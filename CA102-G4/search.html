@@ -58,7 +58,13 @@
 
     <!-- blog 自定義的js -->
     <script src="js/blog_self/blog_semantic.min.js"></script>
+    <script src="js/search/search.js"></script>
     <!-- //blog 自定義的js -->
+
+    <!-- 景點幻燈片 -->
+    <link href="swiper-4.3.3/dist/css/swiper.min.css" rel="stylesheet">
+    <script src="swiper-4.3.3/dist/js/swiper.min.js"></script>
+    <!-- 景點幻燈片 -->
 
 </head>
 
@@ -157,21 +163,17 @@
             </a>
         </div>
         <!-- //Menu -->
+        <!-- 搜尋的結果 -->
         <div class="row mob-col-rev">
             <!-- 搜尋的結果左邊 -->
             <div class="column results">
                 <!-- 景點 -->
                 <div class="poi_results swiper-container swiper-container-horizontal swiper-container-free-mode">
                     <!-- 方向按鈕 -->
-
-                    <div class="button-next active">
-                        <i class="orange angle right icon nexticon"></i>
-                    </div>
-                    <div class="button-prev">
-                        <i class="orange angle left icon pervicon"></i>
-                    </div>
-
+                    <div class="fas fa-chevron-right fa-3x"></div>
+                    <div class="fas fa-chevron-left fa-3x"></div>
                     <!-- //方向按鈕 -->
+                    <!-- 卡片*10張 -->
                     <div class="swiper-wrapper ui cards">
 
                         <a class="raised card swiper-slide swiper-slide-active">
@@ -192,7 +194,7 @@
                             </div>
                             <div class="name content">
                                 <div class="ui header">
-                                    日本橋
+                                    日本橋2
                                 </div>
                             </div>
                             <div class="meta">東京車站・銀座・日本橋</div>
@@ -204,7 +206,7 @@
                             </div>
                             <div class="name content">
                                 <div class="ui header">
-                                    日本橋
+                                    日本橋3
                                 </div>
                             </div>
                             <div class="meta">東京車站・銀座・日本橋</div>
@@ -216,7 +218,7 @@
                             </div>
                             <div class="name content">
                                 <div class="ui header">
-                                    日本橋
+                                    日本橋4
                                 </div>
                             </div>
                             <div class="meta">東京車站・銀座・日本橋</div>
@@ -228,13 +230,74 @@
                             </div>
                             <div class="name content">
                                 <div class="ui header">
-                                    日本橋
+                                    日本橋5
+                                </div>
+                            </div>
+                            <div class="meta">東京車站・銀座・日本橋</div>
+                        </a>
+
+                        <a class="raised card swiper-slide swiper-slide-active">
+                            <div class="image" style="background: url(https://img.travel98.com/n/333/1333_S_104_4430_o.jpg)">
+                                <div class="ui top right attached  green  label">景點</div>
+                            </div>
+                            <div class="name content">
+                                <div class="ui header">
+                                    日本橋6
+                                </div>
+                            </div>
+                            <div class="meta">東京車站・銀座・日本橋</div>
+                        </a>
+
+                        <a class="raised card swiper-slide swiper-slide-active">
+                            <div class="image" style="background: url(https://img.travel98.com/n/333/1333_S_104_4430_o.jpg)">
+                                <div class="ui top right attached  green  label">景點</div>
+                            </div>
+                            <div class="name content">
+                                <div class="ui header">
+                                    日本橋7
+                                </div>
+                            </div>
+                            <div class="meta">東京車站・銀座・日本橋</div>
+                        </a>
+
+                        <a class="raised card swiper-slide swiper-slide-active">
+                            <div class="image" style="background: url(https://img.travel98.com/n/333/1333_S_104_4430_o.jpg)">
+                                <div class="ui top right attached  green  label">景點</div>
+                            </div>
+                            <div class="name content">
+                                <div class="ui header">
+                                    日本橋8
+                                </div>
+                            </div>
+                            <div class="meta">東京車站・銀座・日本橋</div>
+                        </a>
+
+                        <a class="raised card swiper-slide swiper-slide-active">
+                            <div class="image" style="background: url(https://img.travel98.com/n/333/1333_S_104_4430_o.jpg)">
+                                <div class="ui top right attached  green  label">景點</div>
+                            </div>
+                            <div class="name content">
+                                <div class="ui header">
+                                    日本橋9
+                                </div>
+                            </div>
+                            <div class="meta">東京車站・銀座・日本橋</div>
+                        </a>
+
+                        <a class="raised card swiper-slide swiper-slide-active">
+                            <div class="image" style="background: url(https://img.travel98.com/n/333/1333_S_104_4430_o.jpg)">
+                                <div class="ui top right attached  green  label">景點</div>
+                            </div>
+                            <div class="name content">
+                                <div class="ui header">
+                                    日本橋10
                                 </div>
                             </div>
                             <div class="meta">東京車站・銀座・日本橋</div>
                         </a>
 
                     </div>
+                    <!-- //卡片*10張 -->
                 </div>
                 <!-- 景點 -->
             </div>
@@ -246,11 +309,7 @@
             </div>
             <!-- //搜尋的結果右邊 -->
         </div>
-
-
-
-
-
+        <!-- //搜尋的結果 -->
         <!-- 我是隔板 -->
         <div class="ui hidden divider"></div>
         <!-- //我是隔板 -->
