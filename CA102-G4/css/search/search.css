@@ -173,3 +173,17 @@ body {
     padding-top: 1rem;
     padding-bottom: 1rem;
 }
+
+.image {
+    height: 100%;
+    width: 100%;
+    transition: all 1.2s ease;
+}
+
+a:hover .image {
+    transform: scale(1.1);
+}
+
+.raised.card.swiper-slide {
+    overflow: hidden;
+}
