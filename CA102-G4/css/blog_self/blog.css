@@ -1127,7 +1127,7 @@ div.ui.image.pic > img {
     transition: all 1.2s ease;
 }
 
-a:hover img {
+a:hover .ui.image.pic > img {
     transform: scale(1.1);
 }
 

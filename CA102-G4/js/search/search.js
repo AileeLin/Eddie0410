@@ -14,4 +14,15 @@
               prevEl: '.fas.fa-chevron-left',
           },
       });
+
+      $(".item").click(function () {
+          if (!$(this).hasClass('dropdown browse')) {
+              $(this)
+                  .addClass('active')
+                  .closest('.ui.menu')
+                  .find('.item')
+                  .not($(this))
+                  .removeClass('active');
+          }
+      });
   });

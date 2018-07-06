@@ -6,9 +6,6 @@ $(document).ready(function () {
 
             $('[data-content="建立文章遊記"]').popup();
 
-            //    $("a.fluid.card").hover(function () {
-            //        $("div.ui.image.pic>img").attr("transform", "scale(1.1)");
-            //    });
             $(".item").click(function () {
                     if (!$(this).hasClass('dropdown browse')) {
                         $(this)
