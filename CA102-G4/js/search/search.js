@@ -36,5 +36,5 @@
               clickable: true,
           },
       });
-      
+
   });
