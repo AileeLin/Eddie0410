@@ -1117,20 +1117,6 @@ body > div.ui.container > div > a > div.image > div {
     box-sizing: inherit;
 }
 
-.image {
-    overflow: hidden;
-}
-
-div.ui.image.pic > img {
-    height: 100%;
-    width: 100%;
-    transition: all 1.2s ease;
-}
-
-a:hover .ui.image.pic > img {
-    transform: scale(1.1);
-}
-
 body > div.ui.container > div.ui.four.stackable.cards > div {
     position: fixed;
     right: 2rem;

@@ -94,6 +94,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 14px;
 }
 
 .ui.cards > .card > .name.content .header {
@@ -165,7 +166,7 @@ body {
     color: red;
 }
 
-.ui.grid>.row {
+.ui.grid > .row {
     position: relative;
     display: flex;
     width: 100% !important;
@@ -186,4 +187,46 @@ a:hover .image {
 
 .raised.card.swiper-slide {
     overflow: hidden;
+}
+
+.calendar::before,
+.user::before {
+    margin-right: 5px
+}
+
+.extra > a:hover {
+    color: red;
+    text-decoration: none;
+}
+
+.title {
+    color: #1e70bf !important;
+}
+
+.title:hover {
+    color: red !important;
+}
+
+.swiper-button-disabled {
+    opacity: .35;
+}
+
+.swiper-container2 {
+    width: 300px;
+    height: 300px;
+    position: absolute;
+    margin: 0 auto;
+}
+
+.swiper-slide {
+    background-position: center;
+    background-size: cover;
+}
+
+.column.results {
+    padding-right: 14px;
+}
+
+.column.area_result.center.aligned {
+    padding-left: 14px;
 }

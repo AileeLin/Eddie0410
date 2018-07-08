@@ -5,10 +5,6 @@
           slidesPerView: 3,
           centeredSlides: false,
           spaceBetween: 30,
-          pagination: {
-              el: '.swiper-pagination',
-              clickable: true,
-          },
           navigation: {
               nextEl: '.fas.fa-chevron-right',
               prevEl: '.fas.fa-chevron-left',
@@ -25,4 +21,20 @@
                   .removeClass('active');
           }
       });
+
+      var swiper2 = new Swiper('.swiper-container2', {
+          effect: 'cube',
+          grabCursor: true,
+          cubeEffect: {
+              shadow: true,
+              slideShadows: true,
+              shadowOffset: 20,
+              shadowScale: 0.94,
+          },
+          pagination: {
+              el: '.swiper-pagination',
+              clickable: true,
+          },
+      });
+      
   });
