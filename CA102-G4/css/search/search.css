@@ -178,8 +178,6 @@ a:hover .image {
 }
 .swiper-container2 {
     width: 300px;
-    height: 300px;
-    position: absolute;
     margin: 0 auto;
 }
 .swiper-slide {
@@ -191,4 +189,56 @@ a:hover .image {
 }
 .column.area_result.center.aligned {
     padding-left: 14px;
+}
+.userImage {
+    width: 300px;
+    height: 300px;
+    background-size: cover;
+    border-radius: .28571429rem .28571429rem 0 0!important
+}
+.userInfo {
+    width: auto;
+    height: auto;
+    box-shadow: 0 1px 3px 0 #d4d4d5, 0 0 0 1px #d4d4d5;
+    padding: 1em 1em;
+}
+
+.userInfoHeader {
+    font-size: 700px;
+    font-size: 1.28571429em;
+    color: rgba(0,0,0,.85);
+    line-height: 1.28571429em;
+}
+
+.swiperCard {
+    border-radius: .28571429rem;
+}
+
+.swiperCard:hover {
+    text-decoration: none;
+}
+
+.userSwiper-wrapper {
+    border-radius: .28571429rem;
+}
+
+.userInfoJoindate {
+    color: rgba(0,0,0,.4);
+    font-size: 14px;
+}
+
+.userInfoDescription {
+    font-size: 16px;
+    color: rgba(0,0,0,.68);
+    margin-top: 8px;
+}
+.swiper-pagination {
+    bottom: 90px !important;
+}
+.ui.header.title,
+.ui.fluid.action.input > input {
+    font-family: 'Oswald', 'Noto Sans TC', sans-serif !important;
+}
+.userExtra {
+    color: rgba(0,0,0,.4);
 }
