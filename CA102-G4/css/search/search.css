@@ -199,8 +199,8 @@ a:hover .image {
 .userInfo {
     width: auto;
     height: auto;
-    box-shadow: 0 1px 3px 0 #d4d4d5, 0 0 0 1px #d4d4d5;
     padding: 1em 1em;
+    border-radius: 0 0 .28571429rem .28571429rem!important;
 }
 
 .userInfoHeader {
@@ -212,6 +212,7 @@ a:hover .image {
 
 .swiperCard {
     border-radius: .28571429rem;
+    box-shadow: 0 1px 3px 0 #d4d4d5, 0 0 0 1px #d4d4d5;
 }
 
 .swiperCard:hover {
@@ -233,7 +234,7 @@ a:hover .image {
     margin-top: 8px;
 }
 .swiper-pagination {
-    bottom: 90px !important;
+    bottom: 125px !important;
 }
 .ui.header.title,
 .ui.fluid.action.input > input {
@@ -241,4 +242,9 @@ a:hover .image {
 }
 .userExtra {
     color: rgba(0,0,0,.4);
+    padding: .75em 1em;
+    border-top: 1px solid rgba(0,0,0,.05)!important;
+}
+.userIcon {
+    margin-right: 3.5px;
 }
