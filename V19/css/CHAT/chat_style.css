@@ -3,7 +3,7 @@
        bottom: 0;
        right: 50px;
        width: 279px;
-       height: 28px;
+       height: 344px;
        border-color: black;
        background-color:#f5f6f7;
        z-index: 1000;
@@ -64,9 +64,9 @@
         border: 0;
     }
         
-    /*聊天列表放大*/
+    /*聊天列表縮小*/
     .chatWindow{
-        height: 344px;
+        height: 28px;
     }
     .list-group-item{
         background-color:#f5f6f7;
