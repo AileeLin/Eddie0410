@@ -1,7 +1,7 @@
         $(document).ready(function(){
             $('[data-toggle="tooltip"]').tooltip();
             
-            //縮小聊天列表視窗
+            //放大聊天列表視窗
             $(".chatHeader").click(function(e){
                $(".chatContainer").toggleClass("chatWindow"); 
             });
