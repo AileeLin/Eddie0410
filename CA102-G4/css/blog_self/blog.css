@@ -1164,3 +1164,7 @@ body > div.ui.container > div.ui.four.stackable.cards > div {
     border: none;
     font-family: 'Oswald', 'Noto Sans TC', sans-serif !important;
 }
+.ui.image.pic img {
+    height: 100% !important;
+    width: 100% !important;
+}
