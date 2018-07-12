@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    
+
     var appendNumber = 4;
     var prependNumber = 1;
     var swiper = new Swiper('.swiper-container', {
@@ -38,4 +38,13 @@ $(document).ready(function () {
         },
     });
 
+});
+
+$(window).load(function () {
+    $(".swiper-wrapper.userSwiper-wrapper").css({
+        transitionProperty: "transform"
+    });
+    $(".swiper-slide.swiperCard").css({
+        transitionProperty: "transform"
+    });
 });

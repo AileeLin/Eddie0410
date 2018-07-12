@@ -251,8 +251,12 @@ a:hover .image {
     margin-right: 3.5px;
 }
 
-
-
+.swiper-wrapper.userSwiper-wrapper, {
+    transition-property: none;
+}
+.swiper-slide.swiperCard {
+    transition-property: none;
+}
 
 
 

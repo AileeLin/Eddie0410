@@ -16,7 +16,7 @@
             //聊天對話小視窗中的搜尋好友
             $("#search_Fri").on("keyup", function() {
                 var value = $(this).val().toLowerCase();
-                $("ul.list-group > li.list-group-item").filter(function() {
+                $("div.chatContext>ul.list-group > li.list-group-item").filter(function() {
                     $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
                 });
             });
@@ -53,7 +53,7 @@
             //建立聊天對話視窗後，確認時會把聊天名、參加名單送出，再把原表單內容清空
             $(".modal-footer>button[class='btn btn-success']").click(function(){
                  /*這邊要抓到選取的資料，送到資料庫新增Table*/
-                 if($("#search_Fri_modal").val() == ""){
+                 if($("#chatName").val() == ""){
                      alert("請填寫聊天對話名稱");
                      $("#chatName").css("border-color","red");
                  }else{
