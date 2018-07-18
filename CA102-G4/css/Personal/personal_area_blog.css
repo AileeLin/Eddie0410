@@ -1,0 +1,42 @@
+.ui.four.stackable.cards {
+    margin: 0;
+}
+
+.edit_Del {
+    /*    margin: 0 auto !important;*/
+    align-self: center;
+    width: 100% !important;
+}
+
+.editBlog {
+    border: solid 1px #00ff00;
+    color: #00ff00;
+    width: 45%;
+}
+
+.delBlog {
+    border: solid 1px #ff0000;
+    color: #ff0000;
+    width: 45%;
+}
+
+.right.floated.author.nowrap {
+    text-align: center;
+    width: 100%;
+}
+
+.fluid.card:hover {
+    text-decoration: none;
+}
+
+.fluid.card:hover .image {
+    transform: scale(1.1);
+}
+
+.image {
+    transition: all 1.2s ease;
+    overflow: hidden;
+}
+.fluid.card {
+    overflow: hidden;
+}
