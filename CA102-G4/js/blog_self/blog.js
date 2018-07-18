@@ -6,15 +6,19 @@ $(document).ready(function () {
 
     $('[data-content="建立文章遊記"]').popup();
 
-    $(".item").click(function () {
+    $(".itemRight").click(function () {
         if (!$(this).hasClass('dropdown browse')) {
             $(this)
                 .addClass('active')
                 .closest('.ui.menu')
-                .find('.item')
+                .find('.itemRight')
                 .not($(this))
                 .removeClass('active');
         }
     });
 
+    $(".ui.basic.floating.dropdown.button").one("click",function(){
+        $(this).dropdown("toggle");
+    })
+    
 });

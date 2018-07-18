@@ -14,7 +14,7 @@
     border-color: rgb(209, 211, 212);
     margin: 5% auto;
 }
-.travle {
+.travel {
     margin: 5% auto;
 }
 .planItinerary_container {
@@ -113,7 +113,7 @@ button.circular.ui.icon.basic.button.submit:focus {
 .createTrip {
     float: right;
 }
-div.travle > div {
+div.travel > div {
     display: block;
 }
 div.hidden.content {

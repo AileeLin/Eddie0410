@@ -3,7 +3,7 @@
 
 <head>
     <!-- 網頁title -->
-    <title>Travle Maker</title>
+    <title>Travel Maker</title>
     <!-- //網頁title -->
 
     <!-- 指定螢幕寬度為裝置寬度，畫面載入初始縮放比例 100% -->
@@ -13,7 +13,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
     <!-- 設定網頁keywords -->
-    <meta name="keywords" content="TravleMaker,travlemaker,自助旅行,部落格,旅遊記" />
+    <meta name="keywords" content="TravelMaker,Travelmaker,自助旅行,部落格,旅遊記" />
     <!-- //設定網頁keywords -->
 
     <!-- 隱藏iPhone Safari位址列的網頁 -->
@@ -25,6 +25,7 @@
         function hideURLbar() {
             window.scrollTo(0, 1);
         }
+
     </script>
     <!-- //隱藏iPhone Safari位址列的網頁 -->
 
@@ -63,8 +64,14 @@
     <link href="./css/Chat/chat_style.css" rel="stylesheet" type="text/css">
     <script src="./js/Chat/chat.js"></script>
     <!-- //聊天相關CSS及JS -->
-
+    <!-- 自定義css -->
     <link rel="stylesheet" href="/css/Personal/personal_area_blog.css">
+    <link href="css/blog_self/blog_divider.css" rel="stylesheet" type="text/css">
+    <link href="css/blog_self/blog_button.css" rel="stylesheet" type="text/css">
+    <!-- //自定義css -->
+    <!-- LogoIcon -->
+    <link href="images/Logo_Black_use.png" rel="icon" type="image/png">
+    <!-- //LogoIcon -->
 </head>
 
 <body>
@@ -76,7 +83,7 @@
                     <ul>
                         <li><i class="fa fa-phone" aria-hidden="true"></i>
                             <a href="tel:034257387"> 03-4257387</a></li>
-                        <li><a href="mailto:TravleMaker@gmail.com"><i class="fa fa-envelope" aria-hidden="true"></i> TravleMaker@gmail.com</a></li>
+                        <li><a href="mailto:TravelMaker@gmail.com"><i class="fa fa-envelope" aria-hidden="true"></i> TravelMaker@gmail.com</a></li>
                     </ul>
                 </div>
                 <div class="top-banner-right">
@@ -93,14 +100,14 @@
             <div class="container">
                 <div class="logo">
                     <h1>
-                        <a href="index.html">Travle Maker</a>
+                        <a href="index.html">Travel Maker</a>
                     </h1>
                 </div>
                 <div class="top-nav">
                     <!-- 當網頁寬度太小時，導覽列會縮成一個按鈕 -->
                     <nav class="navbar navbar-default">
-                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">Menu						
-							</button>
+                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">Menu
+                        </button>
                         <!-- //當網頁寬度太小時，導覽列會縮成一個按鈕 -->
                         <!-- Collect the nav links, forms, and other content for toggling -->
                         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -155,53 +162,54 @@
             <ul class="nav nav-tabs" role="tablist">
                 <li class="nav-item active">
                     <a href="persional_area_home.html">
-                  <i class="fas fa-home"></i>首頁
-              </a>
+                        <i class="fas fa-home"></i>首頁
+                    </a>
                 </li>
                 <li class="nav-item">
                     <a href="personal_area_friend.html">
-                  <i class="fas fa-user-friends"></i>好友
-              </a>
+                        <i class="fas fa-user-friends"></i>好友
+                    </a>
                 </li>
                 <li class="nav-item">
                     <a href="#blog">
-                  <i class="fab fa-blogger"></i>旅遊記
-              </a>
+                        <i class="fab fa-blogger"></i>旅遊記
+                    </a>
                 </li>
                 <li class="nav-item">
                     <a href="#trip">
-                  <i class="fas fa-map"></i>行程
-              </a>
+                        <i class="fas fa-map"></i>行程
+                    </a>
                 </li>
                 <li class="nav-item">
                     <a href="#together">
-                  <i class="fas fa-bullhorn"></i>揪團
-              </a>
+                        <i class="fas fa-bullhorn"></i>揪團
+                    </a>
                 </li>
                 <li class="nav-item">
                     <a href="#question">
-                  <i class="question circle icon"></i>問答
-              </a>
+                        <i class="question circle icon"></i>問答
+                    </a>
                 </li>
                 <li class="nav-item">
                     <a href="#gallery">
-                  <i class="image icon"></i>相片
-              </a>
+                        <i class="image icon"></i>相片
+                    </a>
                 </li>
 
                 <li class="nav-item">
                     <a href="#gallery">
-                  <i class="shopping bag icon"></i>交易
-              </a>
+                        <i class="shopping bag icon"></i>交易
+                    </a>
                 </li>
 
                 <li class="nav-item" style="float: right">
                     <a href="#setting">
-                  <i class="cog icon"></i>設置
-              </a>
+                        <i class="cog icon"></i>設置
+                    </a>
                 </li>
             </ul>
             <!-- //頁籤項目 -->
+            <!-- 卡片 -->
             <div class="ui four stackable cards">
 
                 <a class="fluid card" href="#">
@@ -354,6 +362,37 @@
                     </div>
                 </a>
             </div>
+            <!-- //卡片 -->
+            <!-- 我是隔板 -->
+            <div class="ui hidden divider"></div>
+            <!-- //我是隔板 -->
+            <!-- 換頁bar -->
+            <div class="ui page grid padded page_bar">
+                <!-- 上一頁button -->
+                <div class="ui buttons">
+                    <button class="ui labeled icon button">
+                        <i class="left chevron icon"></i> 上一頁
+                    </button>
+                </div>
+                <!-- //上一頁button -->
+                <!-- 下一頁button -->
+                <div class="ui buttons">
+                    <button class="ui right labeled icon button">
+                        下一頁
+                        <i class="right chevron icon"></i>
+                    </button>
+                </div>
+                <!-- //下一頁button -->
+                <!-- 頁數資訊 -->
+                <div class="page_info">
+                    顯示第1頁，共4頁
+                </div>
+                <!-- //頁數資訊 -->
+            </div>
+            <!-- //換頁bar -->
+            <!-- 我是隔板 -->
+            <div class="ui hidden divider"></div>
+            <!-- //我是隔板 -->
         </div>
     </div>
     <!--//container-->
@@ -371,7 +410,7 @@
                     </div>
                     <div class="footer-grid-info">
                         <ul>
-                            <li><a href="about.html">關於Travle Maker</a></li>
+                            <li><a href="about.html">關於Travel Maker</a></li>
                             <li><a href="about.html">聯絡我們</a></li>
                             <li><a href="about.html">常見問題</a></li>
                         </ul>
@@ -415,7 +454,7 @@
             </div>
             <div class="copyright">
                 <p>Copyright &copy; 2018 All rights reserved
-                    <a href="index.html" target="_blank" title="TravleMaker">TravleMaker</a>
+                    <a href="index.html" target="_blank" title="TravelMaker">TravelMaker</a>
                 </p>
             </div>
         </div>
@@ -484,58 +523,58 @@
                                 <div class="item">
                                     <input type="checkbox" class="ui checkbox" id="fri01">
                                     <label for="fri01" style="width:80%">
-                                  <img class="ui avatar image" src="./images/p1.jpg">
-                                  <span class="content">小小兵small</span>  
-                               </label>
+                                        <img class="ui avatar image" src="./images/p1.jpg">
+                                        <span class="content">小小兵small</span>
+                                    </label>
                                 </div>
                                 <div class="item">
                                     <input type="checkbox" class="ui checkbox" id="fri02">
                                     <label for="fri02" style="width:80%">
-                                  <img class="ui avatar image" src="./images/p2.jpg">
-                                  <span class="content">大眼怪eye</span>  
-                               </label>
+                                        <img class="ui avatar image" src="./images/p2.jpg">
+                                        <span class="content">大眼怪eye</span>
+                                    </label>
                                 </div>
                                 <div class="item">
                                     <input type="checkbox" class="ui checkbox" id="fri03">
                                     <label for="fri03" style="width:80%">
-                                  <img class="ui avatar image" src="./images/p3.png">
-                                  <span class="content">卡納赫拉kanihei</span>  
-                               </label>
+                                        <img class="ui avatar image" src="./images/p3.png">
+                                        <span class="content">卡納赫拉kanihei</span>
+                                    </label>
                                 </div>
                                 <div class="item">
                                     <input type="checkbox" class="ui checkbox" id="fri04">
                                     <label for="fri04" style="width:80%">
-                                  <img class="ui avatar image" src="./images/p4.png">
-                                  <span class="content">北爛貓cat</span>  
-                               </label>
+                                        <img class="ui avatar image" src="./images/p4.png">
+                                        <span class="content">北爛貓cat</span>
+                                    </label>
                                 </div>
                                 <div class="item">
                                     <input type="checkbox" class="ui checkbox" id="fri05">
                                     <label for="fri05" style="width:80%">
-                                  <img class="ui avatar image" src="./images/p5.jpg">
-                                  <span class="content">好想兔rabbit</span>  
-                               </label>
+                                        <img class="ui avatar image" src="./images/p5.jpg">
+                                        <span class="content">好想兔rabbit</span>
+                                    </label>
                                 </div>
                                 <div class="item">
                                     <input type="checkbox" class="ui checkbox" id="fri06">
                                     <label for="fri06" style="width:80%">
-                                  <img class="ui avatar image" src="./images/p6.png">
-                                  <span class="content">豆卡頻道dog</span>  
-                               </label>
+                                        <img class="ui avatar image" src="./images/p6.png">
+                                        <span class="content">豆卡頻道dog</span>
+                                    </label>
                                 </div>
                                 <div class="item">
                                     <input type="checkbox" class="ui checkbox" id="fri07">
                                     <label for="fri07" style="width:80%">
-                                  <img class="ui avatar image" src="./images/author1.jpg">
-                                  <span class="content">美女women</span>  
-                               </label>
+                                        <img class="ui avatar image" src="./images/author1.jpg">
+                                        <span class="content">美女women</span>
+                                    </label>
                                 </div>
                                 <div class="item">
                                     <input type="checkbox" class="ui checkbox" id="fri08">
                                     <label for="fri08" style="width:80%">
-                                  <img class="ui avatar image" src="./images/t4.jpg">
-                                  <span class="content">帥哥man</span>  
-                               </label>
+                                        <img class="ui avatar image" src="./images/t4.jpg">
+                                        <span class="content">帥哥man</span>
+                                    </label>
                                 </div>
 
                             </div>

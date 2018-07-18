@@ -1168,3 +1168,13 @@ body > div.ui.container > div.ui.four.stackable.cards > div {
     height: 100% !important;
     width: 100% !important;
 }
+
+.dropdown.icon {
+    margin-left: 12px !important;
+    margin-right: 0 !important;
+}
+
+.ui.basic.floating.dropdown.button {
+    border-left: 2px solid #d4d4d5;
+    box-shadow: none !important;
+}
