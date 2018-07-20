@@ -1,3 +1,8 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ page import="java.util.*"%>
+<%@ page import="com.blog.model.*"%>
+
 <!DOCTYPE html>
 <html>
 
@@ -157,13 +162,13 @@
             <a class="item" href="search_member.html">
                 會員
             </a>
-            <a class="item active" href="search_ask.html">
+            <a class="item" href="search_ask.html">
                 問答
             </a>
             <a class="item" href="search_together.html">
                 揪團
             </a>
-            <a class="item" href="search_tour.html">
+            <a class="item active" href="search_tour.html">
                 景點
             </a>
         </div>
@@ -187,17 +192,15 @@
                             <div class="item">
                                 <div class="content">
                                     <a class="ui header title" target="_blank" href="#">
-                                    日本橋到環球影城
+                                    日本橋
                                 </a>
                                     <div class="description text-truncate">
-                                        從日本橋到環球影城，若搭近鐵轉JR，日本橋到西九条轉JR線到環球，路程中需出站??從日本橋到環球影城，若搭近鐵轉JR，日本橋到西九条轉JR線到環球，路程中需出站??從日本橋到環球影城，若搭近鐵轉JR，日本橋到西九条轉JR線到環球，路程中需出站??從日本橋到環球影城，若搭近鐵轉JR，日本橋到西九条轉JR線到環球，路程中需出站??
+                                        日本橋是東京都的道路元標 也就是道路網的起點 “日本橋”的題字是德川慶喜(15代將軍)的字跡 1603年江戶德川幕府 以此為全國道路網建設計劃五街道的基點 橋頭的青銅獅像 有守護之意 橋中的青銅麒麟 則象徵東京的繁榮 加上日本推理小說 東野圭吾的麒麟之翼的故事景點 以及改拍電影的取景 正是位於此處 所以可以來此散散步 朝聖一下
                                     </div>
                                     <div class="extra">
-                                        <a href="#" target="_blank">
-                                            <i class="fas fa-user user"></i>黃世銘
-                                        </a>
                                         <i class="far fa-calendar-alt calendar"></i>2016-12-08 11:56:02
-                                        <div class="ui small label">交通</div>
+                                        <div class="ui small label">交通要地</div>
+                                        <div class="ui small label">名勝古蹟</div>
                                     </div>
                                 </div>
                             </div>
@@ -209,17 +212,14 @@
                             <div class="item">
                                 <div class="content">
                                     <a class="ui header title" target="_blank" href="#">
-                                    若用鐵路旅行日本
+                                    日本橋車站
                                 </a>
                                     <div class="description text-truncate">
-                                        大家好 若用鐵路旅行日本 大家會是如何建議 我搜尋不到相關文章 謝謝大家大家好 若用鐵路旅行日本 大家會是如何建議 我搜尋不到相關文章 謝謝大家大家好 若用鐵路旅行日本 大家會是如何建議 我搜尋不到相關文章 謝謝大家大家好 若用鐵路旅行日本 大家會是如何建議 我搜尋不到相關文章 謝謝大家大家好 若用鐵路旅行日本 大家會是如何建議 我搜尋不到相關文章 謝謝大家大家好 若用鐵路旅行日本 大家會是如何建議 我搜尋不到相關文章 謝謝大家大家好 若用鐵路旅行日本 大家會是如何建議 我搜尋不到相關文章 謝謝大家
+                                        位於大阪市中央區日本橋1丁目、為大阪市營地下鐵堺筋線、千日前線的一座鐵路車站。
                                     </div>
                                     <div class="extra">
-                                        <a href="#" target="_blank">
-                                            <i class="fas fa-user user"></i>黃世銘
-                                        </a>
                                         <i class="far fa-calendar-alt calendar"></i>2016-12-08 11:56:02
-                                        <div class="ui small label">交通</div>
+                                        <div class="ui small label">交通要地</div>
                                     </div>
                                 </div>
                             </div>
@@ -231,17 +231,16 @@
                             <div class="item">
                                 <div class="content">
                                     <a class="ui header title" target="_blank" href="#">
-                                    帶去日本的4G手機....
+                                    日本武道館
                                 </a>
                                     <div class="description text-truncate">
-                                        問個關於日本4G的問題....
+                                        日本武道館是日本鼓勵傳統的武道而興建的大會場，近年來以舉辦演唱會及舞蹈演藝表演為主。
+
                                     </div>
                                     <div class="extra">
-                                        <a href="#" target="_blank">
-                                            <i class="fas fa-user user"></i>黃世銘
-                                        </a>
                                         <i class="far fa-calendar-alt calendar"></i>2016-12-08 11:56:02
-                                        <div class="ui small label">其他</div>
+                                        <div class="ui small label">展覽會館</div>
+                                        <div class="ui small label">學校・公共設施</div>
                                     </div>
                                 </div>
                             </div>
@@ -253,17 +252,15 @@
                             <div class="item">
                                 <div class="content">
                                     <a class="ui header title" target="_blank" href="#">
-                                    買JR東日本周遊(東北)相關問題
+                                    日本橋三越百貨
                                 </a>
                                     <div class="description text-truncate">
-                                        我看不懂這張在東京市區可以搭乘的有那些(汗) 是不是 JR東日本官網的那張"JR東日本主要鐵道路線圖:首都區" 上面有列的路線都可以搭??
+                                        三越為日本百貨公司集團。
                                     </div>
                                     <div class="extra">
-                                        <a href="#" target="_blank">
-                                            <i class="fas fa-user user"></i>黃世銘
-                                        </a>
                                         <i class="far fa-calendar-alt calendar"></i>2016-12-08 11:56:02
-                                        <div class="ui small label">票券</div>
+                                        <div class="ui small label">名牌・精品</div>
+                                        <div class="ui small label">購物・商店</div>
                                     </div>
                                 </div>
                             </div>
@@ -275,17 +272,14 @@
                             <div class="item">
                                 <div class="content">
                                     <a class="ui header title" target="_blank" href="#">
-                                    日本開車駕照的問題
+                                    JINS コレド日本橋店
                                 </a>
                                     <div class="description text-truncate">
-                                        如題，去日本想要開車旅行，請問應該辦理哪些手續？如題，去日本想要開車旅行，請問應該辦理哪些手續？如題，去日本想要開車旅行，請問應該辦理哪些手續？如題，去日本想要開車旅行，請問應該辦理哪些手續？如題，去日本想要開車旅行，請問應該辦理哪些手續？如題，去日本想要開車旅行，請問應該辦理哪些手續？
+                                        知名眼鏡連鎖專賣店，目前日本全國約有185家以上店鋪，以及網路商店經營。
                                     </div>
                                     <div class="extra">
-                                        <a href="#" target="_blank">
-                                            <i class="fas fa-user user"></i>黃世銘
-                                        </a>
                                         <i class="far fa-calendar-alt calendar"></i>2016-12-08 11:56:02
-                                        <div class="ui small label">其他</div>
+                                        <div class="ui small label">購物・商店</div>
                                     </div>
                                 </div>
                             </div>
@@ -297,22 +291,39 @@
                             <div class="item">
                                 <div class="content">
                                     <a class="ui header title" target="_blank" href="#">
-                                    在日本租車的注意事項？
+                                    日本科學未來館
                                 </a>
                                     <div class="description text-truncate">
-                                        請問在日本租車，除了備妥相關文件，還需要注意哪些事情？請問在日本租車，除了備妥相關文件，還需要注意哪些事情？請問在日本租車，除了備妥相關文件，還需要注意哪些事情？請問在日本租車，除了備妥相關文件，還需要注意哪些事情？請問在日本租車，除了備妥相關文件，還需要注意哪些事情？請問在日本租車，除了備妥相關文件，還需要注意哪些事情？
+                                        「日本科学未来館」為展示許多21世紀新科技或是新發明的博物館。
                                     </div>
                                     <div class="extra">
-                                        <a href="#" target="_blank">
-                                            <i class="fas fa-user user"></i>黃世銘
-                                        </a>
                                         <i class="far fa-calendar-alt calendar"></i>2016-12-08 11:56:02
-                                        <div class="ui small label">交通</div>
+                                        <div class="ui small label">博物館・美術館</div>
                                     </div>
                                 </div>
                             </div>
                         </td>
                     </tr>
+
+                    <tr>
+                        <td>
+                            <div class="item">
+                                <div class="content">
+                                    <a class="ui header title" target="_blank" href="#">
+                                    日本海さかな街
+                                </a>
+                                    <div class="description text-truncate">
+                                        敦賀港直送新鮮海產，號稱日本海最大的漁獲市場。
+                                    </div>
+                                    <div class="extra">
+                                        <i class="far fa-calendar-alt calendar"></i>2016-12-08 11:56:02
+                                        <div class="ui small label">購物・商店</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+
 
                 </tbody>
 

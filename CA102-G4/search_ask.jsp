@@ -1,3 +1,8 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ page import="java.util.*"%>
+<%@ page import="com.blog.model.*"%>
+
 <!DOCTYPE html>
 <html>
 
@@ -154,10 +159,10 @@
             <a class="item" href="search_blog.html">
                 旅遊記
             </a>
-            <a class="item active" href="search_member.html">
+            <a class="item" href="search_member.html">
                 會員
             </a>
-            <a class="item" href="search_ask.html">
+            <a class="item active" href="search_ask.html">
                 問答
             </a>
             <a class="item" href="search_together.html">
@@ -187,13 +192,17 @@
                             <div class="item">
                                 <div class="content">
                                     <a class="ui header title" target="_blank" href="#">
-                                    黃世銘
+                                    日本橋到環球影城
                                 </a>
                                     <div class="description text-truncate">
-                                        沒事就愛亂規劃一堆自以為黃金行程的行程，然後思索怎麼用最少的錢玩到最多。沒事就愛亂規劃一堆自以為黃金行程的行程，然後思索怎麼用最少的錢玩到最多。沒事就愛亂規劃一堆自以為黃金行程的行程，然後思索怎麼用最少的錢玩到最多。沒事就愛亂規劃一堆自以為黃金行程的行程，然後思索怎麼用最少的錢玩到最多。
+                                        從日本橋到環球影城，若搭近鐵轉JR，日本橋到西九条轉JR線到環球，路程中需出站??從日本橋到環球影城，若搭近鐵轉JR，日本橋到西九条轉JR線到環球，路程中需出站??從日本橋到環球影城，若搭近鐵轉JR，日本橋到西九条轉JR線到環球，路程中需出站??從日本橋到環球影城，若搭近鐵轉JR，日本橋到西九条轉JR線到環球，路程中需出站??
                                     </div>
                                     <div class="extra">
+                                        <a href="#" target="_blank">
+                                            <i class="fas fa-user user"></i>黃世銘
+                                        </a>
                                         <i class="far fa-calendar-alt calendar"></i>2016-12-08 11:56:02
+                                        <div class="ui small label">交通</div>
                                     </div>
                                 </div>
                             </div>
@@ -205,13 +214,17 @@
                             <div class="item">
                                 <div class="content">
                                     <a class="ui header title" target="_blank" href="#">
-                                    黃世銘
+                                    若用鐵路旅行日本
                                 </a>
                                     <div class="description text-truncate">
-                                        沒事就愛亂規劃一堆自以為黃金行程的行程，然後思索怎麼用最少的錢玩到最多。沒事就愛亂規劃一堆自以為黃金行程的行程，然後思索怎麼用最少的錢玩到最多。沒事就愛亂規劃一堆自以為黃金行程的行程，然後思索怎麼用最少的錢玩到最多。沒事就愛亂規劃一堆自以為黃金行程的行程，然後思索怎麼用最少的錢玩到最多。
+                                        大家好 若用鐵路旅行日本 大家會是如何建議 我搜尋不到相關文章 謝謝大家大家好 若用鐵路旅行日本 大家會是如何建議 我搜尋不到相關文章 謝謝大家大家好 若用鐵路旅行日本 大家會是如何建議 我搜尋不到相關文章 謝謝大家大家好 若用鐵路旅行日本 大家會是如何建議 我搜尋不到相關文章 謝謝大家大家好 若用鐵路旅行日本 大家會是如何建議 我搜尋不到相關文章 謝謝大家大家好 若用鐵路旅行日本 大家會是如何建議 我搜尋不到相關文章 謝謝大家大家好 若用鐵路旅行日本 大家會是如何建議 我搜尋不到相關文章 謝謝大家
                                     </div>
                                     <div class="extra">
+                                        <a href="#" target="_blank">
+                                            <i class="fas fa-user user"></i>黃世銘
+                                        </a>
                                         <i class="far fa-calendar-alt calendar"></i>2016-12-08 11:56:02
+                                        <div class="ui small label">交通</div>
                                     </div>
                                 </div>
                             </div>
@@ -223,13 +236,17 @@
                             <div class="item">
                                 <div class="content">
                                     <a class="ui header title" target="_blank" href="#">
-                                    黃世銘
+                                    帶去日本的4G手機....
                                 </a>
                                     <div class="description text-truncate">
-                                        沒事就愛亂規劃一堆自以為黃金行程的行程，然後思索怎麼用最少的錢玩到最多。沒事就愛亂規劃一堆自以為黃金行程的行程，然後思索怎麼用最少的錢玩到最多。沒事就愛亂規劃一堆自以為黃金行程的行程，然後思索怎麼用最少的錢玩到最多。沒事就愛亂規劃一堆自以為黃金行程的行程，然後思索怎麼用最少的錢玩到最多。
+                                        問個關於日本4G的問題....
                                     </div>
                                     <div class="extra">
+                                        <a href="#" target="_blank">
+                                            <i class="fas fa-user user"></i>黃世銘
+                                        </a>
                                         <i class="far fa-calendar-alt calendar"></i>2016-12-08 11:56:02
+                                        <div class="ui small label">其他</div>
                                     </div>
                                 </div>
                             </div>
@@ -241,13 +258,17 @@
                             <div class="item">
                                 <div class="content">
                                     <a class="ui header title" target="_blank" href="#">
-                                    黃世銘
+                                    買JR東日本周遊(東北)相關問題
                                 </a>
                                     <div class="description text-truncate">
-                                        沒事就愛亂規劃一堆自以為黃金行程的行程，然後思索怎麼用最少的錢玩到最多。沒事就愛亂規劃一堆自以為黃金行程的行程，然後思索怎麼用最少的錢玩到最多。沒事就愛亂規劃一堆自以為黃金行程的行程，然後思索怎麼用最少的錢玩到最多。沒事就愛亂規劃一堆自以為黃金行程的行程，然後思索怎麼用最少的錢玩到最多。
+                                        我看不懂這張在東京市區可以搭乘的有那些(汗) 是不是 JR東日本官網的那張"JR東日本主要鐵道路線圖:首都區" 上面有列的路線都可以搭??
                                     </div>
                                     <div class="extra">
+                                        <a href="#" target="_blank">
+                                            <i class="fas fa-user user"></i>黃世銘
+                                        </a>
                                         <i class="far fa-calendar-alt calendar"></i>2016-12-08 11:56:02
+                                        <div class="ui small label">票券</div>
                                     </div>
                                 </div>
                             </div>
@@ -259,13 +280,17 @@
                             <div class="item">
                                 <div class="content">
                                     <a class="ui header title" target="_blank" href="#">
-                                    黃世銘
+                                    日本開車駕照的問題
                                 </a>
                                     <div class="description text-truncate">
-                                        沒事就愛亂規劃一堆自以為黃金行程的行程，然後思索怎麼用最少的錢玩到最多。沒事就愛亂規劃一堆自以為黃金行程的行程，然後思索怎麼用最少的錢玩到最多。沒事就愛亂規劃一堆自以為黃金行程的行程，然後思索怎麼用最少的錢玩到最多。沒事就愛亂規劃一堆自以為黃金行程的行程，然後思索怎麼用最少的錢玩到最多。
+                                        如題，去日本想要開車旅行，請問應該辦理哪些手續？如題，去日本想要開車旅行，請問應該辦理哪些手續？如題，去日本想要開車旅行，請問應該辦理哪些手續？如題，去日本想要開車旅行，請問應該辦理哪些手續？如題，去日本想要開車旅行，請問應該辦理哪些手續？如題，去日本想要開車旅行，請問應該辦理哪些手續？
                                     </div>
                                     <div class="extra">
+                                        <a href="#" target="_blank">
+                                            <i class="fas fa-user user"></i>黃世銘
+                                        </a>
                                         <i class="far fa-calendar-alt calendar"></i>2016-12-08 11:56:02
+                                        <div class="ui small label">其他</div>
                                     </div>
                                 </div>
                             </div>
@@ -277,13 +302,17 @@
                             <div class="item">
                                 <div class="content">
                                     <a class="ui header title" target="_blank" href="#">
-                                    黃世銘
+                                    在日本租車的注意事項？
                                 </a>
                                     <div class="description text-truncate">
-                                        沒事就愛亂規劃一堆自以為黃金行程的行程，然後思索怎麼用最少的錢玩到最多。沒事就愛亂規劃一堆自以為黃金行程的行程，然後思索怎麼用最少的錢玩到最多。沒事就愛亂規劃一堆自以為黃金行程的行程，然後思索怎麼用最少的錢玩到最多。沒事就愛亂規劃一堆自以為黃金行程的行程，然後思索怎麼用最少的錢玩到最多。
+                                        請問在日本租車，除了備妥相關文件，還需要注意哪些事情？請問在日本租車，除了備妥相關文件，還需要注意哪些事情？請問在日本租車，除了備妥相關文件，還需要注意哪些事情？請問在日本租車，除了備妥相關文件，還需要注意哪些事情？請問在日本租車，除了備妥相關文件，還需要注意哪些事情？請問在日本租車，除了備妥相關文件，還需要注意哪些事情？
                                     </div>
                                     <div class="extra">
+                                        <a href="#" target="_blank">
+                                            <i class="fas fa-user user"></i>黃世銘
+                                        </a>
                                         <i class="far fa-calendar-alt calendar"></i>2016-12-08 11:56:02
+                                        <div class="ui small label">交通</div>
                                     </div>
                                 </div>
                             </div>
