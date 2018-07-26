@@ -1,10 +1,22 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page import="java.util.*"%>
+<%@ page import="com.mem.model.*"%>
 <%@ page import="com.blog.model.*"%>
 
 <!DOCTYPE html>
 <html>
+
+<%
+ MemberVO memberVO = (MemberVO)session.getAttribute("memberVO"); 
+ 
+ boolean login_state = false;
+ Object login_state_temp = session.getAttribute("login_state");
+ if(login_state_temp!=null){
+  login_state=(boolean)login_state_temp;
+ }
+
+%>
 
 <head>
     <!-- 網頁title -->
@@ -39,16 +51,16 @@
     <!-- //JQUERY -->
 
     <!-- bootstrap css及JS檔案 -->
-    <link href="css/index_bootstrap.css" rel="stylesheet" type="text/css" media="all" />
-    <script src="js/index_bootstrap.js"></script>
+    <link href="<%=request.getContextPath()%>/front_end/css/all/index_bootstrap.css" rel="stylesheet" type="text/css" media="all" />
+    <script src="<%=request.getContextPath()%>/front_end/js/all/index_bootstrap.js"></script>
     <!-- //bootstrap css及JS檔案 -->
 
     <!-- css -->
-    <link href="css/index_style.css" rel="stylesheet" type="text/css" media="all" />
+    <link href="<%=request.getContextPath()%>/front_end/css/all/index_style.css" rel="stylesheet" type="text/css" media="all" />
     <!-- //css -->
 
     <!-- 幻燈片css -->
-    <link href="css/index_ken_burns.css" rel="stylesheet">
+    <link href="<%=request.getContextPath()%>/front_end/css/all/index_ken_burns.css" rel="stylesheet">
     <!-- //幻燈片css -->
 
     <!-- font-awesome icons -->
@@ -60,7 +72,7 @@
     <link href='https://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css'>
     <!-- //font字體 -->
     <!-- LogoIcon -->
-    <link href="images/Logo_Black_use.png" rel="icon" type="image/png">
+    <link href="<%=request.getContextPath()%>/front_end/images/all/Logo_Black_use.png" rel="icon" type="image/png">
     <!-- //LogoIcon -->
 </head>
 
@@ -78,7 +90,15 @@
                 </div>
                 <div class="top-banner-right">
                     <ul>
-                        <li><a class="top_banner" href="#"><i class="fa fa-user" aria-hidden="true"></i></a></li>
+                    <li>
+                         <%= (login_state)? 
+                         "<a href=\"/CA102G4/front_end/member/member.do?action=logout\"><span class=\" top_banner\" aria-hidden=\"true\"><i class=\" fas fa-sign-out-alt\" aria-hidden=\"true\"></i></span></a>"
+                         :"<a href=\"/CA102G4/front_end/member/mem_login.jsp\"><span class=\" top_banner\" aria-hidden=\"true\"><i class=\" fa fa-user\" aria-hidden=\"true\"></i></span></a>"%>
+                        </li>
+                        
+                           	 <%= "<a href=\"/CA102G4/front_end/member/update_mem_profile.jsp\"><span class=\" top_banner\" aria-hidden=\"true\"><i class=\" fa fa-user\" aria-hidden=\"true\"></i></span></a>"%>
+                      
+						<li><a class="top_banner" href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_home.jsp"><i class="fa fa-user" aria-hidden="true"></i></a></li>
                         <li><a class="top_banner" href="#"><i class="fa fa-shopping-cart" aria-hidden="true"></i></a></li>
                         <li><a class="top_banner" href="#"><i class="fa fa-envelope" aria-hidden="true"></i></a></li>
                     </ul>
@@ -111,7 +131,7 @@
                                 <li><a href="chat.html">聊天室</a></li>
                                 <li><a href="together.html">揪團</a></li>
                                 <li><a href="buy.html">交易平台</a></li>
-                                <li><a href="advertisement.html">專欄</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/ad/ad.jsp">專欄</a></li>
 
                                 <div class="clearfix"> </div>
                             </ul>
@@ -248,7 +268,7 @@
                 <div class="col-md-3 news-grid">
                     <div class="agile-news-grid-info">
                         <div class="news-grid-info-img">
-                            <a href="single.html"><img src="images/n1.jpg" alt="" /></a>
+                            <a href="single.html"><img src="images/all/n1.jpg" alt="" /></a>
                         </div>
                         <div class="news-grid-info-bottom">
                             <div class="date-grid">
@@ -271,7 +291,7 @@
                 <div class="col-md-3 news-grid">
                     <div class="agile-news-grid-info">
                         <div class="news-grid-info-img">
-                            <a href="single.html"><img src="images/n1.jpg" alt="" /></a>
+                            <a href="single.html"><img src="images/all/n1.jpg" alt="" /></a>
                         </div>
                         <div class="news-grid-info-bottom">
                             <div class="date-grid">
@@ -294,7 +314,7 @@
                 <div class="col-md-3 news-grid">
                     <div class="agile-news-grid-info">
                         <div class="news-grid-info-img">
-                            <a href="single.html"><img src="images/n2.jpg" alt="" /></a>
+                            <a href="single.html"><img src="images/all/n2.jpg" alt="" /></a>
                         </div>
                         <div class="news-grid-info-bottom">
                             <div class="date-grid">
@@ -317,7 +337,7 @@
                 <div class="col-md-3 news-grid">
                     <div class="agile-news-grid-info">
                         <div class="news-grid-info-img">
-                            <a href="single.html"><img src="images/n3.jpg" alt="" /></a>
+                            <a href="single.html"><img src="images/all/n3.jpg" alt="" /></a>
                         </div>
                         <div class="news-grid-info-bottom">
                             <div class="date-grid">
@@ -354,7 +374,7 @@
                 <div class="col-md-3 news-grid">
                     <div class="agile-news-grid-info">
                         <div class="news-grid-info-img">
-                            <a href="single.html"><img src="images/n1.jpg" alt="" /></a>
+                            <a href="single.html"><img src="images/all/n1.jpg" alt="" /></a>
                         </div>
                         <div class="news-grid-info-bottom">
                             <div class="date-grid">
@@ -377,7 +397,7 @@
                 <div class="col-md-3 news-grid">
                     <div class="agile-news-grid-info">
                         <div class="news-grid-info-img">
-                            <a href="single.html"><img src="images/n1.jpg" alt="" /></a>
+                            <a href="single.html"><img src="images/all/n1.jpg" alt="" /></a>
                         </div>
                         <div class="news-grid-info-bottom">
                             <div class="date-grid">
@@ -400,7 +420,7 @@
                 <div class="col-md-3 news-grid">
                     <div class="agile-news-grid-info">
                         <div class="news-grid-info-img">
-                            <a href="single.html"><img src="images/n2.jpg" alt="" /></a>
+                            <a href="single.html"><img src="images/all/n2.jpg" alt="" /></a>
                         </div>
                         <div class="news-grid-info-bottom">
                             <div class="date-grid">
@@ -423,7 +443,7 @@
                 <div class="col-md-3 news-grid">
                     <div class="agile-news-grid-info">
                         <div class="news-grid-info-img">
-                            <a href="single.html"><img src="images/n3.jpg" alt="" /></a>
+                            <a href="single.html"><img src="images/all/n3.jpg" alt="" /></a>
                         </div>
                         <div class="news-grid-info-bottom">
                             <div class="date-grid">
