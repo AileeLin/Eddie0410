@@ -6,7 +6,7 @@ public class MemberVO implements java.io.Serializable {
 	private String mem_Id ;
 	private String mem_Account;
 	private String mem_Password;
-	 
+	
 	private String mem_Name;
 	
 	private Integer mem_Sex;
@@ -38,6 +38,16 @@ public class MemberVO implements java.io.Serializable {
 	private Integer STORE_NO_2;
 	private Integer STORE_NO_3;
 	
+	private Date mem_Reg_Date;
+	
+	public Date getMem_Reg_Date() {
+		return mem_Reg_Date;
+	}
+
+	public void setMem_Reg_Date(Date mem_Reg_Date) {
+		this.mem_Reg_Date = mem_Reg_Date;
+	}
+
 	private String encoded; 
 	
 	public String getEncoded() {

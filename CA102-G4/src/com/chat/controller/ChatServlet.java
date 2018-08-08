@@ -98,6 +98,21 @@ public class ChatServlet {
 						}
 					}
 				}
+				
+//				Map map = new HashMap();
+//				map.put("TYPE",type);
+//				map.put("TO_CHATROOMID",chatRoom_id);
+//				map.put("TO_CRNAME",jsonObject.get("TO_CRNAME").getAsString());
+//				map.put("MEM_ID",sendMemId);
+//				map.put("MSG",jsonObject.get("MSG").getAsString());
+//				map.put("TIME",jsonObject.get("TIME").getAsString());
+//				map.put("CNT",jsonObject.get("TIME").getAsString());
+//				JSONObject json = new JSONObject(map);
+//				
+//				message = json.toString();
+				
+				jsonObject.addProperty("CNT", "2");
+				message=jsonObject.toString();
 			}
 			//判斷發送者是否還在參與名單內
 			int count = 0 ;

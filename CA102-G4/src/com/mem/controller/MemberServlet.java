@@ -1,6 +1,8 @@
 package com.mem.controller;
 
 import java.io.*;
+import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import javax.servlet.*;
@@ -44,7 +46,9 @@ private static final long serialVersionUID = 1L;
 			HttpSession session = req.getSession();
 				
 			if("logout".equals(action)) {
-				session.invalidate();
+//				session.invalidate();
+				session.removeAttribute("login_state");
+				session.removeAttribute("memberVO");
 				res.sendRedirect(req.getContextPath()+"/front_end/index.jsp");
 			}
 			//登出結束
@@ -58,6 +62,8 @@ private static final long serialVersionUID = 1L;
 	    String action = req.getParameter("action");
 	    PrintWriter out = res.getWriter();
 	   	HttpSession session = req.getSession();
+		SimpleDateFormat time_format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+
 			
 		/*Enumeration enums = req.getParameterNames();
 		while(enums.hasMoreElements()) {
@@ -91,11 +97,14 @@ private static final long serialVersionUID = 1L;
 
 			// 【檢查該帳號 , 密碼是否有效】
 		MemberVO memberVO = allowUser(mem_Account,mem_Password);
-		if (memberVO == null) {          //【帳號 , 密碼無效時】
-		   out.println("<HTML><HEAD><TITLE>Access Denied</TITLE></HEAD>");
-		   out.println("<BODY>你的帳號 , 密碼無效!<BR>");
-		   out.println("請按此重新登入 </member/mem_login.jsp>重新登入</A>");
-		   out.println("</BODY></HTML>");
+		if (memberVO == null) {          
+			//【帳號 , 密碼無效時】
+			
+			req.setAttribute("errorMsgs", errorMsgs);
+	    	String url = "/front_end/member/mem_login.jsp";
+	    	RequestDispatcher rd = req.getRequestDispatcher(url);
+	    	rd.forward(req,res);
+	    	
 			}else {		
 					//【帳號 , 密碼有效時, 才做以下工作】	    	
 			String member_Id = memberVO.getMem_Id();
@@ -136,13 +145,22 @@ private static final long serialVersionUID = 1L;
 					errorMsgs.put("mem_Name","姓名: 只能是中、英文字母、數字和_ , 且長度必需在2到10之間");
 	            }
 				
+//				String mem_Account = req.getParameter("mem_id");
+//				String mem_idReg = "^[a-zA-Z0-9_]{3,10}$";
+				
+				
 				String mem_Account = req.getParameter("mem_Account");
 				String mem_AccountReg = "[\\w-.]+@[\\w-]+(.[\\w_-]+)+";
+				MemberDAO dao = new MemberDAO();
+				MemberVO checkAccount = dao.checkAccount(mem_Account);
 				if (mem_Account == null || mem_Account.trim().length() == 0) {
 					errorMsgs.put("mem_Account","帳號: 請勿空白");
 				} else if(!mem_Account.trim().matches(mem_AccountReg)) { //以下練習正則(規)表示式(regular-expression)
 					errorMsgs.put("mem_Account","帳號: 只能是Email");
-	            }
+	            }else if (checkAccount != null) {
+					errorMsgs.put("mem_Account","此帳號已被註冊過，請重新註冊其他帳號");
+				}
+
 				
 				String mem_Password = req.getParameter("mem_Password");
 				String mem_PasswordReg = "^(?=.*\\d)(?=.*[a-z]).{6,10}$";
@@ -153,7 +171,8 @@ private static final long serialVersionUID = 1L;
 	            }
 				
 				Integer mem_State = 3;
-
+				
+				Date mem_Reg_Date = new Date(System.currentTimeMillis());
 								
 				System.out.println("test2");
 				// Send the use back to the form, if there were errors
@@ -166,7 +185,7 @@ private static final long serialVersionUID = 1L;
 				
 				/***************************2.開始新增資料***************************************/
 				MemberService memberSvc = new MemberService();
-				memberSvc.addMember(mem_Account, mem_Password, mem_Name, mem_State);
+				memberSvc.addMember(mem_Account, mem_Password, mem_Name, mem_State,mem_Reg_Date);
 				System.out.println("新增成功");
 				/***************************3.新增完成,準備轉交(Send the Success view)***********/
 				String url = "/front_end/member/mem_login.jsp";
@@ -184,11 +203,10 @@ private static final long serialVersionUID = 1L;
         
        
 
-        if ("UPDATE_MEMBER".equals(action)) { // 來自update_mem_profile.jsp的請求
+        if ("UPDATE_MEMBER".equals(action)) { 
         	System.out.println("修改有進來");
 			List<String> errorMsgs = new LinkedList<String>();
-			// Store this set in the request scope, in case we need to
-			// send the ErrorPage view.
+
 			req.setAttribute("errorMsgs", errorMsgs);
 			byte[] mem_Photo = null;
 			ByteArrayOutputStream baos=null;

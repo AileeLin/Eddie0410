@@ -33,11 +33,8 @@
 
 /*頁面安排--start*/
 
-/*個人首頁-左半邊*/
-#home_left{
-    float:left;
-    width:30%;
-}
+
+    
 .hl_div{
     height: 200px;
     width: 100%;
@@ -47,8 +44,10 @@
 
 /*個人首頁-右半邊*/
 #home_right{
-    float:left;
-    width:70%;
+/*     float:left; */
+/*     width:100%; */
+   	margin-left: 50px;
+    margin-right: 50px;
 }
 
 /*btn樣式 為蓋掉原semantic.min的*/
@@ -62,4 +61,41 @@
     vertical-align: text-top;
     line-height: 1em;
 }
+
+/*為蓋掉原index.css的*/
+.row {
+    margin-top: 0px;
+    height: auto;
+    margin-bottom: 100px;
+}
+/*照片牆卡片樣式 為蓋掉原semantic.min的*/
+.ui.card > .image > img, .ui.cards > .card > .image > img {
+	height: 250px;
+	
+}
+
+.ui.card > .image img, .ui.cards > .card > .image img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: inherit;
+  }
+
+.ui.card > .image:not(.ui) img, .ui.cards > .card > .image:not(.ui) img {
+    border: none;
+}
+.ui.card > .image img, .ui.cards > .card > .image img {
+    height: 250px;
+}
+/**卡片標題字形會被蓋掉*/
+.ui.card > .content > .header, .ui.cards > .card > .content > .header {
+    font-family: inherit;
+}
+
+
+
+
+
+
+
 /*��摰��--end*/

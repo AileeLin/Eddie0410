@@ -2,18 +2,17 @@ package com.mem.model;
 
 import java.util.*;
 import java.sql.*;
+import java.sql.Date;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
-import com.admin.model.AdminVO;
-
 
 
 public class MemberDAO implements MemberDAO_interface {
-	 
+	
 	// 一個應用程式中,針對一個資料庫 ,共用一個DataSource即可
 	private static DataSource ds = null;
 	static {
@@ -31,30 +30,40 @@ public class MemberDAO implements MemberDAO_interface {
 //	+ "VALUES ('M'||LPAD(to_char(MEMBER_seq.NEXTVAL), 6, '0'),?,?,?)";
 
 private static final String INSERT_STMT = 
-"Insert into MEMBER (MEM_ID,MEM_ACCOUNT,MEM_PASSWORD,MEM_NAME,MEM_STATE) "
-+ "VALUES ('M'||LPAD(to_char(MEMBER_seq.NEXTVAL), 6, '0'),?,?,?,?)";
+"Insert into MEMBER (MEM_ID,MEM_ACCOUNT,MEM_PASSWORD,MEM_NAME,MEM_STATE,MEM_REG_DATE) "
++ "VALUES ('M'||LPAD(to_char(MEMBER_seq.NEXTVAL), 6, '0'),?,?,?,?,?)";
 private static final String UPDATE = 
 	"UPDATE MEMBER SET MEM_ACCOUNT=?,MEM_PASSWORD= ?, MEM_NAME= ? ,MEM_SEX= ?,MEM_ADDRESS= ?,MEM_BIRTHDAY= ?,MEM_PHONE= ?,MEM_PROFILE= ?,MEM_PHOTO= ?,MEM_STATE= ?,DELIVERY_ADDRESS_1= ?,DELIVERY_ADDRESS_2=?,DELIVERY_ADDRESS_3=?,STORE_ADDR_1=?,STORE_ADDR_2=?,STORE_ADDR_3=?,STORE_NAME_1=?,STORE_NAME_2=?,STORE_NAME_3=?,STORE_NO_1=?,STORE_NO_2=?,STORE_NO_3=? WHERE MEM_ID = ?";
 private static final String GET_ALL_STMT = 
-	"SELECT MEM_ID,MEM_ACCOUNT,MEM_PASSWORD,MEM_NAME,MEM_SEX,MEM_ADDRESS,to_char(MEM_BIRTHDAY,'yyyy-mm-dd') MEM_BIRTHDAY,MEM_PHONE,MEM_PROFILE,MEM_PHOTO,MEM_STATE,DELIVERY_ADDRESS_1,DELIVERY_ADDRESS_2,DELIVERY_ADDRESS_3,STORE_ADDR_1,STORE_ADDR_2,STORE_ADDR_3,STORE_NAME_1,STORE_NAME_2,STORE_NAME_3,STORE_NO_1,STORE_NO_2,STORE_NO_3 FROM MEMBER ORDER BY MEM_ID";
+	"SELECT * FROM MEMBER ORDER BY MEM_ID";
 private static final String GET_ONE_STMT = 
-	"SELECT MEM_ID,MEM_ACCOUNT,MEM_PASSWORD,MEM_NAME,MEM_SEX,MEM_ADDRESS,to_char(MEM_BIRTHDAY,'yyyy-mm-dd') MEM_BIRTHDAY,MEM_PHONE,MEM_PROFILE,MEM_PHOTO,MEM_STATE,DELIVERY_ADDRESS_1,DELIVERY_ADDRESS_2,DELIVERY_ADDRESS_3,STORE_ADDR_1,STORE_ADDR_2,STORE_ADDR_3,STORE_NAME_1,STORE_NAME_2,STORE_NAME_3,STORE_NO_1,STORE_NO_2,STORE_NO_3 FROM MEMBER WHERE MEM_ID = ?";
+	"SELECT * FROM MEMBER WHERE MEM_ID = ?";
+
 private static final String DELETE_MEMBER = 
 	"DELETE FROM MEMBER WHERE MEM_ID = ?";
+
 private static final String login_Member = 
-	"SELECT * FROM MEMBER WHERE MEM_ACCOUNT= ? AND MEM_PASSWORD = ?"; 
+	"SELECT * FROM MEMBER WHERE MEM_ACCOUNT= ? AND MEM_PASSWORD = ?";
+
 private static final String update_Member =
 	"UPDATE MEMBER SET MEM_NAME= ? , MEM_PHONE= ? ,MEM_SEX= ?,MEM_BIRTHDAY= ?,MEM_PHOTO= ?,MEM_PROFILE= ? WHERE MEM_ID = ?";
+
 private static final String MEM_Update_PASSWORD = 
 	"UPDATE MEMBER SET MEM_PASSWORD=? WHERE MEM_ACCOUNT=?";
 
+//防止重覆註冊
+private static final String CHECK_ACCOUNT = 
+"SELECT * FROM MEMBER WHERE MEM_ACCOUNT = ?";
+
+//管理員更改會員狀態
 private static final String UPDATE_ON_STATE_STMT=
 	"UPDATE MEMBER SET MEM_STATE = 1 WHERE MEM_ID=?";
 private static final String UPDATE_OFF_STATE_STMT=
 	"UPDATE MEMBER SET MEM_STATE = 2 WHERE MEM_ID=?";
-
+//管理員搜尋會員
 private static final String getAll_member =
 	"SELECT * FROM MEMBER WHERE UPPER(MEM_NAME) LIKE UPPER(?) OR UPPER(MEM_NAME) LIKE UPPER(?) ORDER BY MEM_ID ";
+
 
 
 @Override
@@ -72,6 +81,8 @@ public void insert(MemberVO memberVO) {
 		pstmt.setString(2, memberVO.getMem_Password());
 		pstmt.setString(3, memberVO.getMem_Name());
 		pstmt.setInt(4,3);
+		pstmt.setDate(5, memberVO.getMem_Reg_Date());
+
 		pstmt.executeUpdate();
 		
 		
@@ -255,7 +266,8 @@ public MemberVO findByPrimaryKey(String mem_Id) {
 			memberVO.setSTORE_NO_1(rs.getInt("STORE_NO_1"));
 			memberVO.setSTORE_NO_2(rs.getInt("STORE_NO_2"));
 			memberVO.setSTORE_NO_3(rs.getInt("STORE_NO_3"));
-			
+			memberVO.setMem_Reg_Date(rs.getDate("MEM_REG_DATE"));
+
 			String photoEncoded = Base64.getEncoder().encodeToString(rs.getBytes("MEM_PHOTO"));
 			memberVO.setEncoded(photoEncoded);
 			
@@ -335,6 +347,9 @@ public List<MemberVO> getAll() {
 			memberVO.setSTORE_NO_1(rs.getInt("STORE_NO_1"));
 			memberVO.setSTORE_NO_2(rs.getInt("STORE_NO_2"));
 			memberVO.setSTORE_NO_3(rs.getInt("STORE_NO_3"));
+
+			memberVO.setMem_Reg_Date(rs.getDate("MEM_REG_DATE"));
+			
 			list.add(memberVO); // Store the row in the list
 		}
 
@@ -381,7 +396,7 @@ public MemberVO login_Member(String mem_Account, String mem_Password) {
 		pstmt = con.prepareStatement(login_Member);
 		pstmt.setString(1, mem_Account);
 		pstmt.setString(2, mem_Password);
-
+		
 		rs = pstmt.executeQuery();
 
 		while (rs.next()) {
@@ -398,6 +413,21 @@ public MemberVO login_Member(String mem_Account, String mem_Password) {
 			memberVO_login.setMem_Photo(rs.getBytes("MEM_PHOTO"));
 			memberVO_login.setMem_State(rs.getInt("MEM_STATE"));
 
+			memberVO_login.setDelivery_Address_1(rs.getString("DELIVERY_ADDRESS_1"));
+			memberVO_login.setDelivery_Address_2(rs.getString("DELIVERY_ADDRESS_2"));
+			memberVO_login.setDelivery_Address_3(rs.getString("DELIVERY_ADDRESS_3"));
+			
+			memberVO_login.setSTORE_ADDR_1(rs.getString("STORE_ADDR_1"));
+			memberVO_login.setSTORE_ADDR_2(rs.getString("STORE_ADDR_2"));
+			memberVO_login.setSTORE_ADDR_3(rs.getString("STORE_ADDR_3"));
+			
+			memberVO_login.setSTORE_NAME_1(rs.getString("STORE_NAME_1"));
+			memberVO_login.setSTORE_NAME_2(rs.getString("STORE_NAME_2"));
+			memberVO_login.setSTORE_NAME_3(rs.getString("STORE_NAME_3"));
+
+			memberVO_login.setSTORE_NO_1(rs.getInt("STORE_NO_1"));
+			memberVO_login.setSTORE_NO_2(rs.getInt("STORE_NO_2"));
+			memberVO_login.setSTORE_NO_3(rs.getInt("STORE_NO_3"));
 			pstmt.executeUpdate();
 
 		}
@@ -605,6 +635,8 @@ public List<MemberVO> getAll_member(String mem_Name){
 		memberVO.setMem_Profile(rs.getString("MEM_PROFILE"));
 		memberVO.setMem_Photo(rs.getBytes("MEM_PHOTO"));
 		memberVO.setMem_State(rs.getInt("MEM_STATE"));
+		memberVO.setMem_Reg_Date(rs.getDate("MEM_REG_DATE"));
+
 		list.add(memberVO);
 		}
 		
@@ -637,6 +669,54 @@ public List<MemberVO> getAll_member(String mem_Name){
 		}
 	}
 	return list;
+}
+
+@Override
+public MemberVO checkAccount(String mem_Account) {
+	MemberVO memberVO = null;
+	Connection con = null;
+	PreparedStatement pstmt = null;
+	ResultSet rs = null;
+	try {
+		
+		con = ds.getConnection();
+		pstmt = con.prepareStatement(CHECK_ACCOUNT);
+		pstmt.setString(1, mem_Account);
+		rs = pstmt.executeQuery();
+		
+		while (rs.next()) {
+			
+			memberVO = new MemberVO();
+			memberVO.setMem_Account(rs.getString("MEM_ACCOUNT"));
+			
+		}
+	}catch (SQLException se) {
+		throw new RuntimeException("A database error occured. " + se.getMessage());
+		// Clean up JDBC resources
+	} finally {
+		if (rs != null) {
+			try {
+				rs.close();
+			} catch (SQLException se) {
+				se.printStackTrace(System.err);
+			}
+		}
+		if (pstmt != null) {
+			try {
+				pstmt.close();
+			} catch (SQLException se) {
+				se.printStackTrace(System.err);
+			}
+		}
+		if (con != null) {
+			try {
+				con.close();
+			} catch (Exception e) {
+				e.printStackTrace(System.err);
+			}
+		}
+	}
+	return memberVO;
 }
 
 }

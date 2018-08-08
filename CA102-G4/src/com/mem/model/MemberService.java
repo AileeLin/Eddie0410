@@ -12,15 +12,18 @@ public class MemberService {
 		dao = new MemberDAO();
 	}
 	
+	
+	
 	//註冊會員
 	public MemberVO addMember
-	(String mem_Account, String mem_Password,String mem_Name,Integer mem_State) {
+	(String mem_Account, String mem_Password,String mem_Name,Integer mem_State,Date mem_Reg_Date) {
 
 		MemberVO memberVO = new MemberVO();
 		memberVO.setMem_Name(mem_Name);
 		memberVO.setMem_Account(mem_Account);
 		memberVO.setMem_Password(mem_Password);
 		memberVO.setMem_State(mem_State);
+		memberVO.setMem_Reg_Date(mem_Reg_Date);
 
 		dao.insert(memberVO);
 
@@ -107,7 +110,7 @@ public class MemberService {
 		return dao.getAll();
 	}
 	
-	 
+	
 	
 	
 //	public MemberVO Login_Member(String mem_Account, String mem_Password) {

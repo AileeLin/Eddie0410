@@ -1,9 +1,13 @@
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page import="com.mem.model.*" %>
-<%@ page import="com.photo.model.*" %>
+<%@ page import="com.photo_wall.model.*" %>
 <%@ page import="com.blog.model.*" %>
 <%@ page import="java.util.*" %>
+<%@ page import="com.fri.model.*" %>
+<%@ page import="com.trip.model.*" %>
+<jsp:useBean id="friSvc" scope="page" class="com.fri.model.FriendService"></jsp:useBean>
+<jsp:useBean id="tripSvc" scope="page" class="com.trip.model.TripService"></jsp:useBean>
 <%	
 	//因為沒有登入也可以查看他人的個人頁面，但無法顯示加入好友的按鈕
 	Object memId = session.getAttribute(session.getId());
@@ -47,8 +51,8 @@
 	MemberVO otherUser_memVO = memSvc.getOneMember(uId); 
 	pageContext.setAttribute("otherUser_memVO",otherUser_memVO);
 	
-	//取出該uI照片牆的照片 -----可能還要再改!! 因為是JDBC版本
-	Photo_wallJDBCDAO photoSvc = new Photo_wallJDBCDAO();
+	//取出該uI照片牆的照片
+	Photo_wallDAO photoSvc = new Photo_wallDAO();
 	List<Photo_wallVO> photoList=photoSvc.getAll_ByMemID(uId);
 	pageContext.setAttribute("photoList", photoList);
 	
@@ -56,6 +60,18 @@
 	blogService blogSvc = new blogService();
 	List<blogVO> blogList=blogSvc.findByMemId(uId);//動態從session取得會員ID
 	pageContext.setAttribute("blogList", blogList);
+	
+	/***************取出登入者的行程******************/
+	List<TripVO> allTripList = tripSvc.getAll();
+	List<TripVO> uTripList = new ArrayList<>();
+	for(TripVO tripvo : allTripList){
+		if(tripvo.getMem_id().equals(uId)){
+			uTripList.add(tripvo);		
+		}
+	}
+
+	pageContext.setAttribute("uTripList",uTripList);
+	
 %>
 <!DOCTYPE html>
 <html>
@@ -295,39 +311,39 @@
             <!--會員個人頁面-首頁內容-->
             <div class="mem_ind_content">
               <!-- 頁籤項目 -->
-              <ul class="nav nav-tabs" role="tablist" style="">
+              <ul class="nav nav-tabs">
                 <li class="nav-item active">
-                  <a href="<%=request.getContextPath()%>/front_end/personal/personal_area_public.html">
+                  <a href="#home_right" data-toggle="tab">
                       <i class="fas fa-home"></i>首頁
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a href="">
+                  <a href="#friendsPage"  data-toggle="tab">
                       <i class="fas fa-user-friends"></i>好友
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a href="personal_area_blog.html">
+                  <a href="#blog"  data-toggle="tab">
                       <i class="fab fa-blogger"></i>旅遊記
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a href="#trip">
+                  <a href="#trip" data-toggle="tab">
                       <i class="fas fa-map"></i>行程
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a href="#together">
+                  <a href="#together" data-toggle="tab">
                       <i class="fas fa-bullhorn"></i>揪團
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a href="#question">
+                  <a href="#question" data-toggle="tab">
                       <i class="question circle icon"></i>問答
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a href="#gallery">
+                  <a href="#gallery" data-toggle="tab">
                       <i class="image icon"></i>相片
                   </a>
                 </li>
@@ -335,21 +351,13 @@
               <!-- //頁籤項目 -->
               <!-- 頁籤項目-首頁內容 -->
               <div class="tab-content">
-                <!--首頁左半邊-個人首頁-->
-                <div id="home_left">
-                    <div class="s_div">哈哈哈</div>
-                    <div class="s_div">哈哈哈</div>
-                    <div class="s_div">哈哈哈</div>
-                    <div class="s_div">哈哈哈</div>
-                </div>
-                <!--//首頁左半邊-個人首頁-->
                 <!--首頁右半邊-個人首頁-->
-                <div id="home_right" class="container tab-pane active">
+                <div id="home_right" class="tab-pane fade in active">
                    <!--首頁我的照片列表-->
                    <div class="u_ind_item">
                       <div class="u_title">
                           <strong>${otherUser_memVO.mem_Name}的照片</strong>
-                          <a href="#"><i class="angle double right icon"></i>更多</a>
+                          <a href="#gallery"><i class="angle double right icon"></i>更多</a>
                           <div>
                               <span>${photoList.size()}</span>
                               <span>張照片</span>
@@ -361,7 +369,7 @@
 		                      <div class="flex">
 								<c:forEach var="photovo" items="${photoList}" begin="0" end="4">
 									<div class="item">
-								    	<a href="">
+								    	<a href="<%=request.getContextPath()%>/front_end/photowall/view_photowall.jsp?photo_No=${photovo.photo_No}">
 								        	<img src="<%=request.getContextPath()%>/front_end/readPic?action=photowall&id=${photovo.photo_No}">
 								    	</a>
 									</div>
@@ -406,8 +414,9 @@
 			                            	${blogvo.travel_date}
 			                            </span>
 			                          </div>
-			                          <div class="description text-truncate">
-			                            <span>
+			                          <div class="description">
+			                          	<i class="fas fa-align-justify"></i>
+			                            <span class="_shortText">
 			                                <i class="fas fa-map-marker-alt"></i>
 			                                <c:set var="blog_content" value="${blogvo.blog_content}"/>
 											<%= ((String)pageContext.getAttribute("blog_content")).replaceAll("<[^>]*>","").trim()%>
@@ -427,85 +436,130 @@
                    </div>
                    <hr>
                    <!--首頁我的行程列表-->
-                   <div class="u_ind_item">
-                      <div class="u_title">
-                          <strong>${otherUser_memVO.mem_Name}的行程</strong>
-                          <a href="#"><i class="angle double right icon"></i>更多</a>
-                          <div>
-                              <span>11</span>
-                              <span>篇行程</span>
-                          </div>
-                      </div>
-                      <div class="mem_ind_item_plan">
-                         <div class="ui items">
-                          <div class="item">
-                            <div class="ui small image">
-                             <a href="">
-                              <img src="<%=request.getContextPath()%>/front_end/images/all/2.jpg">
-                             </a>
-                            </div>
-                            <div class="content">
-                              <div class="header">水宝小慢的澳大利亚行程</div>
-                              <div class="meta">
-                                <span class="stay"><i class="fas fa-calendar-alt"></i> 13天</span>
-                              </div>
-                              <div class="description">
-                                <p>
-                                    <i class="fas fa-map-marker-alt"></i> 
-                                    北京>悉尼>澳大利亚蓝山>霍巴特>阿德莱德>悉尼>北京京>悉尼>澳大利亚蓝山>霍巴特>阿德莱德>悉尼>北
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="item">
-                            <div class="ui small image">
-                             <a href="">
-                              <img src="<%=request.getContextPath()%>/front_end/images/all/2.jpg">
-                             </a>
-                            </div>
-                            <div class="content">
-                              <div class="header">水宝小慢的澳大利亚行程</div>
-                              <div class="meta">
-                                <span class="stay"><i class="fas fa-calendar-alt"></i> 13天</span>
-                              </div>
-                              <div class="description">
-                                <p>
-                                    <i class="fas fa-map-marker-alt"></i> 
-                                    北京>悉尼>澳大利亚蓝山>霍巴特>阿德莱德>悉尼>北京京>悉尼>澳大利亚蓝山>霍巴特>阿德莱德>悉尼>北
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="item">
-                            <div class="ui small image">
-                             <a href="">
-                              <img src="<%=request.getContextPath()%>/front_end/images/all/2.jpg">
-                             </a>
-                            </div>
-                            <div class="content">
-                              <div class="header">水宝小慢的澳大利亚行程</div>
-                              <div class="meta">
-                                <span class="stay"><i class="fas fa-calendar-alt"></i> 13天</span>
-                              </div>
-                              <div class="description">
-                                <p>
-                                    <i class="fas fa-map-marker-alt"></i> 
-                                    北京>悉尼>澳大利亚蓝山>霍巴特>阿德莱德>悉尼>北京京>悉尼>澳大利亚蓝山>霍巴特>阿德莱德>悉尼>北
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-                         </div>  
-                      </div>
-                   </div>
+	               <div class="u_ind_item">
+	                  <div class="u_title">
+	                      <strong>我的行程</strong>
+	                      <a href="#"><i class="angle double right icon"></i>更多</a>
+	                      <div>
+	                          <span>${uTripList.size()}</span>
+	                          <span>篇行程</span>
+	                      </div>
+	                  </div>
+	                  <div class="mem_ind_item_plan">
+	                     <div class="ui items">
+	                      <c:choose>
+		                      <c:when test="${not empty uTripList}">
+			                      <c:forEach var="tripvo" items="${uTripList}" begin="0" end="2">
+				                      <div class="item">
+				                        <div class="ui small image">
+				                         <a href=""><img src="<%=request.getContextPath()%>/front_end/readPic?action=trip&id=${tripvo.trip_no}"></a>
+				                        </div>
+				                        <div class="content">
+				                          <div class="header">${tripvo.trip_name}</div>
+				                          <div class="meta">
+				                            <span class="stay"><i class="fas fa-play-circle"></i>出發日期：${tripvo.trip_startDay}</span>
+				                          </div>
+				                          <div class="description">
+				                          	<span class="stay"><i class="fas fa-clock"></i>&nbsp;${tripvo.trip_days}天</span>
+				                            <p>
+												<!-- 本來要放行程有幾個景點<i class="fas fa-map-marker-alt"></i> -->
+				                            </p>
+				                          </div>
+				                        </div>
+				                      </div>
+			                      </c:forEach>
+		                      </c:when>
+	 						  <c:otherwise>
+								<img src="<%=request.getContextPath()%>/front_end/images/all/nothing.png" class="nothing">尚未發表
+						      </c:otherwise>
+	                      </c:choose>
+	                     </div>  
+	                  </div>
+	               </div>
                    <br>
                 </div>
                 <!--//首頁右半邊-個人首頁-->
+                <div id="friendsPage" class="tab-pane fade"></div>
+                <!--//相片頁面-->
+                <div id="gallery" class="tab-pane fade">
+                	<div class='row'>
+                	
+                		 <c:choose>
+		                  	<c:when test="${not empty photoList}">
+			                  	<div class="ui three stackable cards">
+									<c:forEach var="photovo" items="${photoList}">
+									<div class="card">
+										<div class="image">
+										<a href="<%=request.getContextPath()%>/front_end/photowall/view_photowall.jsp?photo_No=${photovo.photo_No}">
+									    	<img src="<%=request.getContextPath()%>/front_end/readPic?action=photowall&id=${photovo.photo_No}">
+									    </a>	
+										</div>
+									</div>
+									</c:forEach>
+								 </div>
+		                     </c:when>
+		                     <c:otherwise>
+			                     <div style="text-align:center">
+			                     	<img src="<%=request.getContextPath()%>/front_end/images/all/nothing.png" class="nothing">&nbsp; 尚未發表
+			                     </div>	
+		                     </c:otherwise>
+		                  </c:choose>
+	 				
+	 				</div>
+                </div>
+                <!--//相片頁面-->
+                <!--部落格頁面-->
+                <div id="blog" class="tab-pane fade">
+                	<div class='row'>
+	 				
+	 				  <c:choose>
+		               <c:when test="${not empty blogList}">
+		               <div class="ui card">
+						<c:forEach var="blogvo" items="${blogList}">
+						  <div class="image">
+					 		<a href="<%=request.getContextPath()%>/blog.do?action=article&blogID=${blogvo.blog_id}">
+						    	<img src="<%=request.getContextPath()%>/blogPicReader?blog_id=${blogvo.blog_id}">
+							</a>
+						  </div>
+					  	  <div class="content">
+							<a class="header">
+								${blogvo.blog_title}
+							</a>
+							<div class="meta">
+								<span class="date">
+									發文日期：${blogvo.blog_date}
+								</span>
+							</div>
+							<div class="description">
+							 <!-- 這裡可以看內文 -->	
+							</div>
+					  	  </div>
+					  	  <div class="extra content">
+					   		<a>
+					      	  <i class="eye icon"></i>${blogvo.blog_views}
+					    	</a>
+					  	  </div>
+					  	</c:forEach>
+					  	</div>
+		               </c:when>
+                       <c:otherwise>
+                       	<div style="text-align:center">
+                     	 	<img src="<%=request.getContextPath()%>/front_end/images/all/nothing.png" class="nothing">&nbsp; 尚未發表
+                     	</div>
+                       </c:otherwise>
+		              </c:choose>
+
+	 				</div>
+                </div>
+                <!--部落格頁面-->
+                
               </div>
               <!--頁籤項目-首頁內容-->
             </div>
             <!-- //會員個人頁面內容 -->
         </div>
+       			
+       			
         <!--//container-->
 
         <!-- footer -->
@@ -569,7 +623,24 @@
         </div>
         <!-- //footer -->
 
-
+		    	<script>
+		// 	 setInterval(function() {
+		// 		  $("div.chatContext").load(function(){alert("有做")});
+		// 	  }, 1000); 
+			
+			//引入個人的部落格資訊，內容太多冗長
+			$(function(){
+			    var len = 100; // 超過100個字以"..."取代
+			    $("._shortText").each(function(i){
+			   	 var temptext=$(this).text().trim().replace('  ', '');
+			        if(temptext.length>len){
+			            $(this).attr("title",temptext);
+			            var text=temptext.substring(0,len-1)+"...";
+			            $(this).text(text);
+			        }
+			    });
+			});
+		</script>
     </body>
 
 </html>

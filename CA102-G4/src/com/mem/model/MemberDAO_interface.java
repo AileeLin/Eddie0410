@@ -19,9 +19,12 @@ public interface MemberDAO_interface {
 	public void update_Member(MemberVO memberVO);
 	public MemberVO login_Member(String mem_Account,String mem_Password) ;
 	public void Mem_Update_Password(MemberVO memberVO);
+	//管理員更改會員狀態
 	int update_State(String mem_Id,Integer mem_State);
+	//管理員找會員
 	public List<MemberVO> getAll_member(String mem_Name);
-
+	//防止重覆註冊
+	MemberVO checkAccount(String mem_Account);
 	
 	public void delete(String mem_Id);
 	public List<MemberVO> getAll() ;
