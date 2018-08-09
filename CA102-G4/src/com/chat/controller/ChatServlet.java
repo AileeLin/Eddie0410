@@ -37,6 +37,21 @@ public class ChatServlet {
 		Set<String> onlineMemId = sessionsMap.keySet();
 		//取出目前所有上線人員session
 		Collection<Session> sessions = sessionsMap.values();
+
+		
+		/*****************避免讓A封鎖B時，讓B看到A是否上線**********************/
+		FriendService friSvc = new FriendService();
+		
+		//剔除上線者將發送者封鎖的人
+		for(String friMemId:onlineMemId) {
+			if((friSvc.findRelationship(friMemId,mem_id)) != null && 
+					(friSvc.findRelationship(friMemId,mem_id)).getFri_Stat() == 3) {
+				//並沒有動到原sessionsMap。
+				onlineMemId.remove(friMemId);			
+			}
+		}
+		/*****************避免讓A封鎖B時，讓B看到A是否上線**********************/
+		
 		
 		//把要送出去的資料先用MAP裝，再轉成JSONObject
 		Map map = new HashMap();
@@ -44,6 +59,7 @@ public class ChatServlet {
 		map.put("openMemId",mem_id);
 		map.put("online",onlineMemId);
 		JSONObject json = new JSONObject(map);
+
 		
 		//告訴所有人我上線了
 		for(Session session : sessions) {
@@ -90,10 +106,15 @@ public class ChatServlet {
 						if(fri.getFri_Stat() == 3) {	
 							Session receiverSession = sessionsMap.get(sendMemId); 
 							if(receiverSession != null && receiverSession.isOpen()) {
-								receiverSession.getAsyncRemote().sendText(message);
-								/*********這邊是不是要存訊息到Redis????再思考一下下**************/
+								receiverSession.getAsyncRemote().sendText(message);	
 							}
+							
 							System.out.println("因為我自己被封鎖了，所以我只收得到自己的訊息" + message);
+							/*********這邊是不是要存訊息到Redis????再思考一下下**************/
+							Jedis jedis = pool.getResource();
+							jedis.rpush(chatRoom_id,message);
+							jedis.close();
+							
 							return;	
 						}
 					}

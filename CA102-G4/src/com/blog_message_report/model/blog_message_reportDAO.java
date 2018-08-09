@@ -34,6 +34,9 @@ public class blog_message_reportDAO implements blog_message_reportDAO_interface 
 	// 傳回單筆
 	private static final String GET_ONE_STMT ="SELECT * FROM BLOG_MESSAGE_REPORT WHERE MEM_ID = ? AND MESSAGE_ID = ?";
 		
+	//****************************傳回處理狀況的List
+	private static final String GETALL_BYSTATUS_STMT ="SELECT * FROM BLOG_MESSAGE_REPORT WHERE BMR_STATUS = ?";
+	
 	@Override
 	public int insert(blog_message_reportVO blog_message_reportVO) {
 		int updateCount = 0;
@@ -206,6 +209,60 @@ public class blog_message_reportDAO implements blog_message_reportDAO_interface 
 			}
 		}
 		return blog_message_reportVO;
+	}
+
+	@Override
+	public List<blog_message_reportVO> getBlogMsgReport_ByStatus(Integer bmr_status) {
+
+		List<blog_message_reportVO> list = new ArrayList<blog_message_reportVO>();
+		blog_message_reportVO blog_message_reportVO = null;
+
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+
+		try {
+			con = ds.getConnection();
+			pstmt = con.prepareStatement(GETALL_BYSTATUS_STMT);
+			pstmt.setInt(1, bmr_status);
+			rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				blog_message_reportVO = new blog_message_reportVO();
+				blog_message_reportVO.setMem_id(rs.getString("MEM_ID"));
+				blog_message_reportVO.setMessage_id(rs.getString("MESSAGE_ID"));
+				blog_message_reportVO.setBmr_reason(rs.getString("BMR_REASON"));
+				blog_message_reportVO.setBmr_time(rs.getTimestamp("BMR_TIME"));
+				blog_message_reportVO.setBmr_status(rs.getInt("BMR_STATUS"));
+				list.add(blog_message_reportVO);
+			}
+		} catch (SQLException se) {
+			throw new RuntimeException("A database error occured." + se.getMessage());
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException se) {
+					se.printStackTrace();
+				}
+			}
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (SQLException se) {
+					se.printStackTrace();
+				}
+			}
+			if (con != null) {
+				try {
+					con.close();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return list;
+	
 	}
 	
 }

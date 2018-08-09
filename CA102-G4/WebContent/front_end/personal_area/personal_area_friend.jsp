@@ -196,7 +196,7 @@
 	                         </c:choose>
 	                     </li>
 	                    <li style="<%= logout %>"><a class="top_banner" href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_home.jsp"><i class="fa fa-user" aria-hidden="true"></i></a></li>          	
-                        <li><a class="top_banner" href="#"><i class="fa fa-shopping-cart" aria-hidden="true"></i></a></li>
+                        <li><a class="top_banner" href="<%=request.getContextPath()%>/front_end/store/store_cart.jsp"><i class="fa fa-shopping-cart" aria-hidden="true"></i></a></li>
                         <li><a class="top_banner" href="#"><i class="fa fa-envelope" aria-hidden="true"></i></a></li>
                     </ul>
                 </div>
@@ -219,15 +219,14 @@
                         <!-- Collect the nav links, forms, and other content for toggling -->
                         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                             <ul class="nav navbar-nav">
-                                <li><a href="news.html">最新消息</a></li>
-                                <li><a href="tour.html">景點介紹</a></li>
-                                <li><a href="plan.html">行程規劃</a></li>
-                                <li><a href="blog.html">旅遊記</a></li>
-                                <li><a href="ask.html">問答區</a></li>
-                                <li><a href="galley.html">照片牆</a></li>
-                                <li><a href="chat.html">聊天室</a></li>
-                                <li><a href="together.html">揪團</a></li>
-                                <li><a href="buy.html">交易平台</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/news/news.jsp">最新消息</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/attractions/att.jsp">景點介紹</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/trip/trip.jsp">行程規劃</a></li>
+                                <li><a href="<%=request.getContextPath()%>/blog.index">旅遊記</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/question/question.jsp">問答區</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/photowall/photo_wall.jsp">照片牆</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/grp/grpIndex.jsp">揪團</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/store/store.jsp">交易平台</a></li>
                                 <li><a href="<%=request.getContextPath()%>/front_end/ad/ad.jsp">專欄</a></li>
 
                                 <div class="clearfix"> </div>
@@ -286,7 +285,7 @@
               </a>
             </li>
             <li class="nav-item">
-              <a href="personal_area_blog.html">
+              <a href="<%=request.getContextPath()%>/blog.do?action=myBlog&mem_id=${memberVO.mem_Id}">
                   <i class="fab fa-blogger"></i>旅遊記
               </a>
             </li>
@@ -296,12 +295,12 @@
               </a>
             </li>
             <li class="nav-item">
-              <a href="#together">
+              <a href="<%=request.getContextPath()%>/front_end/grp/personal_area_grp.jsp">
                   <i class="fas fa-bullhorn"></i>揪團
               </a>
             </li>
             <li class="nav-item">
-              <a href="#question">
+              <a href="<%=request.getContextPath()%>/front_end/personal/personal_area_question.jsp">
                   <i class="question circle icon"></i>問答
               </a>
             </li>
@@ -312,19 +311,19 @@
             </li>
             
              <li class="nav-item">
-              <a href="#gallery">
+              <a href="<%=request.getContextPath()%>/front_end/personal_area/ personal_area_sell.jsp">
                   <i class="money bill alternate icon"></i>銷售
               </a>
             </li>
 
              <li class="nav-item">
-              <a href="#gallery">
+              <a href="<%=request.getContextPath()%>/front_end/personal_area/ personal_area_buy.jsp">
                   <i class="shopping cart icon"></i>購買
               </a>
             </li>
 
             <li class="nav-item" style="float: right">
-              <a href="#setting">
+              <a href="<%=request.getContextPath()%>/front_end/member/member.do?action=getOne_For_Display&mem_Id=${memberVO.mem_Id}">
                   <i class="cog icon"></i>設置
               </a>
             </li>
@@ -530,25 +529,25 @@
           <!--首頁右半邊-->                
           <div style="width:25%;float:left" class="add_Div">
                 <div>
-                    <a href="" class="adddiv_a">
+                    <a href="<%=request.getContextPath()%>/front_end/blog/blog_add.jsp" class="adddiv_a">
                         <div style="color:rgb(93,187,133)">
                             <i class="fas fa-edit"></i><br>
                             寫旅遊記
                         </div>        
                     </a>
-                    <a href="" class="adddiv_a">
+                    <a href="<%=request.getContextPath()%>/front_end/trip/newTrip.jsp" class="adddiv_a">
                         <div style="color:rgb(245,177,0)">
                             <i class="far fa-calendar-check"></i><br>
                             規劃行程
                         </div>  
                     </a>
-                    <a href="" class="adddiv_a">
+                    <a href="<%=request.getContextPath()%>/front_end/grp/grpIndex.jsp" class="adddiv_a">
                         <div style="color:rgb(242,102,34)">
                         <i class="fas fa-bullhorn"></i><br>
                         揪旅伴去
                         </div>  
                     </a>
-                    <a href="" class="adddiv_a">
+                    <a href="<%=request.getContextPath()%>/front_end/ask/ask.jsp" class="adddiv_a">
                         <div style="color:rgb(81,167,219)">
                             <i class="fas fa-comment-dots"></i><br>
                             提問題去
@@ -578,9 +577,9 @@
                     </div>
                     <div class="footer-grid-info">
                         <ul>
-                            <li><a href="about.html">關於Travel Maker</a></li>
-                            <li><a href="about.html">聯絡我們</a></li>
-                            <li><a href="about.html">常見問題</a></li>
+                          <li><a href="<%=request.getContextPath()%>/front_end/about_us/about_us.jsp">關於Travel Maker</a></li>
+                          <li><a href="<%=request.getContextPath()%>/front_end/content/content.jsp">聯絡我們</a></li>
+                          <li><a href="<%=request.getContextPath()%>/front_end/faq/faq.jsp">常見問題</a></li>
                         </ul>
                     </div>
                 </div>

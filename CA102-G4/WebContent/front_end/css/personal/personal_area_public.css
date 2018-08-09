@@ -48,7 +48,7 @@
 #friendsPage,
 #blog,
 #trip,
-#together,
+#grp,
 #question,
 #gallery{
 /*     float:left; */
@@ -100,9 +100,22 @@
 }
 
 
+/**問答區的卡片***/
+.ui.link.card{
+	margin-top: 40px;
+}
 
+a{
+	color:#5E5E5E;	
+}
 
-
+.ui.link.card .header>a:hover,
+.ui.card .content>a.header:hover,
+.ui.card > .content > a.header:hover,
+.ui.cards > .card > .content > a.header:hover {
+	color:#5E5E5E;
+	text-decoration:none;
+}
 
 
 /*��摰��--end*/

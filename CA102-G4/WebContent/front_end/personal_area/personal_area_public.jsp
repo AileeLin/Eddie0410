@@ -1,13 +1,18 @@
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %> 
 <%@ page import="com.mem.model.*" %>
 <%@ page import="com.photo_wall.model.*" %>
 <%@ page import="com.blog.model.*" %>
 <%@ page import="java.util.*" %>
 <%@ page import="com.fri.model.*" %>
 <%@ page import="com.trip.model.*" %>
+<%@ page import="com.grp.model.*" %>
+<%@ page import="com.question.model.*" %>
 <jsp:useBean id="friSvc" scope="page" class="com.fri.model.FriendService"></jsp:useBean>
 <jsp:useBean id="tripSvc" scope="page" class="com.trip.model.TripService"></jsp:useBean>
+<jsp:useBean id="grpSvc" scope="page" class="com.grp.model.GrpService"></jsp:useBean>
+<jsp:useBean id="qaSvc" scope="page" class="com.question.model.QuestionService"></jsp:useBean>
 <%	
 	//因為沒有登入也可以查看他人的個人頁面，但無法顯示加入好友的按鈕
 	Object memId = session.getAttribute(session.getId());
@@ -46,22 +51,22 @@
 	}
 	
 	
-	//取出該uI相關資料
+	//取出該uI會員資料
 	MemberService memSvc = new MemberService();
 	MemberVO otherUser_memVO = memSvc.getOneMember(uId); 
 	pageContext.setAttribute("otherUser_memVO",otherUser_memVO);
 	
-	//取出該uI照片牆的照片
+	//取出該uI照片牆的照片(未被檢舉 OK)
 	Photo_wallDAO photoSvc = new Photo_wallDAO();
 	List<Photo_wallVO> photoList=photoSvc.getAll_ByMemID(uId);
 	pageContext.setAttribute("photoList", photoList);
 	
-	//取出該uId部落格文章
+	//取出該uId部落格文章(未被檢舉 OK)
 	blogService blogSvc = new blogService();
 	List<blogVO> blogList=blogSvc.findByMemId(uId);//動態從session取得會員ID
 	pageContext.setAttribute("blogList", blogList);
 	
-	/***************取出登入者的行程******************/
+	/***************取出uId的行程******************/
 	List<TripVO> allTripList = tripSvc.getAll();
 	List<TripVO> uTripList = new ArrayList<>();
 	for(TripVO tripvo : allTripList){
@@ -69,9 +74,27 @@
 			uTripList.add(tripvo);		
 		}
 	}
-
 	pageContext.setAttribute("uTripList",uTripList);
 	
+	/***************取出uId的發起的揪團(檢舉後處理???????)******************/
+	List<GrpVO> allGrpList = grpSvc.getAll();
+	List<GrpVO> uGrpList = new ArrayList<>();
+	for(GrpVO grpVO : allGrpList){
+		if(grpVO.getMem_Id().equals(uId)){
+			uGrpList.add(grpVO);		
+		}
+	}
+	pageContext.setAttribute("uGrpList",uGrpList);
+	
+	/***************取出uId的發起的問答(顯示為0)******************/
+	List<QuestionVO> allQAList = qaSvc.getAll();
+	List<QuestionVO> uQAList = new ArrayList<>();
+	for(QuestionVO qaVO : allQAList){
+		if(qaVO.getMem_id().equals(uId) && qaVO.getQ_state() == 0){
+			uQAList.add(qaVO);		
+		}
+	}
+	pageContext.setAttribute("uQAList",uQAList);
 %>
 <!DOCTYPE html>
 <html>
@@ -166,8 +189,8 @@
 	    				}else if(data == 1){
 	    					//我有送好友邀請給他了，但他尚未確認，送出時，按鈕disabled掉，不給退已送的好友邀請
 	    					$("#mem_ind_name_friBtn").html(
-		    						"<a href='#' class='ui inverted primary button mini' disabled>"+
-		    						"<i class='fas fa-user-plus'></i>&nbsp好友邀請確認中</a>");
+		    						"<button class='ui blue button mini' disabled>"+
+		    						"<i class='fas fa-user-plus'></i>&nbsp好友邀請確認中</button>");
 	    				}else if (data == 2){
 	    					//他跟我是好友，按下後，會倒到自己的好友管理頁面
 	    					$("#mem_ind_name_friBtn").html(
@@ -229,7 +252,7 @@
 	                         </c:choose>
 	                    </li>
 	                    <li style="<%= logout %>"><a class="top_banner" href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_home.jsp"><i class="fa fa-user" aria-hidden="true"></i></a></li>          	
-                        <li><a class="top_banner" href="#"><i class="fa fa-shopping-cart" aria-hidden="true"></i></a></li>
+                        <li><a class="top_banner" href="<%=request.getContextPath()%>/front_end/store/store_cart.jsp"><i class="fa fa-shopping-cart" aria-hidden="true"></i></a></li>
                         <li><a class="top_banner" href="#"><i class="fa fa-envelope" aria-hidden="true"></i></a></li>
                     </ul>
                     </div>
@@ -252,15 +275,15 @@
                             <!-- Collect the nav links, forms, and other content for toggling -->
                             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                                 <ul class="nav navbar-nav">
-                                    <li><a href="news.html">最新消息</a></li>
-                                    <li><a href="tour.html">景點介紹</a></li>
-                                    <li><a href="plan.html">行程規劃</a></li>
-                                    <li><a href="blog.jsp">旅遊記</a></li>
-                                    <li><a href="ask.html">問答區</a></li>
-                                    <li><a href="galley.html">照片牆</a></li>
-                                    <li><a href="together.html">揪團</a></li>
-                                    <li><a href="buy.html">交易平台</a></li>
-                                    <li><a href="<%=request.getContextPath()%>/front_end/ad/ad.jsp">專欄</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/news/news.jsp">最新消息</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/attractions/att.jsp">景點介紹</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/trip/trip.jsp">行程規劃</a></li>
+                                <li><a href="<%=request.getContextPath()%>/blog.index">旅遊記</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/question/question.jsp">問答區</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/photowall/photo_wall.jsp">照片牆</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/grp/grpIndex.jsp">揪團</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/store/store.jsp">交易平台</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/ad/ad.jsp">專欄</a></li>
 
                                     <div class="clearfix"> </div>
                                 </ul>
@@ -320,11 +343,6 @@
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a href="#friendsPage"  data-toggle="tab">
-                      <i class="fas fa-user-friends"></i>好友
-                  </a>
-                </li>
-                <li class="nav-item">
                   <a href="#blog"  data-toggle="tab">
                       <i class="fab fa-blogger"></i>旅遊記
                   </a>
@@ -335,7 +353,7 @@
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a href="#together" data-toggle="tab">
+                  <a href="#grp" data-toggle="tab">
                       <i class="fas fa-bullhorn"></i>揪團
                   </a>
                 </li>
@@ -415,7 +433,7 @@
 			                          <div class="meta">
 			                            <span class="stay">
 			                            	<i class="fas fa-calendar-alt"></i>
-			                            	${blogvo.travel_date}
+			                            		${blogvo.travel_date}
 			                            </span>
 			                          </div>
 			                          <div class="description">
@@ -456,7 +474,9 @@
 			                      <c:forEach var="tripvo" items="${uTripList}" begin="0" end="2">
 				                      <div class="item">
 				                        <div class="ui small image">
-				                         <a href=""><img src="<%=request.getContextPath()%>/front_end/readPic?action=trip&id=${tripvo.trip_no}"></a>
+				                         <a href="<%=request.getContextPath()%>/front_end/trip/tripDetail.jsp?trip_no=${tripvo.trip_no}">
+				                         	<img src="<%=request.getContextPath()%>/front_end/readPic?action=trip&id=${tripvo.trip_no}">
+				                         </a>
 				                        </div>
 				                        <div class="content">
 				                          <div class="header">${tripvo.trip_name}</div>
@@ -483,7 +503,7 @@
                    <br>
                 </div>
                 <!--//首頁右半邊-個人首頁-->
-                <div id="friendsPage" class="tab-pane fade"></div>
+       
                 <!--//相片頁面-->
                 <div id="gallery" class="tab-pane fade">
                 	<div class='row'>
@@ -512,37 +532,40 @@
 	 				</div>
                 </div>
                 <!--//相片頁面-->
+                
                 <!--部落格頁面-->
                 <div id="blog" class="tab-pane fade">
                 	<div class='row'>
 	 				
 	 				  <c:choose>
 		               <c:when test="${not empty blogList}">
-		               <div class="ui card">
+		               <div class="ui link cards">
 						<c:forEach var="blogvo" items="${blogList}">
-						  <div class="image">
-					 		<a href="<%=request.getContextPath()%>/blog.do?action=article&blogID=${blogvo.blog_id}">
-						    	<img src="<%=request.getContextPath()%>/blogPicReader?blog_id=${blogvo.blog_id}">
-							</a>
-						  </div>
-					  	  <div class="content">
-							<a class="header">
-								${blogvo.blog_title}
-							</a>
-							<div class="meta">
-								<span class="date">
-									發文日期：${blogvo.blog_date}
-								</span>
-							</div>
-							<div class="description">
-							 <!-- 這裡可以看內文 -->	
-							</div>
-					  	  </div>
-					  	  <div class="extra content">
-					   		<a>
-					      	  <i class="eye icon"></i>${blogvo.blog_views}
-					    	</a>
-					  	  </div>
+							<div class="ui card">
+							  <div class="image">
+						 		<a href="<%=request.getContextPath()%>/blog.do?action=article&blogID=${blogvo.blog_id}">
+							    	<img src="<%=request.getContextPath()%>/blogPicReader?blog_id=${blogvo.blog_id}">
+								</a>
+							  </div>
+						  	  <div class="content">
+								<a href="<%=request.getContextPath()%>/blog.do?action=article&blogID=${blogvo.blog_id}" class="header">
+									${blogvo.blog_title}
+								</a>
+								<div class="meta">
+									<span class="date">
+										旅行日期：${blogvo.travel_date}
+									</span>
+								</div>
+								<div class="description">
+								 <!-- 這裡可以看內文 -->	
+								</div>
+						  	  </div>
+						  	  <div class="extra content">
+						   		<a>
+						      	  <i class="eye icon"></i>${blogvo.blog_views}
+						    	</a>
+						  	  </div>
+						  	 </div>
 					  	</c:forEach>
 					  	</div>
 		               </c:when>
@@ -556,6 +579,139 @@
 	 				</div>
                 </div>
                 <!--部落格頁面-->
+                
+                <!--行程頁面-->
+                <div id="trip" class="tab-pane fade">
+                	<div class='row'>
+	 				
+	 				  <c:choose>
+		               <c:when test="${not empty uTripList}">
+		               <div class="ui link cards">
+						<c:forEach var="tripvo" items="${uTripList}">
+							<div class="ui card">
+							  <div class="image">
+						 		<a href="<%=request.getContextPath()%>/front_end/trip/tripDetail.jsp?trip_no=${tripvo.trip_no}">
+							    	<img src="<%=request.getContextPath()%>/front_end/readPic?action=trip&id=${tripvo.trip_no}">
+								</a>
+							  </div>
+						  	  <div class="content">
+								<a href="<%=request.getContextPath()%>/front_end/trip/tripDetail.jsp?trip_no=${tripvo.trip_no}" class="header">
+									${tripvo.trip_name}
+								</a>
+								<div class="meta">
+									<span class="date">
+										出發日期：${tripvo.trip_startDay}
+									</span>
+								</div>
+								<div class="description">
+								 <!-- 這裡可以看內文 -->	
+								</div>
+						  	  </div>
+						  	  <div class="extra content">
+						   		<a>
+						      	  <i class="fas fa-clock"></i>${tripvo.trip_days}天
+						    	</a>
+						  	  </div>
+						  	 </div>
+					  	</c:forEach>
+					  	</div>
+		               </c:when>
+                       <c:otherwise>
+                       	<div style="text-align:center">
+                     	 	<img src="<%=request.getContextPath()%>/front_end/images/all/nothing.png" class="nothing">&nbsp; 尚未發表
+                     	</div>
+                       </c:otherwise>
+		              </c:choose>
+
+	 				</div>
+                </div>
+                <!--行程頁面-->
+                     
+                <!--揪團頁面-->
+                <div id="grp" class="tab-pane fade">
+                	<div class='row'>
+	 				
+	 				  <c:choose>
+		               <c:when test="${not empty uGrpList}">
+		               <div class="ui link cards">
+						<c:forEach var="grpvo" items="${uGrpList}">
+							<div class="ui card">
+							  <div class="image">
+						 		<a href="">
+							    	<img src="<%=request.getContextPath()%>/front_end/readPic?action=grp&id=${grpvo.grp_Id}">
+								</a>
+							  </div>
+						  	  <div class="content">
+								<a href="" class="header">
+									${grpvo.grp_Title}
+								</a>
+								<div class="meta">
+									<span class="date">
+										揪團開始日期：<fmt:formatDate value="${grpvo.grp_Start}" pattern="yyyy-MM-dd kk:mm"/><br>
+										揪團結束日期：<fmt:formatDate value="${grpvo.grp_End}" pattern="yyyy-MM-dd kk:mm"/>
+									</span>
+								</div>
+								<div class="description">
+								 <!-- 這裡可以看內文 -->	
+								</div>
+						  	  </div>
+						  	  <div class="extra content">
+						   		<a>
+						      	  <i class="fas fa-map-marker-alt"></i>${grpvo.trip_Locale}
+						    	</a>
+						  	  </div>
+						  	 </div>
+					  	</c:forEach>
+					  	</div>
+		               </c:when>
+                       <c:otherwise>
+                       	<div style="text-align:center">
+                     	 	<img src="<%=request.getContextPath()%>/front_end/images/all/nothing.png" class="nothing">&nbsp; 尚未發表
+                     	</div>
+                       </c:otherwise>
+		              </c:choose>
+
+	 				</div>
+                </div>
+                <!--部落格頁面-->
+                
+                
+                <!--問答頁面-->
+                <div id="question" class="tab-pane fade">
+                	<div class='row'>
+                	 <strong style="font-size: 1.5em;">發起的問答</strong>
+	 				  <c:choose>
+		               <c:when test="${not empty uQAList}">
+		               <div class="ui link cards">
+						<c:forEach var="qavo" items="${uQAList}">
+							<div class="ui link card">
+							  <div class="content">
+							    <div class="header">
+							      <a href="<%=request.getContextPath()%>/front_end/qa_reply/qa_reply.jsp?question_id=${qavo.question_id}">
+							      	<p>${qavo.question_content}</p>
+							      </a>
+							    </div>
+							  </div>
+							  <div class="extra content">
+							    <div class="right floated author">
+							      <i class="far fa-calendar-alt"></i>發文日期：${qavo.build_date}
+							    </div>
+							  </div>
+							</div>
+					  	</c:forEach>
+					  	</div>
+		               </c:when>
+                       <c:otherwise>
+                       	<div style="text-align:center">
+                     	 	<img src="<%=request.getContextPath()%>/front_end/images/all/nothing.png" class="nothing">&nbsp; 尚未發表
+                     	</div>
+                       </c:otherwise>
+		              </c:choose>
+
+	 				</div>
+                </div>
+                <!--部落格頁面-->
+                
                 
               </div>
               <!--頁籤項目-首頁內容-->
@@ -576,9 +732,9 @@
                         </div>
                         <div class="footer-grid-info">
                             <ul>
-                                <li><a href="about.html">關於Travel Maker</a></li>
-                                <li><a href="about.html">聯絡我們</a></li>
-                                <li><a href="about.html">常見問題</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/about_us/about_us.jsp">關於Travel Maker</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/content/content.jsp">聯絡我們</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/faq/faq.jsp">常見問題</a></li>
                             </ul>
                         </div>
                     </div>

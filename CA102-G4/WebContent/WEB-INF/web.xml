@@ -15,6 +15,8 @@
     <res-type>javax.sql.DataSource</res-type>
     <res-auth>Container</res-auth>
   </resource-ref>
+  
+  <!-- 育萱的 -->
   <!-- 聊天的WS -->
    <servlet>
     <servlet-name>ChatServlet</servlet-name>
@@ -70,15 +72,8 @@
     <servlet-name>FriServlet</servlet-name>
     <url-pattern>/fri.do</url-pattern>
   </servlet-mapping>
-   <!-- 部落格servlet -->
-  <servlet>
-    <servlet-name>BlogServlet</servlet-name>
-    <servlet-class>com.blog.controller.BlogServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>BlogServlet</servlet-name>
-    <url-pattern>/blog.do</url-pattern>
-  </servlet-mapping>
+  <!-- //end育萱的 -->
+  
   <!-- 浩源讀圖片的servlet -->
   <servlet>
     <servlet-name>ReaderPic</servlet-name>
@@ -136,6 +131,35 @@
 		<url-pattern>/attractions/att.do</url-pattern>
 	</servlet-mapping>
 	<!-- //品儒的 -->
-  
+	
+  	<!-- 世銘的 -->
+	<!-- blogController -->
+	<servlet>
+		<servlet-name>BlogServlet</servlet-name>
+		<servlet-class>com.blog.controller.BlogServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>BlogServlet</servlet-name>
+		<url-pattern>/blog.do</url-pattern>
+	</servlet-mapping>
+	<!-- blogIndex -->
+	<servlet>
+		<servlet-name>blogIndex</servlet-name>
+		<jsp-file>/front_end/blog/blogIndex.jsp</jsp-file>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>blogIndex</servlet-name>
+		<url-pattern>/blog.index</url-pattern>
+	</servlet-mapping>
+	<!-- blog瀏覽頁面 -->
+	<servlet>
+		<servlet-name>blogBrowse</servlet-name>
+		<jsp-file>/front_end/blog/blogBrowse.jsp</jsp-file>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>blogBrowse</servlet-name>
+		<url-pattern>/blog</url-pattern>
+	</servlet-mapping>
+	<!-- //世銘的 -->
   
 </web-app>

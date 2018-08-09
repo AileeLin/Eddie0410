@@ -1,5 +1,26 @@
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page import="com.blog_report.model.*" %>
+<%@ page import="com.blog_message_report.model.*" %>
+<%@ page import="com.photo_report.model.*" %>
+<%@ page import="java.util.*" %>
+<%
+	//取得旅遊記檢舉及旅遊記留言檢舉未處理數
+	blogMessageReportService blogMRSvc = new blogMessageReportService();
+	blogReportService blogRSvc = new blogReportService();
+	int blogReportCount = ((blogMRSvc.getBlogMsgReport_ByStatus(0)).size())+(blogRSvc.getBR_BySTATUS(0)).size();
+	
+	//取得照片牆檢舉未處理數
+	photo_reportService photoRSvc = new photo_reportService();
+	List<Photo_reportVO> photoReportList = photoRSvc.getAll();
+	int photoReportCount =0;
+	for(Photo_reportVO photoRVO:photoReportList){
+		if(photoRVO.getPho_Rep_Stats() == 1){
+			photoReportCount++;
+		}
+	}
+%>
+
 
 
 <!DOCTYPE HTML>
@@ -34,7 +55,7 @@
     </head>
     <body>
         <div class="wrapper">
-        <!-- Sidebar  -->
+            <!-- Sidebar  -->
             <nav id="sidebar" class="navbar-fixed-left">
                 <div class="sidebar-header">
                     <h3>Travel Maker</h3>
@@ -44,16 +65,14 @@
                 <ul class="list-unstyled components">
                     <li class="active">
                         <a href="<%=request.getContextPath()%>/back_end/back_index.jsp">
-                            <i class="fas fa-home"></i>
-                            回首頁
+                            <i class="fas fa-home"></i> 回首頁
                         </a>
                     </li>
                     
                     <li>
                         <li class="dropdown">
                             <a href="#auth_Submenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
-                                <i class="fas fa-users"></i>
-                                權限管理
+                                <i class="fas fa-users"></i>權限管理
                             </a>
 
                             <ul class="dropdown-menu" id="auth_Submenu">
@@ -68,48 +87,44 @@
                         </li>
                         
                         <li>
-                            <a href="#">
-                                <i class="fas fa-newspaper"></i>
-                                最新消息管理
+                            <a href="<%=request.getContextPath()%>/back_end/news/news.jsp">
+                                <i class="fas fa-newspaper"></i>最新消息管理
                             </a>
                         </li>
                         
                         <li>
                             <a href="#">
-                                <i class="fas fa-image"></i>
-                                景點管理
+                                <i class="fas fa-image"></i>景點管理
                             </a>
                         </li>
                        
                         <li class="dropdown">
                             <a href="#category_Submenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
-                                <i class="fas fa-tag"></i>
-                                標籤管理
+                                <i class="fas fa-tag"></i>標籤管理
                             </a>
                             <ul class="dropdown-menu" id="category_Submenu">
                                 <li>
-                                    <a href="Back_TagBlog.html">旅遊記</a>
+                                    <a href="<%=request.getContextPath()%>/back_end/blog/blog_tag.jsp">旅遊記</a>
                                 </li>
                                 <li>
-                                    <a href="#">問答區</a>
+                                    <a href="<%=request.getContextPath()%>/back_end/qa_list/qa_list.jsp">問答區</a>
                                 </li>
                             </ul>
                         </li>
                         
                         <li class="dropdown">
                             <a href="#report_Submenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle" aria-haspopup="true" >
-                                <i class="fas fa-comment-dots"></i>
-                                檢舉管理
+                                <i class="fas fa-comment-dots"></i>檢舉管理
                             </a>
                             <ul class="dropdown-menu" id="report_Submenu">
                                 <li>
                                     <a href="#">會員檢舉</a>
                                 </li>
                                 <li>
-                                    <a href="Back_ReportBlog.html">旅遊記檢舉</a>
+                                    <a href="<%=request.getContextPath()%>/blog.do?action=blogReportManage">旅遊記檢舉</a>
                                 </li>
                                 <li>
-                                    <a href="#">問答區檢舉</a>
+                                    <a href="<%=request.getContextPath()%>/back_end/qa_report/qa_report.jsp">問答區檢舉</a>
                                 </li>
                                 <li>
                                     <a href="#">照片牆檢舉</a>
@@ -125,29 +140,26 @@
                         
                         <li>
                             <a href="#">
-                                <i class="fas fa-shopping-cart"></i>
-                                交易款項管理
+                                <i class="fas fa-shopping-cart"></i>交易款項管理
                             </a>
                         </li>
                         
                         <li>
                             <a href="<%=request.getContextPath()%>/back_end/ad/back_ad.jsp">
-                                <i class="fas fa-audio-description"></i>
-                                專欄廣告管理
+                                <i class="fas fa-audio-description"></i>專欄廣告管理
                             </a>
                         </li>
                         
                         <li class="dropdown">
                             <a href="#aboutUS_Submenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
-                                <i class="fas fa-briefcase"></i>
-                                關於我們管理
+                                <i class="fas fa-briefcase"></i>關於我們管理
                                 </a>
                             <ul class="dropdown-menu" id="aboutUS_Submenu">
                                 <li>
-                                    <a href="#">關於我們</a>
+                                    <a href="<%=request.getContextPath()%>/back_end/about_us/about_us.jsp">關於我們</a>
                                 </li>
                                 <li>
-                                    <a href="#">FAQ</a>
+                                    <a href="<%=request.getContextPath()%>/back_end/faq/faq.jsp">FAQ</a>
                                 </li>
                             </ul>
                         </li>
@@ -213,8 +225,8 @@
                                         <i class="fab fa-blogger fa-5x"></i>
                                     </div>
                                     <div class="col-xs-9 text-right">
-                                        <div class="huge">12</div>
-                                        <div>旅遊記檢舉</div>
+                                        <div class="huge"><%=blogReportCount%></div>
+                                        <div>旅遊記檢舉(含留言)</div>
                                     </div>
                                 </div>
                             </div>
@@ -279,7 +291,7 @@
                                         <i class="fas fa-camera fa-5x"></i>
                                     </div>
                                     <div class="col-xs-9 text-right">
-                                        <div class="huge">124</div>
+                                        <div class="huge"><%=photoReportCount %></div>
                                         <div>照片牆檢舉</div>
                                     </div>
                                 </div>

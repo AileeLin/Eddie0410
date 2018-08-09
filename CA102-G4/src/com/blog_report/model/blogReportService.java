@@ -39,4 +39,10 @@ public class blogReportService {
 		
 		return dao.getOne(blog_id, mem_id);
 	}
+	
+	/*****************育萱+********************************/
+	public List<blog_reportVO> getBR_BySTATUS(Integer br_status) {
+		return dao.getBR_BySTATUS(br_status);
+	}
+	
 }

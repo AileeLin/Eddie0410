@@ -14,7 +14,7 @@
         <div class="chatContext">
             <ul class="list-group">
             	<li style="color: #4a4a4a;font-weight: bold;">好友</li>
-            	<!-- 這邊是列出我的朋友-->
+            	<!-- start這邊是列出我的朋友-->
             	<c:forEach var="friVO" items="${myFri}">
  					<li class="list-group-item" id="${friVO.memID_Fri}status" onclick="checkOneByOneCR('${memberVO.mem_Id}','${friVO.memID_Fri}',2);">
              			<img class='avatar' src='<%=request.getContextPath()%>/front_end/readPic?action=member&id=${friVO.memID_Fri}'>
@@ -26,6 +26,8 @@
 	                </li>
 	                </span>
                 </c:forEach>
+                <!-- end這邊是列出我的朋友-->
+                
                 <li style="color: #4a4a4a;font-weight: bold;">群組對話</li>
              	<!-- 這邊是列出我參加的群組聊天-->
             	<c:forEach var="crjVO" items="${myCRList}">
@@ -321,7 +323,7 @@
 				//找到聊天對話名稱
 				openChatRoomName =jsonObj.TO_CRNAME;
 				
-				/*******伺服端若判斷為是一對一對話時，會有回傳參數CNT，讓開啟的視窗顏色會是紫色*********/
+				/*******start伺服端若判斷為是一對一對話時，會有回傳參數CNT，讓開啟的視窗顏色會是紫色*********/
 				var countColor = jsonObj.CNT;
 				//alert("沒視窗時要append視窗");
 				
@@ -335,7 +337,7 @@
 						$("div.input_chatContainer_select[value='"+openChatRoomID+"'] .input_chatHeader>#chat_addFri_span").css("disabled","disabled");
 					}
 				}
-				/*******test*********/
+				/*******end伺服端若判斷為是一對一對話時，會有回傳參數CNT，讓開啟的視窗顏色會是紫色*********/
 
 				var right = Number(sessionStorage.getItem("marginRight"));
 				if(right > 1220 || right <= 0){
@@ -364,6 +366,7 @@
 					alert("歷史訊息append2222222222");
 			}else if(msgType.trim() == "open"){
 				if(jsonObj.openMemId.trim() != loginMemId_Now){
+					//問題?? 是否再判斷這個人是否封鎖我???
 					$("#"+jsonObj.openMemId+"status .online_status").html("<i class='fas fa-circle'></i>");
 					return;
 				}else{
@@ -387,13 +390,23 @@
 				$("#" + openChatRoomID + " .input_chatContext > .chatTextItem_self").last().children().children().css("background-color","white");
 				$("#" + openChatRoomID + " .input_chatContext > .chatTextItem_self").last().children().children().css("color","red");
 				$(".input_chatContext").scrollTop(99999999); //讓聊天內容的捲軸都是在最下面
+				
 				sessionStorage.removeItem(openChatRoomID); //從session移出關閉的聊天對話區塊
+				
+				var right = Number(sessionStorage.getItem("marginRight")); //
+	
+				if(right <= 350){
+					sessionStorage.setItem("marginRight",350);
+				}else{
+					sessionStorage.setItem("marginRight",right-290);
+				}
+														   
 				window.setTimeout(function(){location.href=requestURLForJS},1000);
 				return;
 			}
 
 			$(".input_chatContext").scrollTop(99999999); //讓聊天內容的捲軸都是在最下面
-			alert("WS的onmessage被觸發了");
+			alert("WS的onmessage被觸發了"+msgType);
 			console.log("開啟的聊天對話:"+openChatRoomID);
 			if(openChatRoomID != undefined){
 				console.log("不等於undefined webSocket.onmessage"+openChatRoomID);

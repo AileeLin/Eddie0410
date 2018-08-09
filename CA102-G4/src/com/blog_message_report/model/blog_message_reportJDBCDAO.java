@@ -22,6 +22,9 @@ public class blog_message_reportJDBCDAO implements blog_message_reportDAO_interf
 	// 傳回單筆
 	private static final String GET_ONE_STMT ="SELECT * FROM BLOG_MESSAGE_REPORT WHERE MEM_ID = ? AND MESSAGE_ID = ?";
 
+	//****************************傳回處理狀況的List
+	private static final String GETALL_BYSTATUS_STMT ="SELECT * FROM BLOG_MESSAGE_REPORT WHERE BMR_STATUS = ?";
+	
 	@Override
 	public int insert(blog_message_reportVO blog_message_reportVO) {
 		int updateCount = 0;
@@ -208,6 +211,65 @@ public class blog_message_reportJDBCDAO implements blog_message_reportDAO_interf
 		return blog_message_reportVO;
 	}
 	
+	/*******************傳回處理狀況的List***********************/
+	@Override
+	public List<blog_message_reportVO> getBlogMsgReport_ByStatus(Integer bmr_status) {
+
+		List<blog_message_reportVO> list = new ArrayList<blog_message_reportVO>();
+		blog_message_reportVO blog_message_reportVO = null;
+
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+
+		try {
+			Class.forName(DRIVER);
+			con = DriverManager.getConnection(URL, USER, PASSWORD);
+			pstmt = con.prepareStatement(GETALL_BYSTATUS_STMT);
+			pstmt.setInt(1,bmr_status);
+			rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				blog_message_reportVO = new blog_message_reportVO();
+				blog_message_reportVO.setMem_id(rs.getString("MEM_ID"));
+				blog_message_reportVO.setMessage_id(rs.getString("MESSAGE_ID"));
+				blog_message_reportVO.setBmr_reason(rs.getString("BMR_REASON"));
+				blog_message_reportVO.setBmr_time(rs.getTimestamp("BMR_TIME"));
+				blog_message_reportVO.setBmr_status((rs.getInt("BMR_STATUS")));
+				list.add(blog_message_reportVO);
+			}
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException("Couldn't load database driver. " + e.getMessage());
+		} catch (SQLException se) {
+			throw new RuntimeException("A database error occured." + se.getMessage());
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException se) {
+					se.printStackTrace();
+				}
+			}
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (SQLException se) {
+					se.printStackTrace();
+				}
+			}
+			if (con != null) {
+				try {
+					con.close();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return list;
+	
+	}
+	
+	
 	public static void main(String[] args) {
 		blog_message_reportJDBCDAO dao = new blog_message_reportJDBCDAO();
 
@@ -228,13 +290,13 @@ public class blog_message_reportJDBCDAO implements blog_message_reportDAO_interf
 //		System.out.println(updateCount_update);
 
 		// 傳回全部檢舉清單根據檢舉處理狀況排序，未處理的排上面
-		List<blog_message_reportVO> list = dao.getAll();
-
-		for (blog_message_reportVO br : list) {
-			System.out.print(br.getMem_id() + "\t");
-			System.out.print(br.getMessage_id() + "\t");
-			System.out.println(br.getBmr_status());
-		}
+//		List<blog_message_reportVO> list = dao.getAll();
+//
+//		for (blog_message_reportVO br : list) {
+//			System.out.print(br.getMem_id() + "\t");
+//			System.out.print(br.getMessage_id() + "\t");
+//			System.out.println(br.getBmr_status());
+//		}
 		
 		// 查詢單筆
 //		blog_message_reportVO blog_message_reportVO = dao.getOne("M000001", "BM000001");
@@ -243,5 +305,21 @@ public class blog_message_reportJDBCDAO implements blog_message_reportDAO_interf
 //		System.out.print(blog_message_reportVO.getBmr_reason() + "\t");
 //		System.out.print(blog_message_reportVO.getBmr_time() + "\t");
 //		System.out.print(blog_message_reportVO.getBmr_status() + "\t");
+		
+		
+		
+		//********************測試拿回特定狀態
+		List<blog_message_reportVO> list2 = dao.getBlogMsgReport_ByStatus(0);
+
+		for (blog_message_reportVO br : list2) {
+			System.out.print(br.getMem_id() + "\t");
+			System.out.print(br.getMessage_id() + "\t");
+			System.out.println(br.getBmr_status());
+		}
+		
+		
+		
 	}
+
+
 }
