@@ -31,7 +31,7 @@ public class ChatServlet {
 	@OnOpen
 	public void onOpen(@PathParam("mem_id") String mem_id , Session userWbSession) {
 		
-		//發完我上線的訊息後，這時才將我自己加入上線名單中。
+		//將我自己加入上線名單中。
 		sessionsMap.put(mem_id,userWbSession);
 		//取出目前所有上線人員的mem_id
 		Set<String> onlineMemId = sessionsMap.keySet();
@@ -91,26 +91,14 @@ public class ChatServlet {
 							Session receiverSession = sessionsMap.get(sendMemId); 
 							if(receiverSession != null && receiverSession.isOpen()) {
 								receiverSession.getAsyncRemote().sendText(message);
-								/*********這邊是不是要存訊息到Redis????**************/
+								/*********這邊是不是要存訊息到Redis????再思考一下下**************/
 							}
 							System.out.println("因為我自己被封鎖了，所以我只收得到自己的訊息" + message);
 							return;	
 						}
 					}
 				}
-				
-//				Map map = new HashMap();
-//				map.put("TYPE",type);
-//				map.put("TO_CHATROOMID",chatRoom_id);
-//				map.put("TO_CRNAME",jsonObject.get("TO_CRNAME").getAsString());
-//				map.put("MEM_ID",sendMemId);
-//				map.put("MSG",jsonObject.get("MSG").getAsString());
-//				map.put("TIME",jsonObject.get("TIME").getAsString());
-//				map.put("CNT",jsonObject.get("TIME").getAsString());
-//				JSONObject json = new JSONObject(map);
-//				
-//				message = json.toString();
-				
+	
 				jsonObject.addProperty("CNT", "2");
 				message=jsonObject.toString();
 			}

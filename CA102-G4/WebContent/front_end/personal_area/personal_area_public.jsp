@@ -128,16 +128,19 @@
     <link href='https://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css'>
     <!-- //font字體 -->
     
-    <!-- AD_Page相關CSS及JS -->
+    <!-- AD_Page/personal_area_public相關CSS及JS -->
     <link href="<%=request.getContextPath()%>/front_end/css/ad/ad_page.css" rel="stylesheet" type="text/css"><!--共用頁籤及頁尾style-->
     <link href="<%=request.getContextPath()%>/front_end/css/personal/personal_area_home.css" rel="stylesheet" type="text/css"><!--共用個人首頁上方會員資訊塊style-->
-    <link href="<%=request.getContextPath()%>/front_end/css/personal/persion_area_public.css" rel="stylesheet" type="text/css">
+    <link href="<%=request.getContextPath()%>/front_end/css/personal/personal_area_public.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="<%=request.getContextPath()%>/front_end/js/personal/personal_area_public.js"></script>
     <!-- //AD_Page相關CSS及JS -->
     
     <!-- 聊天相關CSS及JS -->
 <%--     <link href="<%=request.getContextPath()%>/front_end/css/chat/chat_style.css" rel="stylesheet" type="text/css"> --%>
 <%--     <script src="<%=request.getContextPath()%>/front_end/js/chat/chat.js"></script> --%>
     <!-- //聊天相關CSS及JS -->
+    
+
     
 </head>
 
@@ -255,7 +258,6 @@
                                     <li><a href="blog.jsp">旅遊記</a></li>
                                     <li><a href="ask.html">問答區</a></li>
                                     <li><a href="galley.html">照片牆</a></li>
-                                    <li><a href="chat.html">聊天室</a></li>
                                     <li><a href="together.html">揪團</a></li>
                                     <li><a href="buy.html">交易平台</a></li>
                                     <li><a href="<%=request.getContextPath()%>/front_end/ad/ad.jsp">專欄</a></li>
@@ -357,7 +359,9 @@
                    <div class="u_ind_item">
                       <div class="u_title">
                           <strong>${otherUser_memVO.mem_Name}的照片</strong>
-                          <a href="#gallery"><i class="angle double right icon"></i>更多</a>
+                          <a href="#gallery"  data-toggle="tab">
+                          	<i class="angle double right icon"></i>更多
+                          </a>
                           <div>
                               <span>${photoList.size()}</span>
                               <span>張照片</span>
@@ -388,7 +392,7 @@
                    <div class="u_ind_item">
                       <div class="u_title">
                           <strong>${otherUser_memVO.mem_Name}的旅遊記</strong>
-                          <a href="#"><i class="angle double right icon"></i>更多</a>
+                          <a href="#blog" data-toggle="tab"><i class="angle double right icon"></i>更多</a>
                           <div>
                               <span>${blogList.size()}</span>
                               <span>篇遊記</span>
@@ -439,7 +443,7 @@
 	               <div class="u_ind_item">
 	                  <div class="u_title">
 	                      <strong>我的行程</strong>
-	                      <a href="#"><i class="angle double right icon"></i>更多</a>
+	                      <a href="#trip" data-toggle="tab"><i class="angle double right icon"></i>更多</a>
 	                      <div>
 	                          <span>${uTripList.size()}</span>
 	                          <span>篇行程</span>
@@ -623,24 +627,7 @@
         </div>
         <!-- //footer -->
 
-		    	<script>
-		// 	 setInterval(function() {
-		// 		  $("div.chatContext").load(function(){alert("有做")});
-		// 	  }, 1000); 
-			
-			//引入個人的部落格資訊，內容太多冗長
-			$(function(){
-			    var len = 100; // 超過100個字以"..."取代
-			    $("._shortText").each(function(i){
-			   	 var temptext=$(this).text().trim().replace('  ', '');
-			        if(temptext.length>len){
-			            $(this).attr("title",temptext);
-			            var text=temptext.substring(0,len-1)+"...";
-			            $(this).text(text);
-			        }
-			    });
-			});
-		</script>
+
     </body>
 
 </html>

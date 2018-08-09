@@ -367,6 +367,7 @@
 					$("#"+jsonObj.openMemId+"status .online_status").html("<i class='fas fa-circle'></i>");
 					return;
 				}else{
+					//我自己連上WS時，會被通知自己登入的訊息，就直接拿出傳過來的所有上線人員，更改成綠燈
 					var onlineArray = jsonObj.online;
 					for(var i = 0 ;i<onlineArray.length ; i++){
 						$("#"+onlineArray[i]+"status .online_status").html("<i class='fas fa-circle'></i>");
@@ -414,9 +415,10 @@
 		};
 		
 	}
+	/******************************WebSocket結束**************************/
 	</script>
 
-	/******************************WebSocket結束**************************/
+	
 	
 
 
