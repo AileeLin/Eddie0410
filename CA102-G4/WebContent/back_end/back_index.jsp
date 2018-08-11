@@ -5,6 +5,9 @@
 <%@ page import="com.photo_report.model.*" %>
 <%@ page import="java.util.*" %>
 <%@ page import="com.admin.model.*"%>
+<%@ page import="com.attEdit.model.*"%>
+<%@ page import="com.qa_report.model.*"%>
+<%@ page import="com.rp_report.model.*"%>
 <%
 	//**********************管理者登入身分驗證********************************//
 	AdminVO adminVO = (AdminVO)session.getAttribute("adminVO");
@@ -25,12 +28,12 @@
 	}
 	//**********************管理者登入身分驗證********************************//
 
-	//取得旅遊記檢舉及旅遊記留言檢舉未處理數
+	//取得旅遊記檢舉及旅遊記留言檢舉未處理數---OK
 	blogMessageReportService blogMRSvc = new blogMessageReportService();
 	blogReportService blogRSvc = new blogReportService();
 	int blogReportCount = ((blogMRSvc.getBlogMsgReport_ByStatus(0)).size())+(blogRSvc.getBR_BySTATUS(0)).size();
 	
-	//取得照片牆檢舉未處理數
+	//取得照片牆檢舉未處理數?????
 	photo_reportService photoRSvc = new photo_reportService();
 	List<Photo_reportVO> photoReportList = photoRSvc.getAll();
 	int photoReportCount =0;
@@ -39,6 +42,29 @@
 			photoReportCount++;
 		}
 	}
+	
+	//取得景點更新審核數---OK
+	AttractionsEditService attrEditSvc = new AttractionsEditService();
+	int attrEditCount =(attrEditSvc.getAll()).size();
+	
+	//取得問答檢舉及問答留言檢舉未處理數(狀態0為未處理)---OK
+	int qaReportCount = 0;
+	Qa_reportService qaReportSvc = new Qa_reportService();
+	List<Qa_reportVO> qaReportList = qaReportSvc.getAll();
+	for(Qa_reportVO qa_reportVO :qaReportList){
+		if(qa_reportVO.getQa_state() == 0){
+			qaReportCount++;
+		}
+	}
+	
+	Rp_reportService rpReportSvc = new Rp_reportService();
+	List<Rp_reportVO> rpReportList = rpReportSvc.getAll();
+	for(Rp_reportVO rp_reportVO :rpReportList){
+		if(rp_reportVO.getRp_state() == 0){
+			qaReportCount++;
+		}
+	}
+	
 		
 %>
 
@@ -255,7 +281,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <a href="#">
+                            <a href="<%=request.getContextPath()%>/blog.do?action=blogReportManage">
                                 <div class="panel-footer">
                                     <span class="pull-left">View Details</span>
                                     <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
@@ -272,12 +298,12 @@
                                         <i class="fas fa-question-circle fa-5x"></i>
                                     </div>
                                     <div class="col-xs-9 text-right">
-                                        <div class="huge">13</div>
+                                        <div class="huge"><%=qaReportCount%></div>
                                         <div>問答區檢舉</div>
                                     </div>
                                 </div>
                             </div>
-                            <a href="#">
+                            <a href="<%=request.getContextPath()%>/back_end/qa_report/qa_report.jsp">
                                 <div class="panel-footer">
                                     <span class="pull-left">View Details</span>
                                     <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
@@ -294,12 +320,12 @@
                                         <i class="fas fa-comment-dots fa-5x"></i>
                                     </div>
                                     <div class="col-xs-9 text-right">
-                                        <div class="huge">124</div>
-                                        <div>景點更新審核</div>
+                                        <div class="huge"><%=attrEditCount%></div>
+                                        <div>景點更新</div>
                                     </div>
                                 </div>
                             </div>
-                            <a href="#">
+                            <a href="<%=request.getContextPath()%>/back_end/attEdit/back_attEditReview.jsp">
                                 <div class="panel-footer">
                                     <span class="pull-left">View Details</span>
                                     <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>

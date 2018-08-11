@@ -9,21 +9,24 @@
 <html>
 
 <%
-	AdminVO adminVO = (AdminVO) session.getAttribute("adminVO");
-	if (adminVO == null) {
-		adminVO = (AdminVO) session.getAttribute("adminVO");
+	//**********************管理者登入身分驗證********************************//
+	AdminVO adminVO = (AdminVO)session.getAttribute("adminVO");
+	if(adminVO == null){
+		adminVO = (AdminVO)session.getAttribute("adminVO");
 	}
-
-	boolean login_state = false;
-	Object login_state_temp = session.getAttribute("login_state");
-	if (login_state_temp != null) {
-		login_state = (boolean) login_state_temp;
+	
+	boolean login_state_backEnd = false;
+	Object login_state_temp = session.getAttribute("login_state_backEnd");
+	if(login_state_temp!=null){
+		login_state_backEnd=(boolean)login_state_temp;
 	}
-
-	if (login_state != true) {
-		session.setAttribute("location", "/CA102G4/back_end/back_index.jsp");
-		response.sendRedirect("/CA102G4/back_end/admin/back_login.jsp");
+	
+	if(login_state_backEnd!=true){
+		session.setAttribute("location",request.getRequestURI());
+		response.sendRedirect(request.getContextPath()+"/back_end/admin/back_login.jsp");
+		return;
 	}
+	//**********************管理者登入身分驗證********************************//
 	
 	photo_reportService photo_reportSvc = new photo_reportService();
 	List<Photo_reportVO> reportList = photo_reportSvc.getAll();
@@ -190,8 +193,9 @@
 						<i class="fas fa-align-left"></i>
 					</button>
 					<span style="float: right">
-					<c:choose>
-                          <c:when test="<%=login_state %>">
+						<span style="font-size:1.5em;margin-right:10px;vertical-align:sub;">Welcome！${adminVO.admin_Name}</span>
+                        <c:choose>
+                          <c:when test="<%=login_state_backEnd %>">
                            <a href="<%= request.getContextPath()%>/admin.do?action=logout"><span class=" top_banner btn btn-info"><i class=" fas fa-sign-out-alt" aria-hidden="true"></i></span></a>
                           </c:when>
                           <c:otherwise>

@@ -24,10 +24,10 @@ public class Rp_reportDAO implements Rp_reportDAO_interface{
 	private static final String INSERT_STMT = "Insert into RP_REPORT (REPLY_ID,MEM_ID,RP_STATE)"
 			+ " values (?,?,0)";
 	
-	private static final String UPDATE_STMT = "UPDATE RP_REPORT SET MEM_ID= ?, RP_STATE=? WHERE QUESTION_ID = ?";
+	private static final String UPDATE_STMT = "UPDATE RP_REPORT SET MEM_ID= ?, RP_STATE=? WHERE REPLY_ID = ?";
 	
-	private static final String DELETE_STMT = "DELETE FROM RP_REPORT WHERE QUESTION_ID = ?";
-	private static final String FIND_BY_PK = "SELECT * FROM RP_REPORT WHERE QUESTION_ID = ?";
+	private static final String DELETE_STMT = "DELETE FROM RP_REPORT WHERE REPLY_ID = ? AND MEM_ID=?";
+	private static final String FIND_BY_PK = "SELECT * FROM RP_REPORT WHERE REPLY_ID = ?";
 	private static final String GET_ALL = "SELECT * FROM RP_REPORT";
 	
 	private static final String GET_ALL_STMT = "SELECT * FROM RP_REPORT ORDER BY RP_STATE";
@@ -114,7 +114,7 @@ public class Rp_reportDAO implements Rp_reportDAO_interface{
 		return updateCount;
 	}
 	@Override
-	public int delete(String reply_id) {
+	public int delete(String reply_id, String mem_id) {
 		int updateCount = 0;
 		Connection con = null;
 		PreparedStatement pstmt = null;
@@ -126,7 +126,8 @@ public class Rp_reportDAO implements Rp_reportDAO_interface{
 			pstmt = con.prepareStatement(DELETE_STMT);
 			
 			pstmt.setString(1,reply_id);
-
+			pstmt.setString(2,mem_id);
+			
 			updateCount = pstmt.executeUpdate();
 
 			// Handle any SQL errors

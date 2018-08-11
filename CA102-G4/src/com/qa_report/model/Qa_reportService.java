@@ -38,8 +38,8 @@ public class Qa_reportService {
 		return Qa_reportVO;
 	}
 	
-	public void deleteQa_report(String question_id) {
-		dao.delete(question_id);
+	public void deleteQa_report(String question_id,String mem_id) {
+		dao.delete(question_id,mem_id);
 	}
 	
 	public Qa_reportVO getOneQa_report(String question_id) {
@@ -50,11 +50,6 @@ public class Qa_reportService {
 		return dao.getAll();
 	}
 	
-	public void update_review_State(String mem_id,String question_id,Integer qa_state) {
-		
-		dao.update_review_State(mem_id,question_id,qa_state);
-
-	}
 }	
 
 

@@ -22,7 +22,7 @@ public class Qa_reportJDBCDAO implements Qa_reportDAO_interface{
 	
 	private static final String UPDATE_STMT = "UPDATE QA_REPORT SET MEM_ID= ?, QA_STATE=? WHERE QUESTION_ID = ?";
 	
-	private static final String DELETE_STMT = "DELETE FROM QA_REPORT WHERE QUESTION_ID = ?";
+	private static final String DELETE_STMT = "DELETE FROM QA_REPORT WHERE QUESTION_ID AND MEM_ID = ?";
 	private static final String FIND_BY_PK = "SELECT * FROM QA_REPORT WHERE QUESTION_ID = ?";
 	private static final String GET_ALL = "SELECT * FROM QA_REPORT";
 	@Override
@@ -115,7 +115,7 @@ public class Qa_reportJDBCDAO implements Qa_reportDAO_interface{
 		return updateCount;
 	}
 	@Override
-	public int delete(String question_id) {
+	public int delete(String question_id,String mem_id) {
 		int updateCount = 0;
 		Connection con = null;
 		PreparedStatement pstmt = null;
@@ -127,7 +127,7 @@ public class Qa_reportJDBCDAO implements Qa_reportDAO_interface{
 			pstmt = con.prepareStatement(DELETE_STMT);
 			
 			pstmt.setString(1,question_id);
-
+			pstmt.setString(2,mem_id);
 			updateCount = pstmt.executeUpdate();
 
 			// Handle any driver errors
@@ -315,10 +315,6 @@ public class Qa_reportJDBCDAO implements Qa_reportDAO_interface{
 					
 				
 	}
-	@Override
-	public int update_review_State(String mem_id, String quesion_id, Integer qa_state) {
 
-		return 0;
-	}
 }
 

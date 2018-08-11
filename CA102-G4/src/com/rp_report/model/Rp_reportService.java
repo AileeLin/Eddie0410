@@ -36,8 +36,8 @@ public class Rp_reportService {
 		return Rp_reportVO;
 	}
 	
-	public void deleteRp_reportVO(String reply_id) {
-		dao.delete(reply_id);
+	public void deleteRp_reportVO(String reply_id,String mem_id) {
+		dao.delete(reply_id,mem_id);
 	}
 	
 	public Rp_reportVO getOneRp_report(String reply_id) {

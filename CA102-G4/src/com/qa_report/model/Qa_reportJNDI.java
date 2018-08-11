@@ -24,13 +24,14 @@ public class Qa_reportJNDI implements Qa_reportDAO_interface{
 	private static final String INSERT_STMT = "Insert into QA_REPORT (QUESTION_ID,MEM_ID,QA_STATE)"
 			+ " values (?,?,0)";
 	
-	private static final String UPDATE_STMT = "UPDATE QA_REPORT SET MEM_ID= ?, Qa_state=? WHERE QUESTION_ID = ?";
-	
-	private static final String DELETE_STMT = "DELETE FROM QA_REPORT WHERE QUESTION_ID = ?";
+	private static final String UPDATE_STMT = "UPDATE QA_REPORT SET MEM_ID= ?, QA_STATE=? WHERE QUESTION_ID = ?";	
+	private static final String DELETE_STMT = "DELETE FROM QA_REPORT WHERE QUESTION_ID AND MEM_ID=?";
 	private static final String FIND_BY_PK = "SELECT * FROM QA_REPORT WHERE QUESTION_ID = ?";
 	private static final String GET_ALL = "SELECT * FROM QA_REPORT";
 	
-	private static final String GET_ALL_STMT = "SELECT * FROM QA_REPORT ORDER BY Qa_state";
+	
+	
+	
 	@Override
 	public int insert(Qa_reportVO Qa_reportVO) {
 		int updateCount = 0;
@@ -114,7 +115,7 @@ public class Qa_reportJNDI implements Qa_reportDAO_interface{
 		return updateCount;
 	}
 	@Override
-	public int delete(String question_id) {
+	public int delete(String question_id, String mem_id) {
 		int updateCount = 0;
 		Connection con = null;
 		PreparedStatement pstmt = null;
@@ -126,7 +127,8 @@ public class Qa_reportJNDI implements Qa_reportDAO_interface{
 			pstmt = con.prepareStatement(DELETE_STMT);
 			
 			pstmt.setString(1,question_id);
-
+			pstmt.setString(2,mem_id);
+			
 			updateCount = pstmt.executeUpdate();
 
 			// Handle any SQL errors
@@ -171,7 +173,6 @@ public class Qa_reportJNDI implements Qa_reportDAO_interface{
 			
 			rs.next();
 			Qa_report = new Qa_reportVO();
-			System.out.println(rs.getString("question_id"));
 			Qa_report.setQuestion_id(rs.getString("question_id"));
 			Qa_report.setMem_id(rs.getString("mem_id"));
 			Qa_report.setQa_state(rs.getInt("Qa_state"));
@@ -207,57 +208,59 @@ public class Qa_reportJNDI implements Qa_reportDAO_interface{
 		}
 		return Qa_report;
 
-	}	
-		@Override
-		public List<Qa_reportVO> getAll() {
-			List<Qa_reportVO> list = new ArrayList<Qa_reportVO>();
-			Qa_reportVO qa_reportVO = null;
+	}
+	@Override
+	public List<Qa_reportVO> getAll() {
+		List<Qa_reportVO> list = new ArrayList<Qa_reportVO>();
+		Qa_reportVO Qa_report = null;
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
 
-			Connection con = null;
-			PreparedStatement pstmt = null;
-			ResultSet rs = null;
+		try {
 
-			try {
-				con = ds.getConnection();
-				pstmt = con.prepareStatement(GET_ALL_STMT);
-				rs = pstmt.executeQuery();
-
-				while (rs.next()) {
-					qa_reportVO = new Qa_reportVO();
-					qa_reportVO.setQuestion_id(rs.getString("QUESTION_ID"));
-					qa_reportVO.setMem_id(rs.getString("MEM_ID"));
-					qa_reportVO.setQa_state(rs.getInt("QA_STATE"));
-					list.add(qa_reportVO);
-				}
-			} catch (SQLException se) {
-				throw new RuntimeException("A database error occured." + se.getMessage());
-			} finally {
-				if (rs != null) {
-					try {
-						rs.close();
-					} catch (SQLException se) {
-						se.printStackTrace();
-					}
-				}
-				if (pstmt != null) {
-					try {
-						pstmt.close();
-					} catch (SQLException se) {
-						se.printStackTrace();
-					}
-				}
-				if (con != null) {
-					try {
-						con.close();
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
+			con = ds.getConnection();
+			pstmt = con.prepareStatement(GET_ALL);
+			
+			rs = pstmt.executeQuery();
+			
+			while (rs.next()) {
+				Qa_report = new Qa_reportVO();
+				Qa_report.setQuestion_id(rs.getString("question_id"));
+				Qa_report.setMem_id(rs.getString("mem_id"));
+				Qa_report.setQa_state(rs.getInt("Qa_state"));
+				list.add(Qa_report);
+			}
+			
+			// Handle any SQL errors
+		} catch (SQLException se) {
+			throw new RuntimeException("A database error occured. "
+					+ se.getMessage());
+			// Clean up JDBC resources
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
 				}
 			}
-			return list;
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (con != null) {
+				try {
+					con.close();
+				} catch (Exception e) {
+					e.printStackTrace(System.err);
+				}
+			}
 		}
-		@Override
-		public int update_review_State(String mem_id, String quesion_id, Integer qa_state) {
-			return 0;
-		}
+		return list;
 	}
+
+}
