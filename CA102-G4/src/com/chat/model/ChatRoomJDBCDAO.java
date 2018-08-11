@@ -11,7 +11,7 @@ public class ChatRoomJDBCDAO implements ChatRoomDAO_Interface{
 	private static final String PASSWORD="12345678";
 	
 	//新增聊天對話
-	private static final String ADDCHATROOM_STMT="INSERT INTO CHATROOM(CHATROOM_ID,CHATROOM_NAME,CHATREC) VALUES('CR'||LPAD(TO_CHAR(CHATROOM_SEQ.NEXTVAL),6,'0'),?,?)";
+	private static final String ADDCHATROOM_STMT="INSERT INTO CHATROOM(CHATROOM_ID,CHATROOM_NAME,CHATREC,CHATROOM_INITCNT) VALUES('CR'||LPAD(TO_CHAR(CHATROOM_SEQ.NEXTVAL),6,'0'),?,?,?)";
 	
 	//更新某個聊天對話
 	private static final String UPDATECHATROOM_STMT="UPDATE CHATROOM SET CHATROOM_NAME=?,CHATREC=?  WHERE CHATROOM_ID=?";
@@ -27,27 +27,61 @@ public class ChatRoomJDBCDAO implements ChatRoomDAO_Interface{
 	
 	//新增聊天對話
 	@Override
-	public String addChatRoom(ChatRoomVO cr,String[] addPeople) {
+	public String addChatRoom(ChatRoomVO cr,String[] addPeople,String loginMemId) {
 		int count = 0 ;
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		String pk = null;
-		
 		try {
+			
 			Class.forName(DRIVER);
-			con=DriverManager.getConnection(URL, USER, PASSWORD);
-			String[] col = {"CHATROOM_ID"};
+			con = DriverManager.getConnection(URL, USER, PASSWORD);
+			//處理交易問題，故要先關閉自動提交
+			con.setAutoCommit(false);
+
+			//1----先新增聊天對話，設定自增主建
+			String[] col = {"CHATROOM_ID"}; 
+
 			pstmt=con.prepareStatement(ADDCHATROOM_STMT,col);
 			pstmt.setString(1, cr.getChatRoom_Name());
 			pstmt.setString(2, cr.getChatRec());
+			pstmt.setInt(3,cr.getChatRoom_InitCNT());
 			count=pstmt.executeUpdate();
+			
 			ResultSet rs = pstmt.getGeneratedKeys();
 			rs.next();
-			pk = rs.getString(1);
+			pk=rs.getString(1);
+			System.out.println("有近來DAO2");
+			
+			//2----拿到自增組件，新增聊天對話名單
+			for(int i = 0 ; i < addPeople.length ;i++) {
+				pstmt = con.prepareStatement("INSERT INTO CHATROOM_JOIN (CHATROOM_ID,JOIN_MEMID) VALUES (?,?)");
+				pstmt.setString(1, pk);
+				pstmt.setString(2, addPeople[i]);
+				pstmt.executeUpdate();
+			}
+			//3----把自己也加入進去
+			if(loginMemId != null) {
+				pstmt = con.prepareStatement("INSERT INTO CHATROOM_JOIN (CHATROOM_ID,JOIN_MEMID) VALUES (?,?)");
+				pstmt.setString(1, pk);
+				pstmt.setString(2, loginMemId);
+				pstmt.executeUpdate();
+			}
+			System.out.println("有近來DAO3");
+			//3--------新增完成----------
+			con.commit();
+			con.setAutoCommit(true);
 			
 		}catch(ClassNotFoundException ce) {
-			throw new RuntimeException("無法載入資料庫驅動程式"+ce.getMessage());
+			throw new RuntimeException("資料庫無法載入驅動"+ce.getMessage());
 		}catch(SQLException se) {
+			if(con != null) {
+				try {
+					con.rollback();
+				} catch (SQLException e) {
+					throw new RuntimeException("rollback失敗"+e.getMessage());
+				}
+			}
 			throw new RuntimeException("資料庫發生錯誤"+se.getMessage());
 		}finally {
 			if(pstmt!=null) {
@@ -68,7 +102,7 @@ public class ChatRoomJDBCDAO implements ChatRoomDAO_Interface{
 		
 		return pk;
 	}
-
+	
 	//修改聊天對話(名子或聊天紀錄)
 	@Override
 	public int updateChatRoom(ChatRoomVO cr) {
@@ -77,8 +111,9 @@ public class ChatRoomJDBCDAO implements ChatRoomDAO_Interface{
 		PreparedStatement pstmt = null;
 		
 		try {
+
 			Class.forName(DRIVER);
-			con=DriverManager.getConnection(URL, USER, PASSWORD);
+			con = DriverManager.getConnection(URL, USER, PASSWORD);
 			pstmt=con.prepareStatement(UPDATECHATROOM_STMT);
 			pstmt.setString(1, cr.getChatRoom_Name());
 			pstmt.setString(2, cr.getChatRec());
@@ -86,7 +121,7 @@ public class ChatRoomJDBCDAO implements ChatRoomDAO_Interface{
 			count=pstmt.executeUpdate();
 			
 		}catch(ClassNotFoundException ce) {
-			throw new RuntimeException("無法載入資料庫驅動程式"+ce.getMessage());
+			throw new RuntimeException("資料庫無法載入驅動程式"+ce.getMessage());
 		}catch(SQLException se) {
 			throw new RuntimeException("資料庫發生錯誤"+se.getMessage());
 		}finally {
@@ -108,7 +143,7 @@ public class ChatRoomJDBCDAO implements ChatRoomDAO_Interface{
 		
 		return count;
 	}
-	
+
 	//刪除聊天對話(當最後一個人離開聊天對話時)
 	@Override
 	public int delChatRoom(String chatRoom_id) {
@@ -246,12 +281,12 @@ public class ChatRoomJDBCDAO implements ChatRoomDAO_Interface{
 	public static void main(String args[]) {
 		ChatRoomJDBCDAO dao = new ChatRoomJDBCDAO();
 		
-		//新增聊天對話(第一次建立聊天室時)
-		ChatRoomVO cr = new ChatRoomVO();
-		cr.setChatRoom_Name("測試");
-		cr.setChatRec("");
-		String count = dao.addChatRoom(cr);
-		System.out.println("新增了"+count+"聊天對話");
+		//新增聊天對話(第一次建立聊天室時)  --- 不能用喔 因為有改
+//		ChatRoomVO cr = new ChatRoomVO();
+//		cr.setChatRoom_Name("測試");
+//		cr.setChatRec("");
+//		String count = dao.addChatRoom(cr);
+//		System.out.println("新增了"+count+"聊天對話");
 		
 		//修改聊天對話(名子或聊天紀錄)
 		ChatRoomVO cr1 = new ChatRoomVO();
@@ -275,6 +310,7 @@ public class ChatRoomJDBCDAO implements ChatRoomDAO_Interface{
 		
 	}
 
+	
 
 
 	
