@@ -2,10 +2,35 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page import="java.util.*" %>
 <%@ page import="com.ad.model.*" %>
+<%@ page import="com.mem.model.*" %>
 <%
 	AdService AdSer = new AdService();
     List<AdVO> list = AdSer.getNewAD();
     pageContext.setAttribute("list",list);
+    
+    
+	//若有登入，可以看到登出按鈕
+	MemberVO memberVO = (MemberVO)session.getAttribute("memberVO");
+	String login,logout;
+	if(memberVO != null){		
+		login = "display:none;";
+		logout = "display:'';";
+	}else{
+		login = "display:'';";
+		logout = "display:none;";
+	}
+	
+	boolean login_state = false ;
+	Object login_state_temp = session.getAttribute("login_state");
+	
+	//確認登錄狀態
+	if(login_state_temp != null ){
+		login_state= (boolean) login_state_temp ;
+	}
+
+    
+    
+    
 %>
 
 <!DOCTYPE html>
@@ -84,7 +109,18 @@
                     </div>
                     <div class="top-banner-right">
                         <ul>
-                            <li><a class="top_banner" href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_home.jsp"><i class="fa fa-user" aria-hidden="true"></i></a></li>
+	                        <li>
+		                      	 <!-- 判斷是否登入，若有登入將會出現登出按鈕 -->
+		                         <c:choose>
+		                          <c:when test="<%=login_state %>">
+		                           	<a href="<%= request.getContextPath()%>/front_end/member/member.do?action=logout"><span class=" top_banner"><i class=" fas fa-sign-out-alt" aria-hidden="true"></i></span></a>
+		                          </c:when>
+		                          <c:otherwise>
+		                           	<a href="<%= request.getContextPath()%>/front_end/member/mem_login.jsp"><span class="top_banner"><i class=" fa fa-user" aria-hidden="true"></i></span></a>
+		                          </c:otherwise>
+		                         </c:choose>
+		                    </li>
+	                    	<li style="<%= logout %>"><a class="top_banner" href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_home.jsp"><i class="fa fa-user" aria-hidden="true"></i></a></li>          	
                             <li><a class="top_banner" href="<%=request.getContextPath()%>/front_end/store/store_cart.jsp"><i class="fa fa-shopping-cart" aria-hidden="true"></i></a></li>
                             <li><a class="top_banner" href="#"><i class="fa fa-envelope" aria-hidden="true"></i></a></li>
                         </ul>

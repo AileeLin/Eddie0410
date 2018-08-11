@@ -156,7 +156,7 @@
                         </li>
                         
                         <li>
-                            <a href="<%=request.getContextPath()%>/back_end/attEdit/back_attEditReview.jsp">
+                            <a href="<%=request.getContextPath()%>/back_end/attEdit/back_attEdit.jsp">
                                 <i class="fas fa-image"></i>景點管理
                             </a>
                         </li>
