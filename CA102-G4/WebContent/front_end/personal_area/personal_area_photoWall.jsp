@@ -2,6 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page import="com.fri.model.*" %>
 <%@ page import="com.mem.model.*" %>
+<%@ page import="com.photo_wall.model.*" %>
 <%@ page import="java.util.*" %>
 <%
 
@@ -34,20 +35,12 @@
 	/***************取出登入者會員資訊******************/
 	String memId = ((MemberVO)session.getAttribute("memberVO")).getMem_Id();
 	
-	//為了join(寫法有servlet3.0限制)
-	MemberService memSvc = new MemberService();
-	pageContext.setAttribute("memSvc",memSvc); 
+	//取得登錄者的照片牆且狀態為1(未被檢舉)
+	Photo_wallService photoSvc = new Photo_wallService(); 
+	List<Photo_wallVO> photoList=photoSvc.getByMem_id(memId);
+	pageContext.setAttribute("photoList", photoList);
 	
-	/***************取出會員的好友******************/
-	FriendService friSvc = new FriendService();
-	List<Friend> myFri = friSvc.findMyFri(memId,2); //互相為好友的狀態
-	List<Friend> myFri_Block = friSvc.findMyFri(memId,3); //會員封鎖好友名單
-	List<Friend> myNewFri = friSvc.findMyNewFri(memId);
-	List<Friend> myFriBir = friSvc.findMyBirFri(memId);	
-	pageContext.setAttribute("myFri",myFri);
-	pageContext.setAttribute("myNewFri",myNewFri);
-	pageContext.setAttribute("myFri_Block",myFri_Block);
-	pageContext.setAttribute("myFriBir",myFriBir);
+
 %>
 
 <!DOCTYPE html>
@@ -279,7 +272,7 @@
                   <i class="fas fa-home"></i>首頁
               </a>
             </li>
-            <li class="nav-item  active">
+            <li class="nav-item">
               <a href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_friend.html">
                   <i class="fas fa-user-friends"></i>好友
               </a>
@@ -304,7 +297,7 @@
                   <i class="question circle icon"></i>問答
               </a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item active">
               <a href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_photoWall.jsp">
                   <i class="image icon"></i>相片
               </a>
@@ -329,234 +322,26 @@
             </li>
           </ul>
           <!-- //頁籤項目 -->
-          <!-- 頁籤項目-好友管理內容 -->
-          <div class="tab-content" style="float:left;width:75%">
-            <!--首頁左半邊-好友管理-->
-            <div id="fri" class="container tab-pane active">
-                <div class="u_title">
-                    <strong>我的好友</strong>
-                </div>
-                <br>
-                <div id="all_fri_search">
-                   <div style="width: 70%;float: left">
-                       <ul class="nav nav-tabs" id="friCate">
-                          <li class="active"><a data-toggle="tab" href="#allFri">全部好友</a></li>
-                          <li><a data-toggle="tab" href="#newFri">最近新增</a></li>
-                          <li><a data-toggle="tab" href="#friBir">當月壽星</a></li>
-                          <li><a data-toggle="tab" href="#blockFri">封鎖名單</a></li>
-                        </ul>
-                   </div>
-                   <div class="input-group" style="width: 30%;float:left">
-                        <span class="input-group-addon" id="basic-addon1"><i class="fas fa-search"></i></span>
-                        <input type="text" class="form-control" placeholder="搜尋" aria-describedby="basic-addon1" id="u_search_Fri">
-                   </div>
-                </div>
-                
-                <div class="tab-content">
-                  <!--所有好友列表-->
-                  <div id="allFri" class="tab-pane fade in active">    
-                    <ul class="list-group">
-                    <c:choose>
-	                    <c:when test="${not empty myFri}">
-	                    	<c:forEach var="frivo" items="${myFri}">
-	                        <li class="list-group-item">                        
-	                            <a href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_public.jsp?uId=${frivo.memID_Fri}">
-	                            	<img src="<%=request.getContextPath()%>/front_end/readPic?action=member&id=${frivo.memID_Fri}">
-	                            </a>
-	                            <div>                                
-                                	<a href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_public.jsp?uId=${frivo.memID_Fri}">
-                                		<p>${memSvc.getOneMember(frivo.memID_Fri).mem_Name}</p>
-                                	</a>
-	                            </div>
-	                            <div>
-	                            	<form action="<%=request.getContextPath()%>/fri.do" method="post" onsubmit="return confirm('確定要封鎖?')">
-	                            		<input type="hidden" name="meId" value="${memberVO.mem_Id}">
-	                                	<input type="hidden" name="friId" value="${frivo.memID_Fri}">
-	                                	<input type="hidden" name="action" value="blockFri">
-	                            		<button type="submit" class="btn btn-warning">封鎖</button> 
-	                            	</form>
-	                                
-	                                <form action="<%=request.getContextPath()%>/fri.do" method="post" onsubmit="return confirm('確定要解除好友關係嗎?')">
-	                                	<input type="hidden" name="meId" value="${memberVO.mem_Id}">
-	                                	<input type="hidden" name="friId" value="${frivo.memID_Fri}">
-	                                	<input type="hidden" name="action" value="deleteFri">
-	                                	<button type="submit" class="btn btn-danger">刪除</button>
-	                                </form>
-	                            </div>
-	                        </li>
-	                        </c:forEach>
-	                    </c:when>
-	                    <c:otherwise>
-	                    	<div class="nothing_span">
-	                    		<img src="<%=request.getContextPath()%>/front_end/images/all/crying.png" class="nothing">&nbsp孤家寡人....
-	                    	</div>
-	                    </c:otherwise>
-                    </c:choose>
-                    </ul>
-                  </div>
-                  <!--//所有好友列表-->
-                  <!--最近新增好友列表-->
-                  <div id="newFri" class="tab-pane fade">
-                    <ul class="list-group">
-                    <c:choose>
-	                    <c:when test="${not empty myNewFri}">
-	                    	<c:forEach var="frivo" items="${myNewFri}">
-	                        <li class="list-group-item">                        
-	                            <a href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_public.jsp?uId=${frivo.memID_Fri}">
-	                            	<img src="<%=request.getContextPath()%>/front_end/readPic?action=member&id=${frivo.memID_Fri}">
-	                            </a>
-	                            <div>
-                                	<a href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_public.jsp?uId=${frivo.memID_Fri}">
-                                		<p>${memSvc.getOneMember(frivo.memID_Fri).mem_Name}</p>
-                                	</a>
-	                            </div>
-	                            <div>
-	                            	<form action="<%=request.getContextPath()%>/fri.do" method="post" onsubmit="return confirm('確定要封鎖?')">
-	                            		<input type="hidden" name="meId" value="${memberVO.mem_Id}">
-	                                	<input type="hidden" name="friId" value="${frivo.memID_Fri}">
-	                                	<input type="hidden" name="action" value="blockFri">
-	                            		<button type="submit" class="btn btn-warning">封鎖</button> 
-	                            	</form>
-	                                
-	                                <form action="<%=request.getContextPath()%>/fri.do" method="post" onsubmit="return confirm('確定要解除好友關係嗎?')">
-	                                	<input type="hidden" name="meId" value="${memberVO.mem_Id}">
-	                                	<input type="hidden" name="friId" value="${frivo.memID_Fri}">
-	                                	<input type="hidden" name="action" value="deleteFri">
-	                                	<button type="submit" class="btn btn-danger">刪除</button>
-	                                </form>
-	                            </div>
-	                        </li>
-	                        </c:forEach>
-	                    </c:when>
-	                    <c:otherwise>
-	                    	<div class="nothing_span">
-	                    		<img src="<%=request.getContextPath()%>/front_end/images/all/crying.png" class="nothing">&nbsp 最近沒認識新朋友 ...
-	                    	</div>
-	                    </c:otherwise>
-                    </c:choose>
-                    </ul>
-                  </div>
-                  <!--//最近新增好友列表-->
-                  <!--當月壽星-->
-                  <div id="friBir" class="tab-pane fade">
-                    <ul class="list-group">
-                    <c:choose>
-                    	<c:when test="${not empty myFriBir}">
-	                    	<c:forEach var="frivo" items="${myFriBir}">
-		                        <li class="list-group-item">                        
-		                            <a href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_public.jsp?uId=${frivo.memID_Fri}">
-		                               <img src="<%=request.getContextPath()%>/front_end/readPic?action=member&id=${frivo.memID_Fri}">
-		                            </a>
-		                            <div>
-		                                <a href="">
-		                                    <p>${memSvc.getOneMember(frivo.memID_Fri).mem_Name}</p>
-		                                </a>
-		                            </div>
-		                            <div>
-		                            	<form action="<%=request.getContextPath()%>/fri.do" method="post" onsubmit="return confirm('確定要封鎖?')">
-		                            		<input type="hidden" name="meId" value="${memberVO.mem_Id}">
-		                                	<input type="hidden" name="friId" value="${frivo.memID_Fri}">
-		                                	<input type="hidden" name="action" value="blockFri">
-		                            		<button type="submit" class="btn btn-warning">封鎖</button> 
-		                            	</form>
-		                                
-		                                <form action="<%=request.getContextPath()%>/fri.do" method="post" onsubmit="return confirm('確定要解除好友關係嗎?')">
-		                                	<input type="hidden" name="meId" value="${memberVO.mem_Id}">
-		                                	<input type="hidden" name="friId" value="${frivo.memID_Fri}">
-		                                	<input type="hidden" name="action" value="deleteFri">
-		                                	<button type="submit" class="btn btn-danger">刪除</button>
-		                                </form>
-		                            </div>
-		                        </li>
-	                        </c:forEach>
-                    	</c:when>
-                    	<c:otherwise>
-	                    	<div class="nothing_span">
-	                    		<img src="<%=request.getContextPath()%>/front_end/images/all/cake.png" class="nothing">&nbsp 本月無壽星
-	                    	</div>
-                    	</c:otherwise>
-                    </c:choose>
-                    </ul>
-                  </div>
-                  <!--//當月壽星-->
-                  <!--封鎖名單-->
-                  <div id="blockFri" class="tab-pane fade">
-                    <ul class="list-group">
-                    <c:choose>
-	                    <c:when test="${not empty myFri_Block}">
-	                    	<c:forEach var="frivo" items="${myFri_Block}">
-	                        <li class="list-group-item">                        
-	                            <a href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_public.jsp?uId=${frivo.memID_Fri}">
-	                            	<img src="<%=request.getContextPath()%>/front_end/readPic?action=member&id=${frivo.memID_Fri}">
-	                            </a>
-	                            <div>
-                                	<a href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_public.jsp?uId=${frivo.memID_Fri}">
-                                		<p>${memSvc.getOneMember(frivo.memID_Fri).mem_Name}</p>
-                                	</a>
-	                            </div>
-	                            <div>
-	                            	<form action="<%=request.getContextPath()%>/fri.do" method="post" onsubmit="return confirm('確定要解除封鎖嗎?')">
-	                            		<input type="hidden" name="meId" value="${memberVO.mem_Id}">
-	                                	<input type="hidden" name="friId" value="${frivo.memID_Fri}">
-	                                	<input type="hidden" name="action" value="unBlockFri">		
-	                                	<button type="submit" class="btn btn-success">解除封鎖</button>
-	                                </form>
-	                                <form action="<%=request.getContextPath()%>/fri.do" method="post" onsubmit="return confirm('確定要解除好友關係嗎?')">
-	                                	<input type="hidden" name="meId" value="${memberVO.mem_Id}">
-	                                	<input type="hidden" name="friId" value="${frivo.memID_Fri}">
-	                                	<input type="hidden" name="action" value="deleteFri">
-	                                	<button type="submit" class="btn btn-danger">刪除好友</button>
-	                                </form>
-
-	                            </div>
-	                        </li>
-	                        </c:forEach>
-	                    </c:when>
-	                    <c:otherwise>
-	                    	<div class="nothing_span">
-	                    		<img src="<%=request.getContextPath()%>/front_end/images/all/noblock_happy.png" class="nothing">&nbsp 無封鎖名單哦!
-	                    	</div>
-	                    </c:otherwise>
-                    </c:choose>
-                    </ul>
-                  </div>
-                  <!--//當月壽星-->
-                </div>
-            </div>
-            <!--//首頁左半邊-好友管理-->
+          <!-- 頁籤項目-照片 -->
+          <div class="tab-content" style="float:left;width:100%">
+			     <c:choose>
+                  	<c:when test="${not empty photoList}">
+                      <div class="flex">
+						<c:forEach var="photovo" items="${photoList}">
+							<div class="item">
+						    	<a href="<%=request.getContextPath()%>/front_end/photowall/view_photowall.jsp?photo_No=${photovo.photo_No}">
+						        	<img src="<%=request.getContextPath()%>/front_end/readPic?action=photowall&id=${photovo.photo_No}">
+						    	</a>
+							</div>
+						</c:forEach>
+                      </div>
+                     </c:when>
+                     <c:otherwise>
+                     	<img src="<%=request.getContextPath()%>/front_end/images/all/nothing.png" class="nothing">尚未發表
+                     </c:otherwise>
+                  </c:choose>
           </div>
-          <!--頁籤項目-好友管理內容-->
-          <!--首頁右半邊-->                
-          <div style="width:25%;float:left" class="add_Div">
-                <div>
-                    <a href="<%=request.getContextPath()%>/front_end/blog/blog_add.jsp" class="adddiv_a">
-                        <div style="color:rgb(93,187,133)">
-                            <i class="fas fa-edit"></i><br>
-                            寫旅遊記
-                        </div>        
-                    </a>
-                    <a href="<%=request.getContextPath()%>/front_end/trip/newTrip.jsp" class="adddiv_a">
-                        <div style="color:rgb(245,177,0)">
-                            <i class="far fa-calendar-check"></i><br>
-                            規劃行程
-                        </div>  
-                    </a>
-                    <a href="<%=request.getContextPath()%>/front_end/grp/grpIndex.jsp" class="adddiv_a">
-                        <div style="color:rgb(242,102,34)">
-                        <i class="fas fa-bullhorn"></i><br>
-                        揪旅伴去
-                        </div>  
-                    </a>
-                    <a href="<%=request.getContextPath()%>/front_end/ask/ask.jsp" class="adddiv_a">
-                        <div style="color:rgb(81,167,219)">
-                            <i class="fas fa-comment-dots"></i><br>
-                            提問題去
-                        </div> 
-                    </a>
-
-                </div>
-            </div>
-          <!--//首頁右半邊--> 
+          <!--頁籤項目-照片-->
         </div>
         <!-- //會員個人頁面內容 -->
         <!-- 為了讓內容與footer不要太近 -->
@@ -564,9 +349,6 @@
     </div>
     <!--//container-->
         
-        
-
-    
     <!-- footer -->
     <div class="footer">
         <div class="container">

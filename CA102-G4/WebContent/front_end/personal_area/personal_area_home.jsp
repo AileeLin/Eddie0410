@@ -310,7 +310,7 @@
               </a>
             </li>
             <li class="nav-item">
-              <a href="#gallery">
+              <a href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_photoWall.jsp">
                   <i class="image icon"></i>相片
               </a>
             </li>
@@ -342,7 +342,9 @@
                <div class="u_ind_item">
                   <div class="u_title">
                       <strong>我的照片</strong>
-                      <a href="#"><i class="angle double right icon"></i>更多</a>
+                      <a href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_photoWall.jsp">
+                      	<i class="angle double right icon"></i>更多
+                      </a>
                       <div>
                           <span>${photoList.size()}</span>
                           <span>張照片</span>
@@ -373,7 +375,9 @@
                <div class="u_ind_item">
                   <div class="u_title">
                       <strong>我的旅遊記</strong>
-                      <a href="#"><i class="angle double right icon"></i>更多</a>
+                      <a href="<%=request.getContextPath()%>/blog.do?action=myBlog&mem_id=${memberVO.mem_Id}">
+                      	<i class="angle double right icon"></i>更多
+                      </a>
                       <div>
                           <span>${blogList.size()}</span>
                           <span>篇遊記</span>
@@ -426,7 +430,9 @@
                <div class="u_ind_item">
                   <div class="u_title">
                       <strong>我的行程</strong>
-                      <a href="#"><i class="angle double right icon"></i>更多</a>
+                      <a href="<%=request.getContextPath()%>/front_end/trip/personal_area_trip.jsp">
+                      	<i class="angle double right icon"></i>更多
+                      </a>
                       <div>
                           <span>${TripList.size()}</span>
                           <span>篇行程</span>

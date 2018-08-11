@@ -40,7 +40,7 @@ public class DBImgReader extends HttpServlet {
 	
 	private void nopic(ServletOutputStream out) throws IOException{
 		
-		InputStream in = getServletContext().getResourceAsStream("/img/nopic.png");
+		InputStream in = getServletContext().getResourceAsStream("/front_end/images/all/nopic.png");
 		byte[] buf = new byte[in.available()];
 		in.read(buf);
 		out.write(buf);
