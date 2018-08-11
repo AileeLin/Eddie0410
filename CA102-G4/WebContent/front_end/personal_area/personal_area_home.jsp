@@ -40,28 +40,21 @@
 		return;
 	}
 		
-	//取得登錄者的照片牆(未被檢舉)
-	Photo_wallDAO photoSvc = new Photo_wallDAO(); 
-	List<Photo_wallVO> photoList=photoSvc.getAll_ByMemID(memberVO.getMem_Id());
+	//取得登錄者的照片牆且狀態為1(未被檢舉)
+	Photo_wallService photoSvc = new Photo_wallService(); 
+	List<Photo_wallVO> photoList=photoSvc.getByMem_id(memberVO.getMem_Id());
 	pageContext.setAttribute("photoList", photoList);
 	
-	//取得登錄者的部落格(未被檢舉)
+	//取得登錄者的部落格且狀態為0顯示(未被檢舉)
 	blogService blogSvc = new blogService();
 	List<blogVO> blogList=blogSvc.findByMemId(memberVO.getMem_Id());
 	pageContext.setAttribute("blogList", blogList);
 	
-	/***************取出登入者的行程******************/
-	List<TripVO> allTripList = tripSvc.getAll();
-	List<TripVO> myTripList = new ArrayList<>();
-	for(TripVO tripvo : allTripList){
-		if(tripvo.getMem_id().equals(memberVO.getMem_Id())){
-			myTripList.add(tripvo);		
-		}
-	}
-
-	pageContext.setAttribute("myTripList",myTripList);
+	/***************取出登入者的行程且狀態不為0的******************/
+	List<TripVO> TripList = tripSvc.getByMem_id(memberVO.getMem_Id());
+	pageContext.setAttribute("TripList",TripList);
 	
-	//取得登錄者所參與的群組聊天*******
+	//*****************聊天用：取得登錄者所參與的群組聊天*************/
 	List<ChatRoom_JoinVO> myCRList =chatRoomJoinSvc.getMyChatRoom(memberVO.getMem_Id());
 	Set<ChatRoom_JoinVO> myCRGroup = new HashSet<>(); //裝著我參與的聊天對話為群組聊天時
 	
@@ -74,7 +67,7 @@
 	}
 	pageContext.setAttribute("myCRList", myCRGroup);
 	
-	/***************取出會員的好友******************/
+	/***************聊天用：取出會員的好友******************/
 	FriendService friSvc = new FriendService();
 	List<Friend> myFri = friSvc.findMyFri(memberVO.getMem_Id(),2); //互相為好友的狀態
 	pageContext.setAttribute("myFri",myFri);
@@ -302,7 +295,7 @@
               </a>
             </li>
             <li class="nav-item">
-              <a href="#trip">
+              <a href="<%=request.getContextPath()%>/front_end/trip/personal_area_trip.jsp">
                   <i class="fas fa-map"></i>行程
               </a>
             </li>
@@ -435,15 +428,15 @@
                       <strong>我的行程</strong>
                       <a href="#"><i class="angle double right icon"></i>更多</a>
                       <div>
-                          <span>${myTripList.size()}</span>
+                          <span>${TripList.size()}</span>
                           <span>篇行程</span>
                       </div>
                   </div>
                   <div class="mem_ind_item_plan">
                      <div class="ui items">
                       <c:choose>
-	                      <c:when test="${not empty myTripList}">
-		                      <c:forEach var="tripvo" items="${myTripList}" begin="0" end="2">
+	                      <c:when test="${not empty TripList}">
+		                      <c:forEach var="tripvo" items="${TripList}" begin="0" end="2">
 			                      <div class="item">
 			                        <div class="ui small image">
 			                         <a href="<%=request.getContextPath()%>/front_end/trip/tripDetail.jsp?trip_no=${tripvo.trip_no}">

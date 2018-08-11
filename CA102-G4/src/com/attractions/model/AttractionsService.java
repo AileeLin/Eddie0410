@@ -68,5 +68,7 @@ public class AttractionsService {
 	public List<AttractionsVO> getAll(Map<String, String[]> map){
 		return dao.getAll(map);
 	}
-	
+	public List<AttractionsVO> getAllRandom() {
+		return dao.getAllRandom();
+	}
 }

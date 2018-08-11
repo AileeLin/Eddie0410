@@ -14,7 +14,7 @@ public class AttractionsEditDAO implements AttractionsEditDAO_interface {
 	static {
 		try {
 			Context ctx = new InitialContext();
-			ds = (DataSource) ctx.lookup("java:comp/env/jdbc/CA102G4DB");
+			ds = (DataSource) ctx.lookup("java:comp/env/jdbc/CA102G4");
 		} catch (NamingException e) {
 			e.printStackTrace();
 		}

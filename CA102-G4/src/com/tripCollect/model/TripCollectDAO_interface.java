@@ -8,4 +8,6 @@ public interface TripCollectDAO_interface {
 	public int delete(String trip_no,String mem_id);
 	public TripCollectVO findByPrimaryKey(String trip_no,String mem_id);
 	public List<TripCollectVO> getAll();
+	
+	public List<TripCollectVO> getByMem_id(String mem_id);
 }

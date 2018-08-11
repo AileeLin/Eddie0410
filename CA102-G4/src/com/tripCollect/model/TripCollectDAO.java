@@ -14,7 +14,7 @@ public class TripCollectDAO implements TripCollectDAO_interface {
 	static {
 		try {
 			Context ctx = new InitialContext();
-			ds = (DataSource) ctx.lookup("java:comp/env/jdbc/CA102G4DB");
+			ds = (DataSource) ctx.lookup("java:comp/env/jdbc/CA102G4");
 		} catch (NamingException e) {
 			e.printStackTrace();
 		}
@@ -26,6 +26,7 @@ public class TripCollectDAO implements TripCollectDAO_interface {
 	private static final String SQL_DELETE = "delete from TRIP_COLLECT where TRIP_NO = ? and MEM_ID = ?";
 	private static final String SQL_QUERY = "select * from TRIP_COLLECT where TRIP_NO = ? and MEM_ID = ?";
 	private static final String SQL_QUERY_ALL = "select * from TRIP_COLLECT";
+	private static final String SQL_QUERY_MEM = "select * from TRIP_COLLECT where MEM_ID = ?";
 
 	@Override
 	public int insert(TripCollectVO tripCollectVO) {
@@ -235,4 +236,55 @@ public class TripCollectDAO implements TripCollectDAO_interface {
 		return list;
 	}
 
+	@Override
+	public List<TripCollectVO> getByMem_id(String mem_id) {
+		List<TripCollectVO> list = new ArrayList<TripCollectVO>();
+		TripCollectVO tripCollectVO = null;
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+
+		try {
+			con = ds.getConnection();
+			pstmt = con.prepareStatement(SQL_QUERY_MEM);
+			pstmt.setString(1, mem_id);
+			rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				tripCollectVO = new TripCollectVO();
+				tripCollectVO.setTrip_no(rs.getString("TRIP_NO"));
+				tripCollectVO.setMem_id(rs.getString("MEM_ID"));
+
+				list.add(tripCollectVO);
+			}
+			// Handle any driver errors
+		} catch (SQLException se) {
+			throw new RuntimeException("A database error occured. " + se.getMessage());
+
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if (con != null) {
+				try {
+					con.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return list;
+	}
+	
 }

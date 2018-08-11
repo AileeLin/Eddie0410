@@ -56,31 +56,25 @@
 	MemberVO otherUser_memVO = memSvc.getOneMember(uId); 
 	pageContext.setAttribute("otherUser_memVO",otherUser_memVO);
 	
-	//取出該uI照片牆的照片(未被檢舉 OK)
-	Photo_wallDAO photoSvc = new Photo_wallDAO();
-	List<Photo_wallVO> photoList=photoSvc.getAll_ByMemID(uId);
+	//取出該uI照片牆的照片且狀態為1(未被檢舉 OK)
+	Photo_wallService photoSvc = new Photo_wallService();
+	List<Photo_wallVO> photoList=photoSvc.getByMem_id(uId);
 	pageContext.setAttribute("photoList", photoList);
 	
-	//取出該uId部落格文章(未被檢舉 OK)
+	//取出該uId部落格文章且狀態為0顯示(未被檢舉 OK)
 	blogService blogSvc = new blogService();
 	List<blogVO> blogList=blogSvc.findByMemId(uId);//動態從session取得會員ID
 	pageContext.setAttribute("blogList", blogList);
 	
-	/***************取出uId的行程******************/
-	List<TripVO> allTripList = tripSvc.getAll();
-	List<TripVO> uTripList = new ArrayList<>();
-	for(TripVO tripvo : allTripList){
-		if(tripvo.getMem_id().equals(uId)){
-			uTripList.add(tripvo);		
-		}
-	}
+	//取出uId的行程且狀態不為0的
+	List<TripVO> uTripList =tripSvc.getByMem_id(uId);
 	pageContext.setAttribute("uTripList",uTripList);
 	
-	/***************取出uId的發起的揪團(檢舉後處理???????)******************/
-	List<GrpVO> allGrpList = grpSvc.getAll();
+	/***************取出uId的發起的揪團(僅撈出1成團中的)******************/
+	List<GrpVO> allGrpList = grpSvc.getAll_ByMemId(uId);
 	List<GrpVO> uGrpList = new ArrayList<>();
 	for(GrpVO grpVO : allGrpList){
-		if(grpVO.getMem_Id().equals(uId)){
+		if(grpVO.getGrp_Status() == 1){
 			uGrpList.add(grpVO);		
 		}
 	}
@@ -159,8 +153,8 @@
     <!-- //AD_Page相關CSS及JS -->
     
     <!-- 聊天相關CSS及JS -->
-<%--     <link href="<%=request.getContextPath()%>/front_end/css/chat/chat_style.css" rel="stylesheet" type="text/css"> --%>
-<%--     <script src="<%=request.getContextPath()%>/front_end/js/chat/chat.js"></script> --%>
+    <link href="<%=request.getContextPath()%>/front_end/css/chat/chat_style.css" rel="stylesheet" type="text/css">
+    <script src="<%=request.getContextPath()%>/front_end/js/chat/chat.js"></script>
     <!-- //聊天相關CSS及JS -->
     
 
@@ -637,13 +631,16 @@
 						<c:forEach var="grpvo" items="${uGrpList}">
 							<div class="ui card">
 							  <div class="image">
-						 		<a href="">
+						 		<a href="<%=request.getContextPath()%>/front_end/grp/grp_oneview.jsp?grp_Id=${grpvo.grp_Id}">
 							    	<img src="<%=request.getContextPath()%>/front_end/readPic?action=grp&id=${grpvo.grp_Id}">
 								</a>
 							  </div>
 						  	  <div class="content">
-								<a href="" class="header">
+								<a href="<%=request.getContextPath()%>/front_end/grp/grp_oneview.jsp?grp_Id=${grpvo.grp_Id}" class="header">
 									${grpvo.grp_Title}
+									<c:if test="${grpvo.grp_Status == 1}">
+										<br><span style="color:red">(揪團中)</span>
+									</c:if>
 								</a>
 								<div class="meta">
 									<span class="date">

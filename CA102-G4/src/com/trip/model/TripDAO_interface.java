@@ -1,6 +1,8 @@
 package com.trip.model;
 
-import java.util.List;
+import java.util.*;
+
+import com.tripDays.model.TripDaysVO;
 
 public interface TripDAO_interface {
 	public int insert(TripVO tripVO);
@@ -9,4 +11,16 @@ public interface TripDAO_interface {
 	public TripVO findByPrimaryKey(String trip_no);
 	public List<TripVO> getAll();
 	public void addTrip(TripVO tripVO);
+	
+	public void insertOneTrip(TripVO tripVO,List<TripDaysVO> tdList,Map<Integer,List<Object>> tripDayMap);
+	
+	public void update2(TripVO tripVO,List<TripDaysVO> tdList,Map<Integer,List<Object>> tripDayMap);
+	
+	public List<TripVO> getPublish();
+	
+	public List<TripVO> getByMem_id(String mem_id);
+	
+	public int deleteOnline(String trip_no);
+	
+	public List<TripVO> getPublishOrderViews();
 }

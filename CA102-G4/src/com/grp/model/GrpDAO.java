@@ -21,10 +21,10 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
+import com.grp_mem.model.Grp_memVO;
 import com.mem.model.MemberVO;
+import com.photo_wall.model.Photo_wallVO;
 import com.tools.jdbcUtil_CompositeQuery_Grp;
-
-
 	
 	public class GrpDAO implements GrpDAO_interface {
 		
@@ -41,51 +41,88 @@ import com.tools.jdbcUtil_CompositeQuery_Grp;
 		//新增一個揪團
 		private static final String INSERT_STMT =
 				"Insert into GRP (GRP_ID,MEM_ID,GRP_START,GRP_END,GRP_CNT,GRP_ACPT,TRIP_NO,TRIP_START,TRIP_END,TRIP_LOCALE,TRIP_DETAILS,GRP_PHOTO,GRP_STATUS,CHATROOM_ID,GRP_TITLE,GRP_PRICE) "
-				+ "VALUES ('GRP'||LPAD(to_char(GRP_seq.NEXTVAL), 6, '0'),?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+				+ "VALUES ('GRP'||LPAD(to_char(GRP_seq.NEXTVAL), 6, '0'),?,SYSDATE,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		//更新揪團
 		private static final String UPDATE =
-				"UPDATE GRP SET MEM_ID=?,GRP_START=?,GRP_END=?,GRP_CNT=?,GRP_ACPT=?,TRIP_NO=?,TRIP_START=?,TRIP_END=?,TRIP_LOCALE=?,TRIP_DETAILS=?,GRP_PHOTO=?,GRP_STATUS=?,CHATROOM_ID=?,GRP_TITLE=?,GRP_PRICE=? WHERE GRP_ID =? ";
+				"UPDATE GRP SET GRP_END=?,GRP_CNT=?,GRP_ACPT=?,TRIP_NO=?,TRIP_START=?,TRIP_END=?,TRIP_LOCALE=?,TRIP_DETAILS=?,GRP_PHOTO=?,CHATROOM_ID=?,GRP_TITLE=?,GRP_PRICE=? WHERE GRP_ID =? ";
 		//刪除揪團
 		private static final String DELETE_GRP =
 				"DELETE FROM GRP WHERE GRP_ID = ?";
+		//已揪團開始日期篩選狀態是正常的揪團 
+		private static final String GET_ALL = 
+				"SELECT * FROM GRP WHERE GRP_STATUS = 1 ORDER BY GRP_START DESC";
 		
 		private static final String GET_ONE_STMT = 
 				"SELECT * FROM GRP WHERE GRP_ID = ?";
-		private static final String GET_ALL = 
-				"SELECT * FROM GRP ORDER BY GRP_ID";
 		
+		//讀取登入者的揪團
+		private static final String GET_ALL_BYMEMID=
+			"SELECT * FROM GRP WHERE MEM_ID = ?";
+		
+		//取得我參加揪團的內容
+		private static final String GET_JOIN_GRP = 
+				"SELECT GRP_PHOTO,TRIP_START,GRP_TITLE,TRIP_DETAILS,GRP_TITLE,GRP_MEM.GRP_ID FROM GRP JOIN GRP_MEM ON GRP.GRP_ID = GRP_MEM.GRP_ID WHERE GRP_MEM.MEM_ID = ? ORDER BY TRIP_START DESC";		
 		
 		@Override
 		public void insert(GrpVO grpVO) {
 			
+			System.out.println("DAO的INSERT-1");
 			Connection con = null;
 			PreparedStatement pstmt = null;
 			
 			try {
-				
+				System.out.println("DAO的INSERT-2");
+
 				con = ds.getConnection();
 
 				pstmt = con.prepareStatement(INSERT_STMT);
-				
+				System.out.println("DAO的INSERT-3");
+
 				pstmt.setString(1, grpVO.getMem_Id());
-				pstmt.setTimestamp(2, grpVO.getGrp_Start());
-				pstmt.setTimestamp(3, grpVO.getGrp_End());
-				pstmt.setInt(4, grpVO.getGrp_Cnt());
-				pstmt.setInt(5, grpVO.getGrp_Acpt());
-				pstmt.setString(6, grpVO.getTrip_No());
-				pstmt.setTimestamp(7, grpVO.getTrip_Start());
-				pstmt.setTimestamp(8, grpVO.getTrip_End());
-				pstmt.setString(9, grpVO.getTrip_Locale());
-				pstmt.setString(10, grpVO.getTrip_Details());
-				pstmt.setBytes(11, grpVO.getGrp_Photo());
-				pstmt.setInt(12, grpVO.getGrp_Status());
-				pstmt.setString(13, grpVO.getChatroom_Id());
-				pstmt.setString(14, grpVO.getGrp_Title());
-				pstmt.setString(15, grpVO.getGrp_Price());
+				
+//				pstmt.setTimestamp(2, grpVO.getGrp_Start());
+				pstmt.setTimestamp(2, grpVO.getGrp_End());
+				
+				System.out.println("1的="+grpVO.getGrp_End());
+				
+				//可接受報名人數
+				
+				pstmt.setInt(3, grpVO.getGrp_Cnt());
+				
+				System.out.println("1-3的="+grpVO.getGrp_Cnt());
+				
+				//滿團人數
+				
+				pstmt.setInt(4, grpVO.getGrp_Acpt());				
+				
+				System.out.println("1-4的="+grpVO.getGrp_Acpt());
+
+				pstmt.setString(5, grpVO.getTrip_No());
+				
+				System.out.println("1-5的="+grpVO.getTrip_No());
 
 				
-				pstmt.executeUpdate();
+				pstmt.setTimestamp(6, grpVO.getTrip_Start());
 				
+				System.out.println("2的="+grpVO.getTrip_Start());
+
+				pstmt.setTimestamp(7, grpVO.getTrip_End());
+				
+				System.out.println("3的="+grpVO.getTrip_End());
+
+				pstmt.setString(8, grpVO.getTrip_Locale());
+				pstmt.setString(9, grpVO.getTrip_Details());
+				pstmt.setBytes(10, grpVO.getGrp_Photo());
+				pstmt.setInt(11, grpVO.getGrp_Status());
+				pstmt.setString(12, grpVO.getChatroom_Id());
+				pstmt.setString(13, grpVO.getGrp_Title());
+				pstmt.setString(14, grpVO.getGrp_Price());
+				
+				System.out.println("DAO的INSERT-4");
+
+				pstmt.executeUpdate();
+				System.out.println("DAO的INSERT-5");
+
 			}catch (SQLException se) {
 				throw new RuntimeException("A database error occured. "
 						+ se.getMessage());
@@ -119,23 +156,22 @@ import com.tools.jdbcUtil_CompositeQuery_Grp;
 
 				pstmt = con.prepareStatement(UPDATE);
 				
-				pstmt.setString(1, grpVO.getMem_Id());
-				pstmt.setTimestamp(2, grpVO.getGrp_Start());
-				pstmt.setTimestamp(3, grpVO.getGrp_End());
-				pstmt.setInt(4, grpVO.getGrp_Cnt());
-				pstmt.setInt(5, grpVO.getGrp_Acpt());
-				pstmt.setString(6, grpVO.getTrip_No());
-				pstmt.setTimestamp(7, grpVO.getTrip_Start());
-				pstmt.setTimestamp(8, grpVO.getTrip_End());
-				pstmt.setString(9, grpVO.getTrip_Locale());
-				pstmt.setString(10, grpVO.getTrip_Details());
-				pstmt.setBytes(11, grpVO.getGrp_Photo());
-				pstmt.setInt(12, grpVO.getGrp_Status());
-				pstmt.setString(13, grpVO.getChatroom_Id());
-				pstmt.setString(14, grpVO.getGrp_Title());
-				pstmt.setString(15, grpVO.getGrp_Price());
-				pstmt.setString(16, grpVO.getGrp_Id());
+				pstmt.setTimestamp(1, grpVO.getGrp_End());
+				pstmt.setInt(2, grpVO.getGrp_Cnt());
+				pstmt.setInt(3, grpVO.getGrp_Acpt());
+				pstmt.setString(4, grpVO.getTrip_No());
+				pstmt.setTimestamp(5, grpVO.getTrip_Start());
+				pstmt.setTimestamp(6, grpVO.getTrip_End());
+				pstmt.setString(7, grpVO.getTrip_Locale());
+				pstmt.setString(8, grpVO.getTrip_Details());
+				pstmt.setBytes(9, grpVO.getGrp_Photo());
+				pstmt.setString(10, grpVO.getChatroom_Id());
+				pstmt.setString(11, grpVO.getGrp_Title());
+				pstmt.setString(12, grpVO.getGrp_Price());
+				pstmt.setString(13, grpVO.getGrp_Id());
 				pstmt.executeUpdate();
+				
+
 				
 			} catch (SQLException se) {
 				throw new RuntimeException("A database error occured. "
@@ -207,18 +243,80 @@ import com.tools.jdbcUtil_CompositeQuery_Grp;
 			}
 		}
 		
-		
+		//***************為了讀取某位會員的揪團內容***********************
+		public List<GrpVO> getAll_ByMemID(String mem_Id){
+			List<GrpVO> list = new ArrayList<>();
+			
+			Connection con=null;
+			PreparedStatement pstmt=null;
+			ResultSet rs=null;
+			
+			try {
+			con = ds.getConnection();
+			pstmt  = con.prepareStatement(GET_ALL_BYMEMID);
+			pstmt.setString(1, mem_Id);
+			rs = pstmt.executeQuery();
+			
+			while(rs.next()) {
+				
+				GrpVO grpVO = new GrpVO();
+				grpVO.setMem_Id(rs.getString("MEM_ID"));
+				grpVO.setGrp_Id(rs.getString("GRP_ID"));
+				grpVO.setGrp_Start(rs.getTimestamp("GRP_START"));
+				grpVO.setGrp_End(rs.getTimestamp("GRP_END"));
+				grpVO.setGrp_Cnt(rs.getInt("GRP_CNT"));
+				grpVO.setGrp_Acpt(rs.getInt("GRP_ACPT"));
+				grpVO.setTrip_No(rs.getString("TRIP_NO"));
+				grpVO.setTrip_Start(rs.getTimestamp("TRIP_START"));
+				grpVO.setTrip_End(rs.getTimestamp("TRIP_END"));
+				grpVO.setTrip_Locale(rs.getString("TRIP_LOCALE"));
+				grpVO.setTrip_Details(rs.getString("TRIP_DETAILS"));
+				grpVO.setGrp_Photo(rs.getBytes("GRP_PHOTO"));
+				grpVO.setGrp_Status(rs.getInt("GRP_STATUS"));
+				grpVO.setChatroom_Id(rs.getString("CHATROOM_ID"));
+				grpVO.setGrp_Title(rs.getString("GRP_TITLE"));
+				grpVO.setGrp_Price(rs.getString("GRP_PRICE"));
+				list.add(grpVO);
+
+			}
+			
+			}catch(SQLException se) {
+				throw new RuntimeException ("資料庫發生錯誤"+se.getMessage());
+			}finally{
+				if (rs != null) {
+					try {
+						rs.close();
+					} catch (SQLException se) {
+						se.printStackTrace(System.err);
+					}
+				}
+				if (pstmt != null) {
+					try {
+						pstmt.close();
+					} catch (SQLException se) {
+						se.printStackTrace(System.err);
+					}
+				}
+				if (con != null) {
+					try {
+						con.close();
+					} catch (Exception e) {
+						e.printStackTrace(System.err);
+					}
+				}
+			}
+			return list;
+		}
 
 		@Override
 		public GrpVO findByPrimaryKey(String grp_Id) {
-			
 			GrpVO grpVO = null;
 			Connection con = null;
 			PreparedStatement pstmt = null;
 			ResultSet rs = null;
 			
 			try {
-				
+
 				con = ds.getConnection();
 
 				pstmt = con.prepareStatement(GET_ONE_STMT);
@@ -228,7 +326,7 @@ import com.tools.jdbcUtil_CompositeQuery_Grp;
 				rs = pstmt.executeQuery();
 
 				while (rs.next()) {
-					
+
 					grpVO = new GrpVO();
 					grpVO.setGrp_Id(rs.getString("GRP_ID"));
 					grpVO.setGrp_Start(rs.getTimestamp("GRP_START"));
@@ -245,6 +343,7 @@ import com.tools.jdbcUtil_CompositeQuery_Grp;
 					grpVO.setChatroom_Id(rs.getString("CHATROOM_ID"));
 					grpVO.setGrp_Title(rs.getString("GRP_TITLE"));
 					grpVO.setGrp_Price(rs.getString("GRP_PRICE"));
+					grpVO.setMem_Id(rs.getString("MEM_ID"));
 
 				}
 				
@@ -276,6 +375,7 @@ import com.tools.jdbcUtil_CompositeQuery_Grp;
 					}
 				}
 			}
+
 			return grpVO;
 		}
 		
@@ -317,7 +417,7 @@ import com.tools.jdbcUtil_CompositeQuery_Grp;
 				grpVO.setGrp_Price(rs.getString("GRP_PRICE"));
 				list.add(grpVO);
 				
-				//System.out.println(grpVO.getGrp_Id());
+				System.out.println(grpVO.getGrp_Id());
 			}
 			
 
@@ -421,6 +521,67 @@ import com.tools.jdbcUtil_CompositeQuery_Grp;
 			}
 			return list;
 			 
+		}
+		
+		@Override
+		public List<GrpVO> getAll_join_grp(String mem_Id) {
+			List<GrpVO> list = new ArrayList<GrpVO>();
+			GrpVO grpVO = null;
+			Connection con = null;
+			PreparedStatement pstmt = null;
+			ResultSet rs = null;
+			
+			try {
+				con = ds.getConnection();
+				
+				pstmt = con.prepareStatement(GET_JOIN_GRP);
+				
+				
+				pstmt.setString(1, mem_Id);
+				
+				rs = pstmt.executeQuery();
+
+				while (rs.next()) {
+					
+					grpVO = new GrpVO();
+					grpVO.setGrp_Id(rs.getString("GRP_ID"));
+					grpVO.setGrp_Title(rs.getString("GRP_TITLE"));
+					grpVO.setTrip_Start(rs.getTimestamp("TRIP_START"));
+					grpVO.setTrip_Details(rs.getString("TRIP_DETAILS"));
+					grpVO.setGrp_Photo(rs.getBytes("GRP_PHOTO"));
+					
+					list.add(grpVO);
+				}
+				
+
+				// Handle any driver errors
+			}catch (SQLException se) {
+				throw new RuntimeException("A database error occured. " + se.getMessage());
+				// Clean up JDBC resources
+			} finally {
+				if (rs != null) {
+					try {
+						rs.close();
+					} catch (SQLException se) {
+						se.printStackTrace(System.err);
+					}
+				}
+				if (pstmt != null) {
+					try {
+						pstmt.close();
+					} catch (SQLException se) {
+						se.printStackTrace(System.err);
+					}
+				}
+				if (con != null) {
+					try {
+						con.close();
+					} catch (Exception e) {
+						e.printStackTrace(System.err);
+					}
+				}
+			}
+			return list;
 		}
 	}
 		

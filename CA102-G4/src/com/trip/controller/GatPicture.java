@@ -89,13 +89,55 @@ public class GatPicture extends HttpServlet {
 				in.close();
 			}
 		}
+		
+		if("trip_no".equals(reqStr)) {
+			try {
+				String reqPara = req.getParameter("trip_no").trim();
+				Statement stmt = con.createStatement();
+				String sql = "select ATTRACTIONS.ATT_PICTURE"+ 
+						" from ATTRACTIONS INNER JOIN"+
+					    "(select ATTRACTIONS_TRIP.ATT_NO"+
+					    " from ATTRACTIONS_TRIP INNER JOIN"+
+					    "(select TRIP.TRIP_NO, TRIP_DAYS.TRIPDAY_NO"+
+					    " from TRIP INNER JOIN TRIP_DAYS on(TRIP.TRIP_NO = TRIP_DAYS.TRIP_NO)"+
+					    " where TRIP.TRIP_NO ='"+reqPara+"' AND ROWNUM=1) FDLocation"+
+					    " on(ATTRACTIONS_TRIP.TRIPDAY_NO = FDLocation.TRIPDAY_NO)"+
+					    " where ROWNUM=1) FDATT"+
+					    " on(ATTRACTIONS.ATT_NO = FDATT.ATT_NO)"+
+					 " where RowNum = 1";
+				ResultSet rs = stmt.executeQuery(sql);
+				if (rs.next()) {
+					BufferedInputStream in = new BufferedInputStream(rs.getBinaryStream(1));
+					byte[] buf = new byte[4 * 1024]; // 4K buffer
+					int len;
+					while ((len = in.read(buf)) != -1) {
+						out.write(buf, 0, len);
+					}
+					in.close();
+				} else {
+					InputStream in = getServletContext().getResourceAsStream("/front_end/images/all/8.jpg");
+					byte[] buf = new byte[in.available()];
+					in.read(buf);
+					out.write(buf);
+					in.close();
+				}
+				rs.close();
+				stmt.close();
+			} catch (Exception e) {
+				InputStream in = getServletContext().getResourceAsStream("/front_end/images/all/8.jpg");
+				byte[] buf = new byte[in.available()];
+				in.read(buf);
+				out.write(buf);
+				in.close();
+			}
+		}
 	}
 
 	public void init() throws ServletException {
 		Context ctx;
 		try {
 			ctx = new javax.naming.InitialContext();
-			DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/CA102G4");
+			DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/CA102G4DB");
 			if (ds != null) {
 				con = ds.getConnection();
 			}

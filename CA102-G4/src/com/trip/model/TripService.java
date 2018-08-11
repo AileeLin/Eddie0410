@@ -3,6 +3,10 @@ package com.trip.model;
 import java.sql.Date;
 import java.util.*;
 
+import com.mysql.fabric.xmlrpc.base.Array;
+import com.tripCollect.model.*;
+import com.tripDays.model.TripDaysVO;
+
 public class TripService {
 	
 	private TripDAO_interface dao;
@@ -44,4 +48,39 @@ public class TripService {
 		return dao.getAll();
 	}
 	
+	public void insertOneTrip(TripVO tripVO, List<TripDaysVO> tdList, Map<Integer, List<Object>> tripDayMap) {
+		dao.insertOneTrip(tripVO, tdList, tripDayMap);
+	}
+	
+	public List<TripVO> getByMem_id(String mem_id){
+		return dao.getByMem_id(mem_id);
+	}
+	
+	public List<TripVO> getOneMemCollection(String mem_id){
+		List<TripVO> list = new ArrayList<>();
+		TripCollectService tripColSvc = new TripCollectService();
+		List<TripCollectVO> tripColList = tripColSvc.getByMem_id(mem_id);
+		for(TripCollectVO tcVO : tripColList) {
+			TripVO tripVO = new TripVO();
+			tripVO = getOneTripByPK(tcVO.getTrip_no());
+			list.add(tripVO);
+		}
+		return list;
+	}
+	
+	public List<TripVO> getPublish() {
+		return dao.getPublish();
+	}
+	
+	public int deleteOnline(String trip_no) {
+		return dao.deleteOnline(trip_no);
+	}
+	
+	public List<TripVO> getPublishOrderViews() {
+		return dao.getPublishOrderViews();
+	}
+	
+	public void updateByEdit(TripVO tripVO, List<TripDaysVO> tdList, Map<Integer, List<Object>> tripDayMap) {
+		dao.update2(tripVO, tdList, tripDayMap);
+	}
 }

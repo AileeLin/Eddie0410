@@ -12,6 +12,10 @@ public interface Photo_wallDAO_interface {
 	//更改照片牆狀態
 	int update_State(String mem_Id,String photo_No,Integer mem_State);
 	
+	
+	//*************讀取特定會員的照片牆******************
+	List<Photo_wallVO> getAll_ByMemID(String mem_Id);
+	
 	//搜尋照片牆
 //	public List<Photo_wallVO> findBy ;
 	

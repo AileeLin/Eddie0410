@@ -24,4 +24,9 @@ public class Photo_wallService {
 		return dao.findByPrimaryKey(photo_No);
 	}
 	
+	//***************搜尋特定會員且照片狀態為1的***************
+	public List<Photo_wallVO> getByMem_id(String mem_id){
+		return dao.getAll_ByMemID(mem_id);
 	}
+	
+}

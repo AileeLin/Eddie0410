@@ -36,7 +36,7 @@ public class GrpPicReader extends HttpServlet {
 				in.close();
 			} else {
 				//res.sendError(HttpServletResponse.SC_NOT_FOUND);
-				InputStream in = getServletContext().getResourceAsStream("/front_end/images/all/no.png");
+				InputStream in = getServletContext().getResourceAsStream("/front_end/images/all/grp_no.jpg");
 				byte[] buf = new byte[in.available()];
 				in.read(buf);
 				out.write(buf);
@@ -46,7 +46,7 @@ public class GrpPicReader extends HttpServlet {
 			stmt.close();
 		} catch (Exception e) {
 			//System.out.println(e);
-			InputStream in = getServletContext().getResourceAsStream("/front_end/images/all/null.png");
+			InputStream in = getServletContext().getResourceAsStream("/front_end/images/all/grp_no.jpg");
 			byte[] buf = new byte[in.available()];
 			in.read(buf);
 			out.write(buf);

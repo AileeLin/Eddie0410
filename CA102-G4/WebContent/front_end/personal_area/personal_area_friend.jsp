@@ -290,7 +290,7 @@
               </a>
             </li>
             <li class="nav-item">
-              <a href="#trip">
+              <a href="<%=request.getContextPath()%>/front_end/trip/personal_area_trip.jsp">
                   <i class="fas fa-map"></i>行程
               </a>
             </li>

@@ -10,4 +10,6 @@ public interface AttractionsDAO_interface {
 	public List<AttractionsVO> getAll();
 	public byte[] getAttPicture(String att_no);
 	public List<AttractionsVO> getAll(Map<String,String[]> map);
+	//世銘打的
+	public List<AttractionsVO> getAllRandom();
 }

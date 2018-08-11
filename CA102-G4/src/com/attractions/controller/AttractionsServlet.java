@@ -23,7 +23,7 @@ public class AttractionsServlet extends HttpServlet{
 		res.setContentType("text/html; charset=Big5");
 		req.setCharacterEncoding("UTF-8");
 		String action = req.getParameter("action").trim();
-		System.out.println(action);
+//		System.out.println(action);
 		
 		if("search".equals(action)) {
 			
@@ -37,7 +37,7 @@ public class AttractionsServlet extends HttpServlet{
 			String keyword = null;
 			if(req.getParameter("keyword")!=null&&!req.getParameter("keyword").trim().isEmpty()) {
 				keyword = req.getParameter("keyword").trim();
-				System.out.println("keyword:"+keyword);
+//				System.out.println("keyword:"+keyword);
 			}
 			if(keyword!=null&&!keyword.isEmpty()) {
 				HashMap<String, String[]> map1 = new HashMap<String, String[]>(req.getParameterMap());
@@ -77,18 +77,18 @@ public class AttractionsServlet extends HttpServlet{
 			try {
 				/***************************1.將輸入資料轉為Map**********************************/ 
 				HttpSession session = req.getSession();
-				Map<String, String[]> map =(Map<String, String[]>) session.getAttribute("map");
+				Map<String, String[]> map =(Map<String, String[]>) session.getAttribute("map_tripEdit");
 				String keyword = null;
 				if(req.getParameter("keyword")!=null&&!req.getParameter("keyword").trim().isEmpty()) {
 					keyword = req.getParameter("keyword").trim();
-					System.out.println("keyword:"+keyword);
+//					System.out.println("keyword:"+keyword);
 				}
 				if(keyword!=null&&!keyword.isEmpty()) {
 					HashMap<String, String[]> map1 = new HashMap<String, String[]>(req.getParameterMap());
 					map1.put("att_name", new String[] {keyword});
 					map1.put("att_address", new String[] {keyword});
 					map1.put("administrative_area", new String[] {keyword});
-					session.setAttribute("map",map1);
+					session.setAttribute("map_tripEdit",map1);
 					map = map1;
 				}
 				
@@ -102,7 +102,7 @@ public class AttractionsServlet extends HttpServlet{
 				}
 				/***************************3.查詢完成,準備轉交(Send the Success view)************/
 				req.setAttribute("list", list);
-				RequestDispatcher successView = req.getRequestDispatcher("/front_end/attractions/att.jsp");
+				RequestDispatcher successView = req.getRequestDispatcher("/front_end/trip/tripEdit.jsp");
 				successView.forward(req, res);
 				/***************************其他可能的錯誤處理**********************************/
 			}catch(Exception e) {

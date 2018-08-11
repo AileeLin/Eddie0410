@@ -34,7 +34,8 @@ public class AttractionsDAO implements AttractionsDAO_interface {
 //	private static final String SQL_QUERY = "select * from ATTRACTIONS where ATT_NO = ?";
 //	private static final String SQL_QUERY_ALL = "select * from ATTRACTIONS";
 	private static final String SQL_QUERY_PICTURE = "select ATT_PICTURE from ATTRACTIONS where ATT_NO = ?";
-
+	//世銘打的
+	private static final String SQL_QUERY_ALL_RANDOM = "SELECT * FROM(SELECT * FROM ATTRACTIONS ORDER BY DBMS_RANDOM.VALUE) WHERE ROWNUM <=4 AND ATT_STATUS = 1";
 	@Override
 	public int insert(AttractionsVO attVO) {
 		int updateCount = 0;
@@ -372,6 +373,63 @@ public class AttractionsDAO implements AttractionsDAO_interface {
 			}
 		}
 		return att_picture;
+	}
+
+	@Override
+	public List<AttractionsVO> getAllRandom() {
+		List<AttractionsVO> list = new ArrayList<AttractionsVO>();
+		AttractionsVO attVO = null;
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+
+		try {
+			con = ds.getConnection();
+			pstmt = con.prepareStatement(SQL_QUERY_ALL_RANDOM);
+			rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				attVO = new AttractionsVO();
+				attVO.setAtt_no(rs.getString("ATT_NO"));
+				attVO.setAtt_name(rs.getString("ATT_NAME"));
+				attVO.setAtt_lat(rs.getDouble("ATT_LAT"));
+				attVO.setAtt_lon(rs.getDouble("ATT_LON"));
+				attVO.setCountry(rs.getString("COUNTRY"));
+				attVO.setAdministrative_area(rs.getString("ADMINISTRATIVE_AREA"));
+				attVO.setAtt_information(rs.getString("ATT_INFORMATION"));
+//				attVO.setAtt_picture(rs.getBytes("ATT_PICTURE"));
+				attVO.setAtt_address(rs.getString("ATT_ADDRESS"));
+				attVO.setAtt_status(rs.getInt("ATT_STATUS"));
+				list.add(attVO);
+			}
+			// Handle any driver errors
+		} catch (SQLException se) {
+			throw new RuntimeException("A database error occured. " + se.getMessage());
+
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if (con != null) {
+				try {
+					con.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return list;
 	}
 
 }
