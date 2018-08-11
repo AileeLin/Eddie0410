@@ -15,7 +15,8 @@
 <jsp:useBean id="qaSvc" scope="page" class="com.question.model.QuestionService"></jsp:useBean>
 <%	
 	//因為沒有登入也可以查看他人的個人頁面，但無法顯示加入好友的按鈕
-	Object memId = session.getAttribute(session.getId());
+	MemberVO memberVO = (MemberVO)session.getAttribute("memberVO");
+	String memId = null;
 	
 	//取得送過來查詢某位會員的ID的參數，以便取得他的相關個人資料
 	String uId = request.getParameter("uId");
@@ -27,12 +28,16 @@
 	}
 	
 	//假設登入者跟傳入的uId參數一致時要導向...他自己的個人管理頁面
-	if(uId.equals((String)memId)){
-		response.sendRedirect(request.getContextPath()+"/front_end/personal_area/personal_area_home.jsp");
-		return;
+	if(memberVO != null){
+		memId = memberVO.getMem_Id();
+		if(uId.equals(memId)){
+			response.sendRedirect(request.getContextPath()+"/front_end/personal_area/personal_area_home.jsp");
+			return;
+		}
 	}
+
 	//若有登入，可以看到登出按鈕
-	MemberVO memberVO = (MemberVO)session.getAttribute("memberVO");
+	//MemberVO memberVO = (MemberVO)session.getAttribute("memberVO");
 	String login,logout;
 	if(memberVO != null){		
 		login = "display:none;";
@@ -317,7 +322,10 @@
 								<!-- 這邊要放關係確認的結果??? -->
 							</span>
                         	<span id='mem_report' style='float:right'>
-                        		<button type='button' class='ui inverted red button mini'><i class="fas fa-exclamation-triangle"></i>&nbsp;檢舉</button>
+                        	    <!-- 有登入才能檢舉 -->
+                        		<c:if test="${memberVO != null}">
+                        			<button type='button' class='ui inverted red button mini'><i class="fas fa-exclamation-triangle"></i>&nbsp;檢舉</button>
+                        		</c:if>
                         	</span>	 	
                         </p>
                         <p class="text-truncate" style="font-size:0.9em;padding-top:10px;max-height:110px">

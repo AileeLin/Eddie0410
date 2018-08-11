@@ -254,7 +254,7 @@
                                         <i class="fas fa-user fa-5x"></i>
                                     </div>
                                     <div class="col-xs-9 text-right">
-                                        <div class="huge">26</div>
+                                        <div class="huge">?</div>
                                         <div>會員檢舉</div>
                                     </div>
                                 </div>
@@ -299,7 +299,7 @@
                                     </div>
                                     <div class="col-xs-9 text-right">
                                         <div class="huge"><%=qaReportCount%></div>
-                                        <div>問答區檢舉</div>
+                                        <div>問答區檢舉(含留言)</div>
                                     </div>
                                 </div>
                             </div>
@@ -325,7 +325,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <a href="<%=request.getContextPath()%>/back_end/attEdit/back_attEditReview.jsp">
+                            <a href="<%=request.getContextPath()%>/back_end/attEdit/back_attEdit.jsp">
                                 <div class="panel-footer">
                                     <span class="pull-left">View Details</span>
                                     <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
@@ -342,7 +342,7 @@
                                         <i class="fas fa-camera fa-5x"></i>
                                     </div>
                                     <div class="col-xs-9 text-right">
-                                        <div class="huge"><%=photoReportCount %></div>
+                                        <div class="huge">?</div>
                                         <div>照片牆檢舉</div>
                                     </div>
                                 </div>
@@ -364,7 +364,7 @@
                                         <i class="fas fa-handshake fa-5x"></i>
                                     </div>
                                     <div class="col-xs-9 text-right">
-                                        <div class="huge">124</div>
+                                        <div class="huge">?</div>
                                         <div>揪團檢舉</div>
                                     </div>
                                 </div>
@@ -386,7 +386,7 @@
                                         <i class="fas fa-shopping-bag fa-5x"></i>
                                     </div>
                                     <div class="col-xs-9 text-right">
-                                        <div class="huge">124</div>
+                                        <div class="huge">?</div>
                                         <div>商品檢舉</div>
                                     </div>
                                 </div>
@@ -408,7 +408,7 @@
                                         <i class="fas fa-dollar-sign fa-5x"></i>
                                     </div>
                                     <div class="col-xs-9 text-right">
-                                        <div class="huge">124</div>
+                                        <div class="huge">?</div>
                                         <div>交易款項</div>
                                     </div>
                                 </div>
