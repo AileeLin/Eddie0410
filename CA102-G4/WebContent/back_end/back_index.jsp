@@ -4,7 +4,27 @@
 <%@ page import="com.blog_message_report.model.*" %>
 <%@ page import="com.photo_report.model.*" %>
 <%@ page import="java.util.*" %>
+<%@ page import="com.admin.model.*"%>
 <%
+	//**********************管理者登入身分驗證********************************//
+	AdminVO adminVO = (AdminVO)session.getAttribute("adminVO");
+	if(adminVO == null){
+		adminVO = (AdminVO)session.getAttribute("adminVO");
+	}
+	
+	boolean login_state_backEnd = false;
+	Object login_state_temp = session.getAttribute("login_state_backEnd");
+	if(login_state_temp!=null){
+		login_state_backEnd=(boolean)login_state_temp;
+	}
+	
+	if(login_state_backEnd!=true){
+		session.setAttribute("location",request.getRequestURI());
+		response.sendRedirect(request.getContextPath()+"/back_end/admin/back_login.jsp");
+		return;
+	}
+	//**********************管理者登入身分驗證********************************//
+
 	//取得旅遊記檢舉及旅遊記留言檢舉未處理數
 	blogMessageReportService blogMRSvc = new blogMessageReportService();
 	blogReportService blogRSvc = new blogReportService();
@@ -19,6 +39,7 @@
 			photoReportCount++;
 		}
 	}
+		
 %>
 
 
@@ -77,10 +98,10 @@
 
                             <ul class="dropdown-menu" id="auth_Submenu">
                                 <li>
-                                    <a href="#">管理員</a>
+                                    <a href="<%=request.getContextPath()%>/back_end/admin/manager_admin.jsp">管理員</a>
                                 </li>
                                 <li>
-                                    <a href="#">會員</a>
+                                    <a href="<%=request.getContextPath()%>/back_end/admin/manager_member.jsp">會員</a>
                                 </li>
                             </ul>
 
@@ -93,7 +114,7 @@
                         </li>
                         
                         <li>
-                            <a href="#">
+                            <a href="<%=request.getContextPath()%>/back_end/attEdit/back_attEditReview.jsp">
                                 <i class="fas fa-image"></i>景點管理
                             </a>
                         </li>
@@ -118,7 +139,7 @@
                             </a>
                             <ul class="dropdown-menu" id="report_Submenu">
                                 <li>
-                                    <a href="#">會員檢舉</a>
+                                    <a href="<%=request.getContextPath()%>/back_end/member/member_report.jsp">會員檢舉</a>
                                 </li>
                                 <li>
                                     <a href="<%=request.getContextPath()%>/blog.do?action=blogReportManage">旅遊記檢舉</a>
@@ -127,7 +148,7 @@
                                     <a href="<%=request.getContextPath()%>/back_end/qa_report/qa_report.jsp">問答區檢舉</a>
                                 </li>
                                 <li>
-                                    <a href="#">照片牆檢舉</a>
+                                    <a href="<%=request.getContextPath()%>/back_end/photo_wall/photo_report.jsp">照片牆檢舉</a>
                                 </li>
                                 <li>
                                     <a href="#">揪團檢舉</a>
@@ -179,17 +200,21 @@
                             <i class="fas fa-align-left"></i>
                         </button>
                         <span style="float: right">
-                        <button type="button" class="btn btn-info" onclick="location.href='back_login.jsp'">
-                            登出
-                            <i class="fas fa-sign-out-alt"></i>
-                        </button>
+	                        <c:choose>
+	                          <c:when test="<%=login_state_backEnd %>">
+	                           <a href="<%= request.getContextPath()%>/admin.do?action=logout"><span class=" top_banner btn btn-info"><i class=" fas fa-sign-out-alt" aria-hidden="true"></i></span></a>
+	                          </c:when>
+	                          <c:otherwise>
+	                           <a href="<%= request.getContextPath()%>/admin_login.jsp"><span class="top_banner btn btn-info"><i class=" fa fa-user" aria-hidden="true"></i></span></a>
+	                          </c:otherwise>
+	                        </c:choose>
                         </span>
                     </div>
                 </nav>
                 
                 <div class="row">
                     <div class="col-lg-12">
-                        <h1 class="page-header">Welcome Ailee Lin!</h1>
+                        <h1 class="page-header">Welcome ${adminVO.admin_Name}!</h1>
                     </div>
                 </div>
 
@@ -296,7 +321,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <a href="#">
+                            <a href="<%=request.getContextPath()%>/back_end/photo_wall/photo_report.jsp">
                                 <div class="panel-footer">
                                     <span class="pull-left">View Details</span>
                                     <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>

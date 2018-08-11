@@ -323,18 +323,18 @@
             </li>
             
              <li class="nav-item">
-              <a href="<%=request.getContextPath()%>/front_end/personal_area/ personal_area_sell.jsp">
+              <a href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_sell.jsp">
                   <i class="money bill alternate icon"></i>銷售
               </a>
             </li>
 
              <li class="nav-item">
-              <a href="<%=request.getContextPath()%>/front_end/personal_area/ personal_area_buy.jsp">
+              <a href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_buy.jsp">
                   <i class="shopping cart icon"></i>購買
               </a>
             </li>
             <li class="nav-item" style="float: right">
-              <a href="<%=request.getContextPath()%>/front_end/member/member.do?action=getOne_For_Display&mem_Id=${memberVO.mem_Id}">
+              <a href="<%=request.getContextPath()%>/front_end/member/update_mem_profile.jsp">
                   <i class="cog icon"></i>設置
               </a>
             </li>

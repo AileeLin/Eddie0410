@@ -65,9 +65,11 @@ $(document).ready(function(){
 		
 	});
 	
-    //點選《建立聊天》的圖示，會跳出建立聊天的小視窗
+    //點選《建立新聊天對話》的圖示，會跳出建立聊天的小視窗
     $("#chat_addFri_span").click(function(e){
         $("#chat_AddFri_Modal").modal({backdrop:'static'});
+        //避免上次使用搜尋功能，會將list隱藏起來
+        $("#chat_AddFri_Modal > div > form > div > div.modal-body > div:nth-child(3) > div:nth-child(1) > div.ui.middle.aligned.selection.list > .item").attr("style",{"display":"display"});
         $("#search_Fri_modal").css("border-color","rgba(34, 36, 38, .15)");//清除未選擇人員的所設定的紅框
         $("#chatName").css("border-color",""); //清除若聊天室未輸入所設定的紅框
         e.stopPropagation();
@@ -75,6 +77,7 @@ $(document).ready(function(){
     
     //點選《加入更多人》的的圖示，會跳出加入更多人的小視窗(動態產生DOM)
     $("body").on("click","span.addOneFri",function(e){ 
+    	//避免上次使用搜尋，會把list隱藏
     	//先清除上次以選的名單
     	$("input[type='checkbox']").removeAttr("checked");
     	//先開啟上一次被disable掉的checkbox
@@ -108,6 +111,10 @@ $(document).ready(function(){
 
         var crName = $(this).parent().parent().text().replace('加入更多好友', '').replace('名單','');
         e.stopPropagation();
+        //開啟《加入更多人》的視窗時，若先前有使用搜尋會導致item被display:none，所以要取消，且搜尋框中的字也要清掉
+        $("#chat_AddMoreFri_Modal .modal-content .modal-body .ui.middle.aligned.selection.list>.item").attr("style",{"display":"display"});
+        $("#chat_AddMoreFri_Modal .modal-content .modal-body #search_addMoreFri").val("");
+        
         $("#chat_AddMoreFri_Modal .modal-title").text(crName.trim()+"::加入更多人");
         $("#chat_AddMoreFri_Modal").modal({backdrop:'static'});
     });
@@ -277,8 +284,8 @@ $(document).ready(function(){
 
     //建立聊天對話視窗後，取消時都會把以勾選的checkboix設定未選擇狀況及輸入盒清空
     $(".modal-footer>button[data-dismiss='modal']").click(function(){
+    	 $("#search_Fri_modal").val("");
          $("input[type='checkbox']").removeAttr("checked");
-         $("#search_Fri_modal").val("");
          $("#chatName").val("");
          $("#select_FriList").empty();
     });

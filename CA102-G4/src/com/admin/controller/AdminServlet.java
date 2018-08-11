@@ -52,7 +52,9 @@ public class AdminServlet extends HttpServlet {
 		HttpSession session = req.getSession();
 
 		if ("logout".equals(action)) {
-			session.invalidate();
+//			session.invalidate();
+			session.removeAttribute("login_state_backEnd");
+			session.removeAttribute("adminVO");
 			res.sendRedirect(req.getContextPath() + "/back_end/admin/back_login.jsp");
 		}
 	}
@@ -73,7 +75,7 @@ public class AdminServlet extends HttpServlet {
 			System.out.println("test456");
 
 			if ("".equals(admin_Account)) {
-				errorMsgs.put("請輸入你的帳號", "帳號是電子信箱");
+				errorMsgs.put("請輸入你的帳號", "test");
 			}
 			if ("".equals(admin_Password)) {
 				errorMsgs.put("請輸入你的密碼", "test");
@@ -101,7 +103,7 @@ public class AdminServlet extends HttpServlet {
 				String session_id = session.getId();
 				session.setAttribute(session_id, admin_Id); // *工作1: 才在session內做已經登入過的標識
 
-				session.setAttribute("login_state", true); // 員工登入的狀態為true
+				session.setAttribute("login_state_backEnd", true); // 員工登入的狀態為true
 
 				session.setAttribute("adminVO", adminVO); // session包著員工資料走
 				try {

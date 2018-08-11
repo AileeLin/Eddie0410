@@ -92,7 +92,14 @@
     <servlet-name>MemberServlet</servlet-name>
     <url-pattern>/front_end/member/member.do</url-pattern>
   </servlet-mapping>
-  
+    <servlet>
+    <servlet-name>AdminServlet</servlet-name>
+    <servlet-class>com.admin.controller.AdminServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>AdminServlet</servlet-name>
+    <url-pattern>/admin.do</url-pattern>
+  </servlet-mapping>
   	<!-- 品儒的 -->
 	<servlet>
 		<servlet-name>tripHtmlOnLoad</servlet-name>

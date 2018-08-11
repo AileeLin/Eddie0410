@@ -437,6 +437,117 @@ public class FriendJDBCDAO implements FriendDAO_interface{
 		return friend;
 	}
 
+
+	/**********待補*************/
+	@Override
+	public int rejectFri(String memID_self, String memID_Fri) {
+
+		int count=0;
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		
+		try {
+			Class.forName(DRIVER);
+			con = DriverManager.getConnection(URL, USER, PASSWORD);
+			
+			pstmt=con.prepareStatement(DELFRI_STMT);
+			pstmt.setString(1, memID_Fri);
+			pstmt.setString(2, memID_self);
+			pstmt.executeUpdate();
+			
+			count++;
+
+		}catch(ClassNotFoundException ce) {
+			throw new RuntimeException("無法載入資料庫驅動程式"+ce.getMessage());
+		}catch(SQLException se) {
+			throw new RuntimeException("資料庫發生錯誤"+se.getMessage());
+		}finally {
+			if(pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (SQLException e) {
+					e.printStackTrace(System.err);
+				}
+			}
+			if(con!=null) {
+				try {
+					con.close();
+				} catch (SQLException e) {
+					e.printStackTrace(System.err);
+				}
+			}
+		}
+		return count;
+
+	}
+
+
+
+	@Override
+	public int becomeFri(String memID_self, String memID_Fri) {
+		int count = 0 ;
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		
+		try {
+			Class.forName(DRIVER);
+			con = DriverManager.getConnection(URL, USER, PASSWORD);
+			
+			//處理交易前要先關掉自動提交
+			con.setAutoCommit(false);
+			
+			//先執行接受他人好友--新增好友
+			pstmt = con.prepareStatement(ADDFRI_STMT);
+			pstmt.setString(1, memID_self);
+			pstmt.setString(2, memID_Fri);
+			pstmt.setInt(3, 2);
+			pstmt.executeUpdate();
+			//先執行接受他人好友--新增好友後更新成為好友時間
+			pstmt = con.prepareStatement(UPDATE_FRISTAT_STMT);
+			pstmt.setString(1, memID_self);
+			pstmt.setString(2, memID_Fri);
+			pstmt.executeUpdate();
+			//再執行更改送出好友邀請的人，更改狀態
+			pstmt = con.prepareStatement(UPDATE_FRISTAT_STMT);
+			pstmt.setString(1, memID_Fri);
+			pstmt.setString(2, memID_self);
+			pstmt.executeUpdate();
+			
+			con.commit();
+			con.setAutoCommit(true);
+			count++;
+			
+		}catch(Exception e){
+			if( con != null) {
+				try {
+					con.rollback();
+				} catch (SQLException sw) {
+					throw new RuntimeException("Rollback失敗"+e.getMessage());
+				}
+			}
+			throw new RuntimeException("資料庫發生錯誤"+e.getMessage());
+		}finally {
+			if(pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (SQLException e) {
+					e.printStackTrace(System.err);
+				}
+			}
+			if(con!=null) {
+				try {
+					con.close();
+				} catch (SQLException e) {
+					e.printStackTrace(System.err);
+				}
+			}
+		}
+		
+		return count;
+	}
+
+
+
 	public static void main(String args[]) {
 		FriendDAO dao=new FriendDAO();
 		
@@ -512,24 +623,6 @@ public class FriendJDBCDAO implements FriendDAO_interface{
 		}
 		
 	}
-
-
-	/**********待補*************/
-	@Override
-	public int rejectFri(String memID_self, String memID_Fri) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-
-
-	@Override
-	public int becomeFri(String memID_self, String memID_Fri) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-
 
 
 

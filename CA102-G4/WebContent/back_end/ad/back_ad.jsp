@@ -3,8 +3,25 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %> 
 <%@ page import="java.util.*" %>
 <%@ page import="com.ad.model.*" %>
-
+<%@ page import="com.admin.model.*"%>
 <%
+	//**********************管理者登入身分驗證********************************//
+	AdminVO adminVO = (AdminVO)session.getAttribute("adminVO");
+	if(adminVO == null){
+		adminVO = (AdminVO)session.getAttribute("adminVO");
+	}
+	
+	boolean login_state_backEnd = false;
+	Object login_state_temp = session.getAttribute("login_state_backEnd");
+	if(login_state_temp!=null){
+		login_state_backEnd=(boolean)login_state_temp;
+	}
+	
+	if(login_state_backEnd!=true){
+		session.setAttribute("location",request.getRequestURI());
+		response.sendRedirect(request.getContextPath()+"/back_end/admin/back_login.jsp");
+		return;
+	}
 
 	AdService adSvc = new AdService();
 	List<AdVO> list = adSvc.getAllAD();
@@ -65,7 +82,7 @@
     </head>
     <body>
         <div class="wrapper">
-                <!-- Sidebar  -->
+            <!-- Sidebar  -->
             <nav id="sidebar" class="navbar-fixed-left">
                 <div class="sidebar-header">
                     <h3>Travel Maker</h3>
@@ -75,7 +92,7 @@
                 <ul class="list-unstyled components">
                     <li class="active">
                         <a href="<%=request.getContextPath()%>/back_end/back_index.jsp">
-                            <i class="fas fa-home"></i>回首頁
+                            <i class="fas fa-home"></i> 回首頁
                         </a>
                     </li>
                     
@@ -87,10 +104,10 @@
 
                             <ul class="dropdown-menu" id="auth_Submenu">
                                 <li>
-                                    <a href="#">管理員</a>
+                                    <a href="<%=request.getContextPath()%>/back_end/admin/manager_admin.jsp">管理員</a>
                                 </li>
                                 <li>
-                                    <a href="#">會員</a>
+                                    <a href="<%=request.getContextPath()%>/back_end/admin/manager_member.jsp">會員</a>
                                 </li>
                             </ul>
 
@@ -103,7 +120,7 @@
                         </li>
                         
                         <li>
-                            <a href="#">
+                            <a href="<%=request.getContextPath()%>/back_end/attEdit/back_attEditReview.jsp">
                                 <i class="fas fa-image"></i>景點管理
                             </a>
                         </li>
@@ -128,7 +145,7 @@
                             </a>
                             <ul class="dropdown-menu" id="report_Submenu">
                                 <li>
-                                    <a href="#">會員檢舉</a>
+                                    <a href="<%=request.getContextPath()%>/back_end/member/member_report.jsp">會員檢舉</a>
                                 </li>
                                 <li>
                                     <a href="<%=request.getContextPath()%>/blog.do?action=blogReportManage">旅遊記檢舉</a>
@@ -137,7 +154,7 @@
                                     <a href="<%=request.getContextPath()%>/back_end/qa_report/qa_report.jsp">問答區檢舉</a>
                                 </li>
                                 <li>
-                                    <a href="#">照片牆檢舉</a>
+                                    <a href="<%=request.getContextPath()%>/back_end/photo_wall/photo_report.jsp">照片牆檢舉</a>
                                 </li>
                                 <li>
                                     <a href="#">揪團檢舉</a>
@@ -189,10 +206,15 @@
                             <i class="fas fa-align-left"></i>
                         </button>
                         <span style="float: right">
-                        <button type="button" class="btn btn-info" onclick="location.href='<%=request.getContextPath()%>/back_end/back_login.jsp'">
-                            登出
-                            <i class="fas fa-sign-out-alt"></i>
-                        </button>
+                        	<span style="font-size:1.5em;margin-right:10px;vertical-align:sub;">Welcome！${adminVO.admin_Name}</span>
+	                        <c:choose>
+	                          <c:when test="<%=login_state_backEnd %>">
+	                           <a href="<%= request.getContextPath()%>/admin.do?action=logout"><span class=" top_banner btn btn-info"><i class=" fas fa-sign-out-alt" aria-hidden="true"></i></span></a>
+	                          </c:when>
+	                          <c:otherwise>
+	                           <a href="<%= request.getContextPath()%>/admin_login.jsp"><span class="top_banner btn btn-info"><i class=" fa fa-user" aria-hidden="true"></i></span></a>
+	                          </c:otherwise>
+	                        </c:choose>
                         </span>
                     </div>
                 </nav>
