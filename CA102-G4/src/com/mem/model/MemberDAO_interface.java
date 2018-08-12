@@ -25,6 +25,7 @@ public interface MemberDAO_interface {
 	public List<MemberVO> getAll_member(String mem_Name);
 	//防止重覆註冊
 	MemberVO checkAccount(String mem_Account);
+	//使用信箱驗證
 	
 	public void delete(String mem_Id);
 	public List<MemberVO> getAll() ;

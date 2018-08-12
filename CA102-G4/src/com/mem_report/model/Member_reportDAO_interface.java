@@ -11,5 +11,8 @@ public interface Member_reportDAO_interface {
 	public Member_reportVO findByPrimaryKey(String mem_Id_Report,String mem_Id_Reported) ;
 	public List<Member_reportVO> getAll() ;
 	
+	//更改會員審核狀態
+	int update_review_State(String mem_Id_Report, String mem_Id_Reported, Integer mem_Rep_Sta);
+
 
 }

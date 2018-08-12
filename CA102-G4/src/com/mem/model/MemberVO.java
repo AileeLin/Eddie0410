@@ -40,6 +40,16 @@ public class MemberVO implements java.io.Serializable {
 	
 	private Date mem_Reg_Date;
 	
+	private String mem_Activecode;
+	
+	public String getMem_Activecode() {
+		return mem_Activecode;
+	}
+
+	public void setMem_Activecode(String mem_Activecode) {
+		this.mem_Activecode = mem_Activecode;
+	}
+
 	public Date getMem_Reg_Date() {
 		return mem_Reg_Date;
 	}

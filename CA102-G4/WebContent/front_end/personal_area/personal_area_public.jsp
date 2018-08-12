@@ -157,12 +157,18 @@
     <script type="text/javascript" src="<%=request.getContextPath()%>/front_end/js/personal/personal_area_public.js"></script>
     <!-- //AD_Page相關CSS及JS -->
     
+    <!-- 會員檢舉使用到的jQuery Dialog -->
+    <link href="<%=request.getContextPath()%>/front_end/jquery-ui-1.12.1/jquery-ui.css" rel="stylesheet">
+    <script src="<%=request.getContextPath()%>/front_end/jquery-ui-1.12.1/jquery-ui.js"></script>
+    <!-- //會員檢舉使用到的jQuery Dialog -->
+    
+    
     <!-- 聊天相關CSS及JS -->
     <link href="<%=request.getContextPath()%>/front_end/css/chat/chat_style.css" rel="stylesheet" type="text/css">
     <script src="<%=request.getContextPath()%>/front_end/js/chat/chat.js"></script>
     <!-- //聊天相關CSS及JS -->
     
-
+	
     
 </head>
 
@@ -226,6 +232,31 @@
     	});/**document read end**/
     	
     	</script>
+    	
+    	<%-- 錯誤表列 --%>
+		<c:if test="${not empty errorMsgs}">
+			<div class="modal fade" id="errorModal">
+			    <div class="modal-dialog modal-sm" role="dialog">
+			      <div class="modal-content">
+			        <div class="modal-header">
+			          <i class="fas fa-exclamation-triangle"></i>
+			          <span class="modal-title"><h4>&nbsp;注意：</h4></span>
+			        </div>
+			        <div class="modal-body">
+						<c:forEach var="message" items="${errorMsgs}">
+							<li style="color:red" type="square">${message}</li>
+						</c:forEach>
+			        </div>
+			        <div class="modal-footer">
+			          <button type="button" class="btn btn-default" data-dismiss="modal">關閉</button>
+			        </div>
+			      </div>
+			    </div>
+			 </div>
+		</c:if>
+		<%-- 錯誤表列 --%>
+    	
+
         <!-- banner -->
         <div class="banner about-bg">
             <div class="top-banner about-top-banner">
@@ -324,7 +355,9 @@
                         	<span id='mem_report' style='float:right'>
                         	    <!-- 有登入才能檢舉 -->
                         		<c:if test="${memberVO != null}">
-                        			<button type='button' class='ui inverted red button mini'><i class="fas fa-exclamation-triangle"></i>&nbsp;檢舉</button>
+                        			<button type='button' class='ui inverted red button mini _Memreport'>
+                        				<i class="fas fa-exclamation-triangle"></i>&nbsp;檢舉
+                        			</button>
                         		</c:if>
                         	</span>	 	
                         </p>
@@ -787,8 +820,20 @@
             </div>
         </div>
         <!-- //footer -->
-
-
+		
+		<!-- 按下檢舉會員，會出現的輸入框 -->
+		<div id="reportMemberDialog">
+    		<div class="reportContent">
+    		<div class="reportContentTitle">檢舉理由：</div>
+    			<form class="ui report form" METHOD="POST" ACTION="<%=request.getContextPath()%>/front_end/member/member.do">
+    				<textarea class="reportReasonContent" name="report_Reason" maxlength="90"></textarea>
+    				<input type="hidden" name="action" value="reportMember">
+    				<input type="hidden" name="mem_Id_report" value="${memberVO.mem_Id}">
+    				<input type="hidden" name="mem_Id_reported" value="<%=uId%>">
+    			</form>
+    		</div>
+    	</div>
+		
     </body>
 
 </html>

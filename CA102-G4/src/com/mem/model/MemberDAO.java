@@ -30,8 +30,8 @@ public class MemberDAO implements MemberDAO_interface {
 //	+ "VALUES ('M'||LPAD(to_char(MEMBER_seq.NEXTVAL), 6, '0'),?,?,?)";
 
 private static final String INSERT_STMT = 
-"Insert into MEMBER (MEM_ID,MEM_ACCOUNT,MEM_PASSWORD,MEM_NAME,MEM_STATE,MEM_REG_DATE) "
-+ "VALUES ('M'||LPAD(to_char(MEMBER_seq.NEXTVAL), 6, '0'),?,?,?,?,?)";
+"Insert into MEMBER (MEM_ID,MEM_ACCOUNT,MEM_PASSWORD,MEM_NAME,MEM_STATE,MEM_REG_DATE,MEM_PHOTO) "
++ "VALUES ('M'||LPAD(to_char(MEMBER_seq.NEXTVAL), 6, '0'),?,?,?,?,?,?)";
 private static final String UPDATE = 
 	"UPDATE MEMBER SET MEM_ACCOUNT=?,MEM_PASSWORD= ?, MEM_NAME= ? ,MEM_SEX= ?,MEM_ADDRESS= ?,MEM_BIRTHDAY= ?,MEM_PHONE= ?,MEM_PROFILE= ?,MEM_PHOTO= ?,MEM_STATE= ?,DELIVERY_ADDRESS_1= ?,DELIVERY_ADDRESS_2=?,DELIVERY_ADDRESS_3=?,STORE_ADDR_1=?,STORE_ADDR_2=?,STORE_ADDR_3=?,STORE_NAME_1=?,STORE_NAME_2=?,STORE_NAME_3=?,STORE_NO_1=?,STORE_NO_2=?,STORE_NO_3=? WHERE MEM_ID = ?";
 private static final String GET_ALL_STMT = 
@@ -82,6 +82,7 @@ public void insert(MemberVO memberVO) {
 		pstmt.setString(3, memberVO.getMem_Name());
 		pstmt.setInt(4,3);
 		pstmt.setDate(5, memberVO.getMem_Reg_Date());
+		pstmt.setBytes(6, memberVO.getMem_Photo());
 
 		pstmt.executeUpdate();
 		
@@ -722,54 +723,4 @@ public MemberVO checkAccount(String mem_Account) {
 }
 
 
-//@Override
-//public MemberVO login_Member(MemberVO memberVO) {
-//	Connection con = null;
-//	PreparedStatement pstmt = null;
-//	ResultSet rs = null;
-//	MemberVO memberVO_login = null;
-//
-//	try {
-//		con = ds.getConnection();
-//		pstmt = con.prepareStatement(Login_Member);
-//		pstmt.setString(1, memberVO.getMem_Account());
-//		pstmt.setString(2, memberVO.getMem_Password());
-//
-//		rs = pstmt.executeQuery();
-//
-//		while (rs.next()) {
-//			memberVO_login = new MemberVO();
-//			memberVO_login.setMem_Account(rs.getString("setMem_Account"));
-//			memberVO_login.setMem_Password(rs.getString("setMem_Password"));
-//
-//		}
-//		// Handle any SQL errors
-//	} catch (SQLException se) {
-//		throw new RuntimeException("A database error occured. " + se.getMessage());
-//		// Clean up JDBC resources
-//	} finally {
-//		if (rs != null) {
-//			try {
-//				rs.close();
-//			} catch (SQLException se) {
-//				se.printStackTrace(System.err);
-//			}
-//		}
-//		if (pstmt != null) {
-//			try {
-//				pstmt.close();
-//			} catch (SQLException se) {
-//				se.printStackTrace(System.err);
-//			}
-//		}
-//		if (con != null) {
-//			try {
-//				con.close();
-//			} catch (Exception e) {
-//				e.printStackTrace(System.err);
-//			}
-//		}
-//	}
-//	return memberVO_login;
-//}
 	

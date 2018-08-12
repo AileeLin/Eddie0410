@@ -24,5 +24,44 @@
 			$(".nav-item>a[href='"+tem+"']").parent().addClass("active");
 		});
 		
+		/***********************若有錯誤訊息時，就會跳出視窗***********************/
+	   	$('#errorModal').modal();
+
+
+	   	/***********************會員檢舉會跳出的視窗***********************/
+		$(".ui.inverted.red.button.mini._Memreport").click(function(){
+			   $("#reportMemberDialog").dialog("open");
+		});
+		
+		$("#reportMemberDialog").dialog({
+		    autoOpen: false,
+		    closeOnEscape: false,
+		    hide: 'blind',
+		    show: 'blind',
+		    title: '訊息',
+		    modal: true,
+		    width: 500,
+		    height: 300,
+		    autofocus: false,
+		    resizable: false,
+		    draggable: false,
+		    buttons: {
+		        "確定": function () {
+		        	$(this).dialog("close");
+		        	$(".ui.report.form").submit();
+		        },
+		        "取消": function () {
+		            $(this).dialog("close");
+		            $(".reportReasonContent").val("");
+		        }
+		    }
+		});
+
+		
+		
+		
 		
 	});
+
+	
+

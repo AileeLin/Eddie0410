@@ -1,7 +1,12 @@
 package com.mem.model;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Date;
 import java.util.List;
+
+import javax.servlet.http.Part;
 
 
 public class MemberService {
@@ -16,7 +21,7 @@ public class MemberService {
 	
 	//註冊會員
 	public MemberVO addMember
-	(String mem_Account, String mem_Password,String mem_Name,Integer mem_State,Date mem_Reg_Date) {
+	(String mem_Account, String mem_Password,String mem_Name,Integer mem_State,Date mem_Reg_Date,String mem_Activecode,byte[] mem_Photo) {
 
 		MemberVO memberVO = new MemberVO();
 		memberVO.setMem_Name(mem_Name);
@@ -24,7 +29,9 @@ public class MemberService {
 		memberVO.setMem_Password(mem_Password);
 		memberVO.setMem_State(mem_State);
 		memberVO.setMem_Reg_Date(mem_Reg_Date);
-
+		memberVO.setMem_Activecode(mem_Activecode);
+		memberVO.setMem_Photo(mem_Photo);
+		
 		dao.insert(memberVO);
 
 		return memberVO;
@@ -109,17 +116,13 @@ public class MemberService {
 	public List<MemberVO> getAll() {
 		return dao.getAll();
 	}
-	
-	
-	
-	
-//	public MemberVO Login_Member(String mem_Account, String mem_Password) {
-//
-//		MemberVO memberVO = new MemberVO();
-//		memberVO.setMem_Account(mem_Account);
-//		memberVO.setMem_Password(mem_Password);
-//		return dao.login_Member(memberVO);
-//	}
+
+
+
+	public MemberVO activeMem(String mem_activecode) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 }
 
