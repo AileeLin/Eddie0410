@@ -1,13 +1,12 @@
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ page import="com.blog_report.model.*" %>
-<%@ page import="com.blog_message_report.model.*" %>
-<%@ page import="com.photo_report.model.*" %>
-<%@ page import="java.util.*" %>
-<%@ page import="com.admin.model.*"%>
+<%@ page import="com.blog_report.model.*,com.blog_message_report.model.*" %>
+<%@ page import="com.admin.model.*,com.mem_report.model.*"%>
+<%@ page import="com.qa_report.model.*,com.rp_report.model.*"%>
 <%@ page import="com.attEdit.model.*"%>
-<%@ page import="com.qa_report.model.*"%>
-<%@ page import="com.rp_report.model.*"%>
+<%@ page import="com.photo_report.model.*" %>
+<%@ page import="com.productReport.model.*" %>
+<%@ page import="java.util.*" %>
 <%
 	//**********************管理者登入身分驗證********************************//
 	AdminVO adminVO = (AdminVO)session.getAttribute("adminVO");
@@ -27,21 +26,32 @@
 		return;
 	}
 	//**********************管理者登入身分驗證********************************//
+	
+	//取得檢舉會員(2是未處理)---OK
+	Member_reportService memReportSvc = new Member_reportService();
+	List<Member_reportVO> memReportList = memReportSvc.getAll();
+	int memReportCount = 0 ;
+	for(Member_reportVO memReVO : memReportList){
+		if(memReVO.getMem_Rep_Sta() == 2){
+			memReportCount++;
+		}
+	}
 
+	//取得商品檢舉(1是未處理)---OK
+	ProductReportService productReportSvc = new ProductReportService();
+	List<ProductReportVO> proReportList = productReportSvc.getAll();
+	int proReportCount = 0 ;
+	for(ProductReportVO proReVO : proReportList){
+		if(proReVO.getProd_report_status() == 1){
+			proReportCount++;
+		}
+	}
+	
 	//取得旅遊記檢舉及旅遊記留言檢舉未處理數---OK
 	blogMessageReportService blogMRSvc = new blogMessageReportService();
 	blogReportService blogRSvc = new blogReportService();
 	int blogReportCount = ((blogMRSvc.getBlogMsgReport_ByStatus(0)).size())+(blogRSvc.getBR_BySTATUS(0)).size();
 	
-	//取得照片牆檢舉未處理數?????
-	photo_reportService photoRSvc = new photo_reportService();
-	List<Photo_reportVO> photoReportList = photoRSvc.getAll();
-	int photoReportCount =0;
-	for(Photo_reportVO photoRVO:photoReportList){
-		if(photoRVO.getPho_Rep_Stats() == 1){
-			photoReportCount++;
-		}
-	}
 	
 	//取得景點更新審核數---OK
 	AttractionsEditService attrEditSvc = new AttractionsEditService();
@@ -65,6 +75,16 @@
 		}
 	}
 	
+	//取得照片牆檢舉未處理數(2未通過)---OK
+	photo_reportService photoRSvc = new photo_reportService();
+	List<Photo_reportVO> photoReportList = photoRSvc.getAll();
+	int photoReportCount =0;
+	for(Photo_reportVO photoRVO:photoReportList){
+		if(photoRVO.getPho_Rep_Stats() == 2){
+			photoReportCount++;
+		}
+	}
+
 		
 %>
 
@@ -177,20 +197,11 @@
                                     <a href="<%=request.getContextPath()%>/back_end/photo_wall/photo_report.jsp">照片牆檢舉</a>
                                 </li>
                                 <li>
-                                    <a href="#">揪團檢舉</a>
-                                </li>
-                                <li>
                                     <a href="#">商品檢舉</a>
                                 </li>
                             </ul>
                         </li>
-                        
-                        <li>
-                            <a href="#">
-                                <i class="fas fa-shopping-cart"></i>交易款項管理
-                            </a>
-                        </li>
-                        
+                                                
                         <li>
                             <a href="<%=request.getContextPath()%>/back_end/ad/back_ad.jsp">
                                 <i class="fas fa-audio-description"></i>專欄廣告管理
@@ -246,7 +257,7 @@
 
                 <!-- /.row -->
                 <div class="row">
-                    <div class="col-lg-3 col-md-6">
+                    <div class="col-lg-4 col-md-6">
                         <div class="panel panel-primary">
                             <div class="panel-heading">
                                 <div class="row">
@@ -254,7 +265,7 @@
                                         <i class="fas fa-user fa-5x"></i>
                                     </div>
                                     <div class="col-xs-9 text-right">
-                                        <div class="huge">?</div>
+                                        <div class="huge"><%=memReportCount%></div>
                                         <div>會員檢舉</div>
                                     </div>
                                 </div>
@@ -268,7 +279,7 @@
                             </a>
                         </div>
                     </div>
-                    <div class="col-lg-3 col-md-6">
+                    <div class="col-lg-4 col-md-6">
                         <div class="panel panel-success">
                             <div class="panel-heading">
                                 <div class="row">
@@ -290,7 +301,7 @@
                             </a>
                         </div>
                     </div>
-                    <div class="col-lg-3 col-md-6">
+                    <div class="col-lg-4 col-md-6">
                         <div class="panel panel-warning">
                             <div class="panel-heading">
                                 <div class="row">
@@ -312,12 +323,12 @@
                             </a>
                         </div>
                     </div>
-                    <div class="col-lg-3 col-md-6">
-                        <div class="panel panel-danger">
+                    <div class="col-lg-4 col-md-6">
+                        <div class="panel panel-primary">
                             <div class="panel-heading">
                                 <div class="row">
                                     <div class="col-xs-3">
-                                        <i class="fas fa-comment-dots fa-5x"></i>
+                                        <i class="far fa-image fa-5x"></i>
                                     </div>
                                     <div class="col-xs-9 text-right">
                                         <div class="huge"><%=attrEditCount%></div>
@@ -334,15 +345,15 @@
                             </a>
                         </div>
                     </div>
-                    <div class="col-lg-3 col-md-6">
-                        <div class="panel panel-primary">
+                    <div class="col-lg-4 col-md-6">
+                        <div class="panel panel-success">
                             <div class="panel-heading">
                                 <div class="row">
                                     <div class="col-xs-3">
                                         <i class="fas fa-camera fa-5x"></i>
                                     </div>
                                     <div class="col-xs-9 text-right">
-                                        <div class="huge">?</div>
+                                        <div class="huge"><%=photoReportCount%></div>
                                         <div>照片牆檢舉</div>
                                     </div>
                                 </div>
@@ -356,29 +367,7 @@
                             </a>
                         </div>
                     </div>
-                    <div class="col-lg-3 col-md-6">
-                        <div class="panel panel-success">
-                            <div class="panel-heading">
-                                <div class="row">
-                                    <div class="col-xs-3">
-                                        <i class="fas fa-handshake fa-5x"></i>
-                                    </div>
-                                    <div class="col-xs-9 text-right">
-                                        <div class="huge">?</div>
-                                        <div>揪團檢舉</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <a href="#">
-                                <div class="panel-footer">
-                                    <span class="pull-left">View Details</span>
-                                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                                    <div class="clearfix"></div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6">
+                    <div class="col-lg-4 col-md-6">
                         <div class="panel panel-warning">
                             <div class="panel-heading">
                                 <div class="row">
@@ -386,30 +375,8 @@
                                         <i class="fas fa-shopping-bag fa-5x"></i>
                                     </div>
                                     <div class="col-xs-9 text-right">
-                                        <div class="huge">?</div>
+                                        <div class="huge"><%=proReportCount%></div>
                                         <div>商品檢舉</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <a href="#">
-                                <div class="panel-footer">
-                                    <span class="pull-left">View Details</span>
-                                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                                    <div class="clearfix"></div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6">
-                        <div class="panel panel-danger">
-                            <div class="panel-heading">
-                                <div class="row">
-                                    <div class="col-xs-3">
-                                        <i class="fas fa-dollar-sign fa-5x"></i>
-                                    </div>
-                                    <div class="col-xs-9 text-right">
-                                        <div class="huge">?</div>
-                                        <div>交易款項</div>
                                     </div>
                                 </div>
                             </div>
