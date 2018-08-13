@@ -31,6 +31,12 @@ public class ChatServlet {
 	@OnOpen
 	public void onOpen(@PathParam("mem_id") String mem_id , Session userWbSession) {
 		
+		
+		int maxBufferSize = 500 * 1024;
+		userWbSession.setMaxTextMessageBufferSize(maxBufferSize);
+		userWbSession.setMaxBinaryMessageBufferSize(maxBufferSize);
+		
+		
 		//將我自己加入上線名單中。
 		sessionsMap.put(mem_id,userWbSession);
 		//取出目前所有上線人員的mem_id

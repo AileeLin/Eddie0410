@@ -8,7 +8,7 @@ $(document).ready(function(){
 		    var value = sessionStorage[key];
 		    if(key != "marginRight" && value != "undefined"){
 		    	$("body").append(value);
-		    	console.log("這邊在取sessionStorage的值:"+value);
+		    	console.log("這邊在取sessionStorage的值:");
 		    }
 		}
 		$(".input_chatContainer").toggleClass("chatWindow_Content");
@@ -40,7 +40,13 @@ $(document).ready(function(){
 		$(this).tooltip();
 	});
 	
-	//當按下登出按鈕後，
+	//******************************************待改
+	$("body").on("click","div.top-banner-right i.fas.fa-sign-out-alt",function(){
+		sessionStorage.clear();
+	});
+	
+	
+	//當按下登出按鈕後，sessionStorage清空
 	$("body").on("click","div.top-banner-right i.fas.fa-sign-out-alt",function(){
 		sessionStorage.clear();
 	});
@@ -290,7 +296,19 @@ $(document).ready(function(){
          $("#select_FriList").empty();
     });
     
+  
+    //************************聊天對話中，若有傳送圖片，點選圖片時會將照片放大***********************//
+    $("body").on("click",".input_chatContext>div>span img",function(){
+    	$("#chatRoomPhoto_Modal .modal-body > img").attr("src",$(this).attr("src"));
+    	$("#chatRoomPhoto_Modal").modal({backdrop:'static'});
+    });
+    
+    
+    
+    
 });
+
+
 
 //從聊天列表直接點選好友時，要先確認是否已有建立過一對一聊天對話? 有的話直接呼叫openChatRoom(chatRoom_id,chatRoom_Name)
 //如果沒有的話，要先新增完後，再呼叫openChatRoom(chatRoom_id,chatRoom_Name)
@@ -378,6 +396,66 @@ function sendMessage(e){
 		inputMessage.focus();
 	}
 }
+
+
+//************************為了拖拉圖片才新增物件 STEP1**************************//
+function createNode(){
+	var file_upload = new vjUI_fileUpload({"dragInBox":".input_chatContext",
+		   "loadCallback":function(files,cr_id,cr_name){
+			var date = new Date();
+			var date_str = date.toJSON().substr(0,10);
+			var time_str = date.toTimeString().substr(0,8);
+			var jsonObj ={
+					"TYPE":"chat",
+					"TO_CHATROOMID":cr_id,
+					"TO_CRNAME":cr_name,
+					"MEM_ID":loginMemId_Now,
+					"MSG":"<img src='"+files[0]+"' style='width:100px;height:auto'>",
+					"TIME":date_str+" "+time_str
+			 };
+			 webSocket.send(JSON.stringify(jsonObj));
+			 file_upload.clearFiles();
+		}
+	});
+
+}
+
+
+
+
+//************************為了拖拉圖片才新增物件 STEP2**************************//
+$(document).ready(function () {
+	//先創建
+	createNode();
+	
+	//create an observer instance (透過這個去監聽body是否有變動DOM元素，若有變動將再次創建，裡面在註冊指定區塊事件)
+	var observer = new MutationObserver(function (mutations) {
+	    mutations.forEach(function (mutation) {
+	       createNode();
+	    });
+	});
+	
+	// configuration of the observer:
+	var config = {
+	    attributes: true,
+	    childList: true,
+	    characterData: true
+	};
+	var targetNode = document.body;
+	// pass in the target node, as well as the observer options
+	observer.observe(targetNode, config);
+
+});
+
+
+
+
+
+
+
+
+
+
 
 
 
