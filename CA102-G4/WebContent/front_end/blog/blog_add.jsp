@@ -121,8 +121,8 @@
 				  dateFormat : "yy-mm-dd"
 				});
 		});
-		
 	</script>
+	<script src="<%=request.getContextPath()%>/front_end/js/blog/vjUI_fileUpload.js"></script>
 </head>
 
 <body>
@@ -294,7 +294,6 @@
     <!-- //editorJS -->
     <script>
         CKEDITOR.replace('editor1', {
-            extraPlugins: 'base64image',
             removePlugins: 'image',
             removePlugins: 'resize',
             height: 700,
@@ -317,6 +316,22 @@
 			</div>
        	 </div>
 		</c:if>
+		<script>
+
+
+			
+			var file_upload=new vjUI_fileUpload({"dragInBox":"iframeBase","loadCallback":previewImage});
+			
+			function previewImage(files){
+				var n=files.length;
+			
+				for(var i=0;i<n;i++){
+					$("body").append("<img src='"+files[i]+"' width='150' style='margin:10px;border:1px solid #cecece;' />");
+				}
+				file_upload.clearFiles();
+			}
+		</script>	
+		
 </body>
 
 </html>

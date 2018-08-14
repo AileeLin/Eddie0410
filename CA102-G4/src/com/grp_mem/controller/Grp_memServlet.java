@@ -15,10 +15,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.grp.model.GrpService;
+import com.grp.model.GrpVO;
 import com.grp_mem.model.Grp_memService;
 import com.grp_mem.model.Grp_memVO;
 import com.mem.model.MemberService;
 import com.mem.model.MemberVO;
+import com.mysql.fabric.xmlrpc.base.Value;
 import com.photo_wall_like.model.photo_wall_likeService;
 
 public class Grp_memServlet extends HttpServlet {
@@ -36,6 +39,7 @@ public class Grp_memServlet extends HttpServlet {
 	    String action = req.getParameter("action");
 	    PrintWriter out = res.getWriter();
 	   	HttpSession session = req.getSession();
+	   	
 	   		
 	   	System.out.println("有進來報名揪團嗎");
 
@@ -94,6 +98,8 @@ public class Grp_memServlet extends HttpServlet {
 			
 		}
 	   	
+	   	
+	   	
 	   	/*************************** 參加揪團 ********************************/
 		if ("collect".equals(action)) {
 			System.out.println("==================================");
@@ -110,8 +116,14 @@ public class Grp_memServlet extends HttpServlet {
 				
 				String grp_Leader = req.getParameter("grp_Leader");
 				
-
-				/*************************** 2.開始增加喜歡次數 ***************************************/
+				//從前台接可接受報名人數
+				Integer grp_Cnt = Integer.parseInt(req.getParameter("grp_Cnt"));
+				
+				//從前台接AJAX的joinOrNot
+				String joinOrNot = req.getParameter("joinOrNot");
+				
+				
+				/*************************** 2.資料庫GRP_MEM增加一筆 ***************************************/
 
 				Grp_memService grp_memSvc = new Grp_memService();
 				
@@ -119,7 +131,63 @@ public class Grp_memServlet extends HttpServlet {
 				
 				System.out.println("grp_Id1="+grp_Id);
 				System.out.println("mem_Id2="+mem_Id);
+				System.out.println("grp_Cnt="+grp_Cnt);
+
+				GrpService grpSvc = new GrpService();
+
+				GrpVO grpVO = grpSvc.findByPrimaryKey(grp_Id);
 				
+//				
+//				// 揪團可報名人數、接受人數 確定參加會減少
+//
+				GrpService grpSvc_less = new GrpService();
+				Integer less = grpSvc_less.update_mem_less(grp_Id,grp_Cnt).getGrp_Cnt();
+//				
+//				
+//				// 揪團可報名人數、接受人數 取消參加會增加	 
+				GrpService grpSvc_plus = new GrpService();
+				Integer plus = grpSvc_plus.update_mem_plus(grp_Id,grp_Cnt).getGrp_Cnt();
+				
+				
+				if(joinOrNot.equals("取消參加")) {
+					grpSvc_less.update_mem_less(grp_Id,grp_Cnt);
+					grp_Cnt -= 1;
+					System.out.println("grp_Cnt2="+grp_Cnt);
+
+					grpSvc_less.update_mem_less(grp_Id,grp_Cnt);
+					Integer mem_less = grpVO.getGrp_Cnt();
+					
+					out.print(grp_Cnt);
+					
+				}
+				
+				if(joinOrNot.equals("我要參加")){
+					grpSvc_plus.update_mem_plus(grp_Id,grp_Cnt);
+					grp_Cnt += 1;
+					System.out.println("grp_Cnt3="+grp_Cnt);
+					grpSvc_plus.update_mem_plus(grp_Id,grp_Cnt);
+					Integer mem_plus = grpVO.getGrp_Cnt();
+					out.print(grp_Cnt);
+					
+				}
+				
+				
+				System.out.println("找麻煩?");
+			    if (cnt == null) {
+					grp_memSvc.joingrp(grp_Id, mem_Id,grp_Leader);
+					String thank = "感謝您的報名";
+					out.print(thank);
+					
+					
+				} else {
+					grp_memSvc.delete(grp_Id, mem_Id);
+					String cancel = "已取消報名";
+					out.print(cancel);
+					
+					
+				}
+			    
+
 //				System.out.println("cnt="+cnt.getMem_Id());
 //				
 //				if(mem_Id.equals(cnt.getMem_Id())) {
@@ -133,28 +201,22 @@ public class Grp_memServlet extends HttpServlet {
 //			     failureView.forward(req, res);
 //			     return;
 //			    }
-				
-			    if (cnt == null) {
-					grp_memSvc.joingrp(grp_Id, mem_Id,grp_Leader);
-					String thank = "感謝您的報名";
-					out.print(thank);
-				} else {
-					grp_memSvc.delete(grp_Id, mem_Id);
-					String cancel = "已取消報名";
-					out.print(cancel);
-				}
-
+			    
 				/*************************** 3.收藏完成，準備轉交(Send the Success view) ***********/
 
 				// 此為AJAX寫法，不用轉交
 
 				/*************************** 其他可能的錯誤處理 **********************************/
 			} catch (Exception e) {
+				e.printStackTrace();
 				out.print("請先登入在參加揪團喔");
 			}
 		}
 		
-		if ("delete".equals(action)) { // 來自article.jsp
+		
+		
+		
+		if ("delete".equals(action)) { 
 
 			   List<String> errorMsgs = new LinkedList<String>();
 			   req.setAttribute("errorMsgs", errorMsgs);
@@ -166,11 +228,11 @@ public class Grp_memServlet extends HttpServlet {
 
 			    /***************************2.開始刪除資料***************************************/
 			    Grp_memService articleSvc = new Grp_memService();
-			    articleSvc.delete(grp_Id,mem_Id); //先將文章內所有留言刪除
+			    articleSvc.delete(grp_Id,mem_Id); 
 			    System.out.println("刪除成功");
 			    /***************************3.刪除完成,準備轉交(Send the Success view)***********/        
 			    String url = "/front_end/grp/personal_grp_review.jsp";
-			    RequestDispatcher successView = req.getRequestDispatcher(url);// 刪除成功後,轉交回送出刪除的來源網頁
+			    RequestDispatcher successView = req.getRequestDispatcher(url);
 			    successView.forward(req, res);
 			    
 			    /***************************其他可能的錯誤處理**********************************/

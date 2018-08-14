@@ -11,6 +11,10 @@
             //            cloudServices_uploadUrl: 'https://33750.cke-cs.com/easyimage/upload/',
 CKEDITOR.editorConfig = function( config ) {
     config.skin = 'moono-dark';
+//	config.extraPlugins = 'base64image';
+//    config.extraPlugins = 'dropler';
+//    config.extraPlugins = 'dragresize';
+	config.extraPlugins = 'dragresize,base64image,base64imagedrop';
     config.image_previewText=' ';
 	config.toolbarGroups = [
 		{ name: 'insert', groups: [ 'base64image', 'insert' ] },
@@ -30,4 +34,6 @@ CKEDITOR.editorConfig = function( config ) {
 	];
 
 	config.removeButtons = 'About,Save,NewPage,Preview,Print,Templates,CreateDiv,Language,HiddenField,ShowBlocks,Scayt,Textarea,TextField,Flash,SpecialChar,PageBreak,Iframe,ImageButton,Find';
+	
 };
+

@@ -242,7 +242,7 @@
                 <!-- 左邊文章標題下方統計數字 -->
                 <div class="article_brief_info">
                     <ul class="helper-clear">
-                        <li class="brief_info author far fa-user"><a href="#">&nbsp; 
+                        <li class="brief_info author far fa-user"><a href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_public.jsp?uId=${blogSvc.findByPrimaryKey(param.blogID).mem_id}">&nbsp; 
                         ${memSvc.findByPrimaryKey(blogSvc.findByPrimaryKey(param.blogID).mem_id).mem_Name}
                         </a></li>
                         <li class="brief_info_divider"></li>
@@ -402,31 +402,32 @@
                     <div class="article_cover">
                         <!-- //作者區自行設定的背景 -->
                         <!-- 作者區的大頭貼 -->
-                        <a href="#">
+                        <a href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_public.jsp?uId=${blogSvc.findByPrimaryKey(param.blogID).mem_id}">
                             <div class="article_author_avatar" style='background-image:url(<%=request.getContextPath()%>/front_end/readPic?action=member&id=${blogSvc.findByPrimaryKey(param.blogID).mem_id});'></div>
                         </a>
                         <!-- //作者區的大頭貼 -->
                         <!-- 作者區下半部 -->
                         <div class="article_author_info">
                             <div class="article_author">
-                                <a href="#">${memSvc.findByPrimaryKey(blogSvc.findByPrimaryKey(param.blogID).mem_id).mem_Name}的文章遊記</a>
+                                <a href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_public.jsp?uId=${blogSvc.findByPrimaryKey(param.blogID).mem_id}">
+                                ${memSvc.findByPrimaryKey(blogSvc.findByPrimaryKey(param.blogID).mem_id).mem_Name}的文章遊記</a>
                             </div>
                             <ul class="article_author_count">
-                                <a href="#">
+                                <a href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_public.jsp?uId=${blogSvc.findByPrimaryKey(param.blogID).mem_id}#trip">
                                     <li>
                                         <span class="count">0</span>
                                         <label class="cntlabel">行程</label>
                                     </li>
                                 </a>
                                 <li class="list_divider"></li>
-                                <a href="#">
+                                <a href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_public.jsp?uId=${blogSvc.findByPrimaryKey(param.blogID).mem_id}#blog">
                                     <li>
                                         <span class="count">${blogSvc.findByMemId(blogSvc.findByPrimaryKey(param.blogID).mem_id).size()}</span>
                                         <label class="cntlabel">文章</label>
                                     </li>
                                 </a>
                                 <li class="list_divider"></li>
-                                <a href="#">
+                                <a href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_public.jsp?uId=${blogSvc.findByPrimaryKey(param.blogID).mem_id}#gallery">
                                     <li>
                                         <span class="count">0</span>
                                         <label class="cntlabel">照片</label>

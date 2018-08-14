@@ -75,8 +75,8 @@ public class GrpService {
 	  return grpVO;
 	 }
 	 //更新揪團
-	 public GrpVO updateGrp
-	 (		 String grp_Id,
+	 public GrpVO updateGrp(		 
+			 String grp_Id,
 			 String grp_Title,
 			 String trip_Locale,
 			 String grp_Price,
@@ -137,14 +137,40 @@ public class GrpService {
 	
 	
 	//成團後更改揪團狀態(=2成團)
-		 public GrpVO update_status(String grp_Id,Integer grp_Status){
-			 			 
+	 public GrpVO update_status(String grp_Id,Integer grp_Status){
+		 			 
+	  GrpVO grpVO = new GrpVO();
+
+	  grpVO.setGrp_Id(grp_Id);
+	  grpVO.setGrp_Status(grp_Status);
+
+	  dao.update_status(grpVO);
+
+	  return grpVO;
+	 }
+	 
+	// 揪團可報名人數、接受人數 確定參加會減少
+	 public GrpVO update_mem_less(String grp_Id, Integer grp_Cnt){
+			 
 		  GrpVO grpVO = new GrpVO();
 
 		  grpVO.setGrp_Id(grp_Id);
-		  grpVO.setGrp_Status(grp_Status);
+		  grpVO.setGrp_Cnt(grp_Cnt);
+		  
+		  dao.update_mem_less(grpVO);
 
-		  dao.update_status(grpVO);
+		  return grpVO;
+		 }
+	 
+	// 揪團可報名人數、接受人數 取消參加會增加	 
+	 public GrpVO update_mem_plus(String grp_Id, Integer grp_Cnt){
+		 
+		  GrpVO grpVO = new GrpVO();
+
+		  grpVO.setGrp_Id(grp_Id);
+		  grpVO.setGrp_Cnt(grp_Cnt);
+
+		  dao.update_mem_plus(grpVO);
 
 		  return grpVO;
 		 }

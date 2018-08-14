@@ -38,22 +38,27 @@ import com.tools.jdbcUtil_CompositeQuery_Grp;
 				e.printStackTrace();
 			}
 		}
+		
 		//新增一個揪團
 		private static final String INSERT_STMT =
-				"Insert into GRP (GRP_ID,MEM_ID,GRP_START,GRP_END,GRP_CNT,GRP_ACPT,TRIP_NO,TRIP_START,TRIP_END,TRIP_LOCALE,TRIP_DETAILS,GRP_PHOTO,GRP_STATUS,CHATROOM_ID,GRP_TITLE,GRP_PRICE) "
-				+ "VALUES ('GRP'||LPAD(to_char(GRP_seq.NEXTVAL), 6, '0'),?,SYSDATE,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			"Insert into GRP (GRP_ID,MEM_ID,GRP_START,GRP_END,GRP_CNT,GRP_ACPT,TRIP_NO,TRIP_START,TRIP_END,TRIP_LOCALE,TRIP_DETAILS,GRP_PHOTO,GRP_STATUS,CHATROOM_ID,GRP_TITLE,GRP_PRICE) "
+			+ "VALUES ('GRP'||LPAD(to_char(GRP_seq.NEXTVAL), 6, '0'),?,SYSDATE,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+		
 		//更新揪團
 		private static final String UPDATE =
-				"UPDATE GRP SET GRP_END=?,GRP_CNT=?,GRP_ACPT=?,TRIP_NO=?,TRIP_START=?,TRIP_END=?,TRIP_LOCALE=?,TRIP_DETAILS=?,GRP_PHOTO=?,CHATROOM_ID=?,GRP_TITLE=?,GRP_PRICE=? WHERE GRP_ID =? ";
+			"UPDATE GRP SET GRP_END=?,GRP_CNT=?,GRP_ACPT=?,TRIP_NO=?,TRIP_START=?,TRIP_END=?,TRIP_LOCALE=?,TRIP_DETAILS=?,GRP_PHOTO=?,CHATROOM_ID=?,GRP_TITLE=?,GRP_PRICE=? WHERE GRP_ID =? ";
+		
 		//刪除揪團
 		private static final String DELETE_GRP =
-				"DELETE FROM GRP WHERE GRP_ID = ?";
+			"DELETE FROM GRP WHERE GRP_ID = ?";
+		
 		//已揪團開始日期篩選狀態是正常的揪團 
 		private static final String GET_ALL = 
-				"SELECT * FROM GRP WHERE GRP_STATUS = 1 ORDER BY GRP_START DESC";
+			"SELECT * FROM GRP WHERE GRP_STATUS = 1 ORDER BY GRP_START DESC";
 		
+		//查詢揪團內容
 		private static final String GET_ONE_STMT = 
-				"SELECT * FROM GRP WHERE GRP_ID = ?";
+			"SELECT * FROM GRP WHERE GRP_ID = ?";
 		
 		//讀取登入者的揪團
 		private static final String GET_ALL_BYMEMID=
@@ -61,12 +66,19 @@ import com.tools.jdbcUtil_CompositeQuery_Grp;
 		
 		//取得我參加揪團的內容
 		private static final String GET_JOIN_GRP = 
-				"SELECT GRP_PHOTO,TRIP_START,GRP_TITLE,TRIP_DETAILS,GRP_TITLE,GRP_MEM.GRP_ID FROM GRP JOIN GRP_MEM ON GRP.GRP_ID = GRP_MEM.GRP_ID WHERE GRP_MEM.MEM_ID = ? ORDER BY TRIP_START DESC";		
+			"SELECT GRP_PHOTO,TRIP_START,GRP_TITLE,TRIP_DETAILS,GRP_TITLE,GRP_MEM.GRP_ID FROM GRP JOIN GRP_MEM ON GRP.GRP_ID = GRP_MEM.GRP_ID WHERE GRP_MEM.MEM_ID = ? ORDER BY TRIP_START DESC";		
 		
 		//成團後更改揪團狀態(=2成團)
 		private static final String UPDATE_GRP_STATUS =
-				"UPDATE GRP SET GRP_STATUS = ? WHERE GRP_ID = ? ";
+			"UPDATE GRP SET GRP_STATUS = ? WHERE GRP_ID = ? ";
 		
+		// 揪團可報名人數、接受人數 確定參加會減少
+		private static final String UPDATE_GRP_MEM_LESS = 
+			"UPDATE GRP SET GRP_CNT = ? WHERE GRP_ID = ?";
+		
+		// 揪團可報名人數、接受人數 取消參加會增加
+		private static final String UPDATE_GRP_MEM_PLUS = 
+			"UPDATE GRP SET GRP_CNT = ? WHERE GRP_ID = ?";
 		
 		
 		@Override
@@ -672,6 +684,88 @@ import com.tools.jdbcUtil_CompositeQuery_Grp;
 		}
 	}
 
+		@Override
+			public void update_mem_less(GrpVO grpVO) {
+				Connection con = null;
+				PreparedStatement pstmt = null;
+				
+				try {
+
+					con = ds.getConnection();
+
+					pstmt = con.prepareStatement(UPDATE_GRP_MEM_LESS);
+
+							
+					pstmt.setInt(1, grpVO.getGrp_Cnt());
+					
+					pstmt.setString(2, grpVO.getGrp_Id());
+					pstmt.executeUpdate();
+
+
+					
+				} catch (SQLException se) {
+					throw new RuntimeException("A database error occured. "
+							+ se.getMessage());
+					// Clean up JDBC resources
+				} finally {
+					if (pstmt != null) {
+						try {
+							pstmt.close();
+						} catch (SQLException se) {
+							se.printStackTrace(System.err);
+						}
+					}
+					if (con != null) {
+						try {
+							con.close();
+						} catch (Exception e) {
+							e.printStackTrace(System.err);
+						}
+					}
+				}
+			}
+
+
+		@Override
+		public void update_mem_plus(GrpVO grpVO) {
+			Connection con = null;
+			PreparedStatement pstmt = null;
+			
+			try {
+				System.out.println("我有增加人數!!");
+				con = ds.getConnection();
+
+				pstmt = con.prepareStatement(UPDATE_GRP_MEM_PLUS);
+
+						
+				pstmt.setInt(1, grpVO.getGrp_Cnt());
+				System.out.println("可接受報名人數為:"+grpVO.getGrp_Cnt());
+				pstmt.setString(2, grpVO.getGrp_Id());
+				pstmt.executeUpdate();
+
+
+				
+			} catch (SQLException se) {
+				throw new RuntimeException("A database error occured. "
+						+ se.getMessage());
+				// Clean up JDBC resources
+			} finally {
+				if (pstmt != null) {
+					try {
+						pstmt.close();
+					} catch (SQLException se) {
+						se.printStackTrace(System.err);
+					}
+				}
+				if (con != null) {
+					try {
+						con.close();
+					} catch (Exception e) {
+						e.printStackTrace(System.err);
+					}
+				}
+			}
+		}
 		
 		
 	}

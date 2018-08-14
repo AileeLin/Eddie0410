@@ -251,7 +251,7 @@
 				                                    </div>
 			                                    </div>
 			                                    <div class="extra" style="color: rgba(0, 0, 0, .4);">
-			                                        <a href="#" target="_blank">
+			                                        <a href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_public.jsp?uId=${grpVO.mem_Id}" target="_blank">
 			                                            <i class="fas fa-user user"></i>
 			                                            ${memSvc.findByPrimaryKey(grpVO.mem_Id).mem_Name}
 			                                        </a>

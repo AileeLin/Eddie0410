@@ -113,13 +113,6 @@ boolean login_state = false;
 				</div>
 				<div class="top-banner-right">
 					<ul>
-						<li><i class="fa fa-phone" aria-hidden="true"></i>
-							<a href="tel:034257387"> 03-4257387</a></li>
-						<li><a href="mailto:TravelMaker@gmail.com"><i class="fa fa-envelope" aria-hidden="true"></i> TravelMaker@gmail.com</a></li>
-					</ul>
-				</div>
-				<div class="top-banner-right">
-					<ul>
 						<li><a href="<%= request.getContextPath()%>/front_end/member/member.do?action=logout"><span class=" top_banner"><i class=" fas fa-sign-out-alt" aria-hidden="true"></i></span></a></li>
 				        <li><a class="top_banner" href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_home.jsp"><i class="fa fa-user" aria-hidden="true"></i></a></li>
 				        <li><a class="top_banner" href="<%=request.getContextPath()%>/front_end/store/store_cart.jsp"><i class="fa fa-shopping-cart shopping-cart" aria-hidden="true"></i><span class="badge">${total_items}</span></a></li>

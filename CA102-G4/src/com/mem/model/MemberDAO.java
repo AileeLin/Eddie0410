@@ -26,8 +26,8 @@ public class MemberDAO implements MemberDAO_interface {
 //	+ "VALUES ('M'||LPAD(to_char(MEMBER_seq.NEXTVAL), 6, '0'),?,?,?)";
 
 private static final String INSERT_STMT = 
-"Insert into MEMBER (MEM_ID,MEM_ACCOUNT,MEM_PASSWORD,MEM_NAME,MEM_STATE,MEM_REG_DATE) "
-+ "VALUES ('M'||LPAD(to_char(MEMBER_seq.NEXTVAL), 6, '0'),?,?,?,?,?)";
+"Insert into MEMBER (MEM_ID,MEM_ACCOUNT,MEM_PASSWORD,MEM_NAME,MEM_STATE,MEM_REG_DATE,MEM_PHOTO) "
++ "VALUES ('M'||LPAD(to_char(MEMBER_seq.NEXTVAL), 6, '0'),?,?,?,?,?,?)";
 private static final String UPDATE = 
 	"UPDATE MEMBER SET MEM_ACCOUNT=?,MEM_PASSWORD= ?, MEM_NAME= ? ,MEM_SEX= ?,MEM_ADDRESS= ?,MEM_BIRTHDAY= ?,MEM_PHONE= ?,MEM_PROFILE= ?,MEM_PHOTO= ?,MEM_STATE= ?,DELIVERY_ADDRESS_1= ?,DELIVERY_ADDRESS_2=?,DELIVERY_ADDRESS_3=?,STORE_ADDR_1=?,STORE_ADDR_2=?,STORE_ADDR_3=?,STORE_NAME_1=?,STORE_NAME_2=?,STORE_NAME_3=?,STORE_NO_1=?,STORE_NO_2=?,STORE_NO_3=? WHERE MEM_ID = ?";
 private static final String GET_ALL_STMT = 
@@ -112,6 +112,7 @@ private static final String getAll_member =
 			pstmt.setString(3, memberVO.getMem_Name());
 			pstmt.setInt(4,3);
 			pstmt.setDate(5, memberVO.getMem_Reg_Date());
+			pstmt.setBytes(6, memberVO.getMem_Photo());
 
 			pstmt.executeUpdate();
 			

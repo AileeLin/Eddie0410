@@ -21,4 +21,8 @@ public class TripCollectService {
 	public TripCollectVO findByPrimaryKey(String trip_no, String mem_id) {
 		return dao.findByPrimaryKey(trip_no, mem_id);
 	}
+	
+	public int delete(String trip_no, String mem_id) {
+		return dao.delete(trip_no, mem_id);
+	}
 }

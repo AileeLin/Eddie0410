@@ -56,7 +56,7 @@ public class TripServlet extends HttpServlet {
 				/***********************1.接收請求參數 - 輸入格式的錯誤處理*************************/
 				String mem_id = null;
 				mem_id = req.getParameter("mem_id");
-				System.out.println(mem_id);
+//				System.out.println(mem_id);
 				String trip_name = req.getParameter("trip_name");
 				if(trip_name==null||trip_name.trim().length()==0) {
 					errorMsgs.put("trip_name","行程名稱: 請勿空白");
@@ -280,10 +280,10 @@ public class TripServlet extends HttpServlet {
 				detailList.add(traTripVO);
 				//list放到map
 				tripDayMap.put(belongDays, detailList);
-				int count=0;
-				for(Map.Entry<Integer, List<Object>> entry : tripDayMap.entrySet()) {
-					System.out.println("第"+(++count)+"天有"+entry.getValue().size()+"個行程");
-				}
+//				int count=0;
+//				for(Map.Entry<Integer, List<Object>> entry : tripDayMap.entrySet()) {
+//					System.out.println("第"+(++count)+"天有"+entry.getValue().size()+"個行程");
+//				}
 				/***************************3.新增完成,準備轉交(Send the Success view)***********/
 				session.setAttribute("tripDayMap", tripDayMap);
 				RequestDispatcher successView = req.getRequestDispatcher("/front_end/trip/tripEdit.jsp");
@@ -529,10 +529,10 @@ public class TripServlet extends HttpServlet {
 				
 				//list放到map
 				tripDayMap.put(belongDays, detailList);
-				int count=0;
-				for(Map.Entry<Integer, List<Object>> entry : tripDayMap.entrySet()) {
-					System.out.println("第"+(++count)+"天有"+entry.getValue().size()+"個行程");
-				}
+//				int count=0;
+//				for(Map.Entry<Integer, List<Object>> entry : tripDayMap.entrySet()) {
+//					System.out.println("第"+(++count)+"天有"+entry.getValue().size()+"個行程");
+//				}
 				/***************************3.修改完成,準備轉交(Send the Success view)***********/
 				session.setAttribute("tripDayMap", tripDayMap);
 				RequestDispatcher successView = req.getRequestDispatcher("/front_end/trip/tripEdit.jsp");
@@ -673,7 +673,47 @@ public class TripServlet extends HttpServlet {
 				HttpSession session = req.getSession();
 				String trip_no = req.getParameter("trip_no");
 				if(session.getAttribute("memberVO")==null) {
-					out.write("fail");
+					out.print("fail");
+					return;
+				}
+				MemberVO memVO = (MemberVO)session.getAttribute("memberVO");
+				String mem_id = memVO.getMem_Id();
+//				System.out.println(mem_id+":"+trip_no);
+				TripCollectVO tripCollectVO = new TripCollectVO();
+				tripCollectVO.setMem_id(mem_id);
+				tripCollectVO.setTrip_no(trip_no);
+				TripCollectService tcSvc = new TripCollectService();
+				if(tcSvc.findByPrimaryKey(trip_no, mem_id)!=null) {
+					out.print("fail2");
+					return;
+				}
+				
+				/***************************2.開始修改資料***************************************/
+				tcSvc.insert(tripCollectVO);
+				
+				/***************************3.修改完成,準備轉交(Send the Success view)***********/
+				out.print("ok");
+				/***************************其他可能的錯誤處理**********************************/
+			}catch(Exception e) {
+				errorMsgs.put("errorMsgs",e.getMessage());
+				RequestDispatcher failureView = req.getRequestDispatcher("/front_end/trip/personal_area_trip.jsp");
+				failureView.forward(req, res);
+				System.out.println(e.getMessage());
+				e.printStackTrace();
+			}
+		}
+		
+		if("cancelCollect".equals(action)) {
+			Map<String,String> errorMsgs = new LinkedHashMap<String,String>();
+			req.setAttribute("errorMsgs", errorMsgs);
+			PrintWriter out = res.getWriter();
+			try {
+				/***********************1.接收請求參數 - 輸入格式的錯誤處理*************************/
+				HttpSession session = req.getSession();
+				String trip_no = req.getParameter("trip_no");
+				if(session.getAttribute("memberVO")==null) {
+					session.setAttribute("location", req.getContextPath()+"/front_end/trip/personal_area_trip.jsp");
+					out.print("fail");
 					return;
 				}
 				MemberVO memVO = (MemberVO)session.getAttribute("memberVO");
@@ -683,16 +723,15 @@ public class TripServlet extends HttpServlet {
 				tripCollectVO.setMem_id(mem_id);
 				tripCollectVO.setTrip_no(trip_no);
 				TripCollectService tcSvc = new TripCollectService();
-				if(tcSvc.findByPrimaryKey(trip_no, mem_id)!=null) {
-					out.write("fail2");
-					return;
-				}
+				int updateCount = tcSvc.delete(trip_no, mem_id);
+				System.out.println(updateCount);
+//				if(updateCount==0) {
+//					out.write("fail2");
+//					return;
+//				}
 				
-				/***************************2.開始修改資料***************************************/
-				tcSvc.insert(tripCollectVO);
-				
-				/***************************3.修改完成,準備轉交(Send the Success view)***********/
-				out.write("ok");
+				/***************************3.刪除完成,準備轉交(Send the Success view)***********/
+				out.print(updateCount);
 				/***************************其他可能的錯誤處理**********************************/
 			}catch(Exception e) {
 				errorMsgs.put("errorMsgs",e.getMessage());

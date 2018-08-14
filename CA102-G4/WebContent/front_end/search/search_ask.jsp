@@ -235,7 +235,7 @@
 		                                    <div class="description text-truncate">
 		                                    </div>
 		                                    <div class="extra" style="color:rgba(0, 0, 0, .4)">
-		                                        <a href="#" target="_blank">
+		                                        <a href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_public.jsp?uId=${QuestionVO.mem_id}" target="_blank">
 		                                            <i class="fas fa-user user"></i>
 		                                            ${memSvc.findByPrimaryKey(QuestionVO.mem_id).mem_Name}
 		                                        </a>

@@ -282,7 +282,7 @@
 		                                    <%= ((String)pageContext.getAttribute("blog_content")).replaceAll("<[^>]*>","").trim()%>
 		                                </div>
 		                                <div class="extra">
-		                                    <a href="#" target="_blank">
+		                                    <a href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_public.jsp?uId=${blogVO.mem_id}" target="_blank">
 		                                        <i class="fas fa-user user"></i>
 		                                        ${memSvc.findByPrimaryKey(blogVO.mem_id).mem_Name}
 		                                    </a>
@@ -314,7 +314,7 @@
                 <div class="swiper-container2">
                     <div class="swiper-wrapper userSwiper-wrapper">
                     	<c:forEach var="memVO" items="${memberVOList}">
-	                        <a class="swiper-slide swiperCard" href="#" target="_blank" style="height:500px">
+	                        <a class="swiper-slide swiperCard" href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_public.jsp?uId=${memVO.mem_Id}" target="_blank" style="height:500px">
 	                            <div class="userImage" style="background-image:url(<%=request.getContextPath()%>/front_end/readPic?action=member&id=${memVO.mem_Id})">
 	                            </div>
 	                            <div class="userInfo">

@@ -23,6 +23,9 @@
         float: left;
 		width: 63%;
 		height: 31.5rem;
+		-webkit-box-sizing:initial;
+		-moz-box-sizing: initial;
+		box-sizing: initial;
       }
       #right-panel {
         float: right;

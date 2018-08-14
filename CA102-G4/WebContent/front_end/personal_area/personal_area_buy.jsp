@@ -41,7 +41,7 @@
 	ProductWishlistService productWishlistSvc = new ProductWishlistService();
 	Set<ProductWishlistVO> list2 = productWishlistSvc.getLikesByMemid(memId);
     Set<ProductWishlistVO> list = new HashSet<ProductWishlistVO>();
-    for(ProductWishlistVO productWishlistVO:list){
+    for(ProductWishlistVO productWishlistVO:list2){
     	int prodId = productWishlistVO.getWishlist_product_id();
     	if(prodSvc.getOneProduct(prodId).getProduct_status() == 1){
     		list.add(productWishlistVO);

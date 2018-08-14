@@ -228,7 +228,7 @@
         <div class="mem_ind_content">
           <!-- 頁籤項目 -->
           <ul class="nav nav-tabs" role="tablist">
-            <li class="nav-item active">
+            <li class="nav-item">
               <a href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_home.jsp">
                   <i class="fas fa-home"></i>首頁
               </a>
@@ -253,7 +253,7 @@
                   <i class="fas fa-bullhorn"></i>揪團
               </a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item active">
               <a href="<%=request.getContextPath()%>/front_end/personal/personal_area_question.jsp">
                   <i class="question circle icon"></i>問答
               </a>

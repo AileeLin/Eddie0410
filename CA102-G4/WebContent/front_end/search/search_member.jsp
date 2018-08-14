@@ -239,8 +239,8 @@
 		                    <tr>
 		                        <td>
 		                            <div class="item">
-		                                <div class="content">
-		                                    <a class="ui header title" target="_blank" href="#">
+		                                <div class="content"> 
+		                                    <a class="ui header title" target="_blank" href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_public.jsp?uId=${memVO.mem_Id}">
 		                                    ${memVO.mem_Name}
 		                                </a>
 		                                    <div class="description text-truncate memberExtra">

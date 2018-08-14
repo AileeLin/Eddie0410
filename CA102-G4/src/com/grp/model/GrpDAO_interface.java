@@ -13,6 +13,7 @@ public interface GrpDAO_interface {
 	
 	//萬用複合查詢(傳入參數型態Map)(回傳 List)
     public List<GrpVO> getAll(Map<String, String[]> map);
+    
     //修改揪團內容
 	public void update(GrpVO grpVO);
 	
@@ -24,6 +25,11 @@ public interface GrpDAO_interface {
 	
 	//成團後更改揪團狀態(=2成團)
 	public void update_status(GrpVO grpVO);
-
+	
+	// 揪團可報名人數、接受人數 確定參加會減少
+	public void update_mem_less(GrpVO grpVO);
+	
+	// 揪團可報名人數、接受人數 確定參加會減少
+	public void update_mem_plus(GrpVO grpVO);
 
 }

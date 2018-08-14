@@ -22,6 +22,14 @@
 		return;
 	}
 	
+	//購物車
+	Object total_items_temp = session.getAttribute("total_items");
+	int total_items = 0;
+	if(total_items_temp != null ){
+		total_items= (Integer) total_items_temp;
+	}
+	pageContext.setAttribute("total_items",total_items);
+	
 //   	TripVO tripVO = (TripVO) request.getAttribute("tripVO");
 %>
 <jsp:useBean id="tripVO" scope="request" class="com.trip.model.TripVO"/>
@@ -53,7 +61,7 @@
 
 <!-- bootstrap-css -->
 <link
-	href="<%=request.getContextPath()%>/front_end/css/all/bootstrap.css"
+	href="<%=request.getContextPath()%>/front_end/css/all/index_bootstrap.css"
 	rel="stylesheet" type="text/css" media="all" />
 <!-- //bootstrap-css -->
 
@@ -86,7 +94,7 @@
 
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <script
-	src="<%=request.getContextPath()%>/front_end/js/all/bootstrap.js"></script>
+	src="<%=request.getContextPath()%>/front_end/js/all/index_bootstrap.js"></script>
 
 </head>
 <body>
@@ -117,9 +125,7 @@
 							<li>
 								<a class="top_banner" href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_home.jsp"><i class="fa fa-user" aria-hidden="true"></i></a>
 							</li>
-							<li>
-								<a class="top_banner" href="#"><i class="fa fa-shopping-cart" aria-hidden="true"></i></a>
-							</li>
+							<li><a class="top_banner" href="<%=request.getContextPath()%>/front_end/store/store_cart.jsp"><i class="fa fa-shopping-cart shopping-cart" aria-hidden="true"></i><span class="badge">${total_items}</span></a></li>
 							<li>
 								<a class="top_banner" href="#"><i class="fa fa-envelope" aria-hidden="true"></i></a>
 							</li>
@@ -147,24 +153,15 @@
 							<!-- Collect the nav links, forms, and other content for toggling -->
 							<div class="collapse navbar-collapse" id="navbar-collapse-menu">
 								<ul class="nav navbar-nav">
-									<li><a
-										href="<%=request.getContextPath()%>/front_end/news/news.jsp">最新消息</a></li>
-									<li><a
-										href="<%=request.getContextPath()%>/front_end/attractions/att.jsp">景點介紹</a></li>
-									<li><a
-										href="<%=request.getContextPath()%>/front_end/trip/trip.jsp">行程規劃</a></li>
-									<li><a
-										href="<%=request.getContextPath()%>/blog.index">旅遊記</a></li>
-									<li><a
-										href="<%=request.getContextPath()%>/front_end/question/question.jsp">問答區</a></li>
-									<li><a
-										href="<%=request.getContextPath()%>/front_end/galley/galley.html">照片牆</a></li>
-									<li><a
-										href="<%=request.getContextPath()%>/front_end/togetger/together.html">揪團</a></li>
-									<li><a
-										href="<%=request.getContextPath()%>/front_end/store/store.jsp">交易平台</a></li>
-									<li><a
-										href="<%=request.getContextPath()%>/front_end/ad/ad.jsp">專欄</a></li>
+									<li><a href="<%=request.getContextPath()%>/front_end/news/news.jsp">最新消息</a></li>
+	                                <li><a href="<%=request.getContextPath()%>/front_end/attractions/att.jsp">景點介紹</a></li>
+	                                <li><a href="<%=request.getContextPath()%>/front_end/trip/trip.jsp">行程規劃</a></li>
+	                                <li><a href="<%=request.getContextPath()%>/blog.index">旅遊記</a></li>
+	                                <li><a href="<%=request.getContextPath()%>/front_end/question/question.jsp">問答區</a></li>
+	                                <li><a href="<%=request.getContextPath()%>/front_end/photowall/photo_wall.jsp">照片牆</a></li>
+	                                <li><a href="<%=request.getContextPath()%>/front_end/grp/grpIndex.jsp">揪團</a></li>
+	                                <li><a href="<%=request.getContextPath()%>/front_end/store/store.jsp">交易平台</a></li>
+	                                <li><a href="<%=request.getContextPath()%>/front_end/ad/ad.jsp">專欄</a></li>
 									<div class="clearfix"></div>
 								</ul>
 							</div>
