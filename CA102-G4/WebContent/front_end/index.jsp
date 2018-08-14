@@ -10,7 +10,7 @@
 	response.setHeader("Pragma","no-cache"); 
 	response.setHeader("Cache-Control","no-store"); 
 	response.setDateHeader("Expires", 0);
-	
+	 
 	MemberVO memberVO = (MemberVO)session.getAttribute("memberVO");
 	String login,logout;
 	if(memberVO != null){		
@@ -19,7 +19,7 @@
 	}else{
 		login = "display:'';";
 		logout = "display:none;";
-	}
+		 }
 	
 	boolean login_state = false;
 	Object login_state_temp = session.getAttribute("login_state");
@@ -27,12 +27,22 @@
 		login_state=(boolean)login_state_temp;
 	}
 %>
+<%
+	//取得購物車商品數量
+	Object total_items_temp = session.getAttribute("total_items");
+	int total_items = 0;
+	if(total_items_temp != null ){
+		total_items= (Integer) total_items_temp;
+	}
+	pageContext.setAttribute("total_items",total_items);
+%>
 <!DOCTYPE html>
 <html>
 <jsp:useBean id="blogSvc" scope="page" class="com.blog.model.blogService"></jsp:useBean>
 <jsp:useBean id="memSvc" scope="page" class="com.mem.model.MemberService"></jsp:useBean>
 <jsp:useBean id="adSvc" scope="page" class="com.ad.model.AdService"></jsp:useBean>
 <jsp:useBean id="grpSvc" scope="page" class="com.grp.model.GrpService"></jsp:useBean>
+<jsp:useBean id="attSvc" scope="page" class="com.attractions.model.AttractionsService"></jsp:useBean>
 <head>
     <!-- 網頁title -->
     <title>Travel Maker</title>
@@ -123,10 +133,9 @@
                          </c:choose>
                          </li>
                         <li style="<%= logout %>"><a class="top_banner" href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_home.jsp"><i class="fa fa-user" aria-hidden="true"></i></a></li>
-                        
-                        <li><a class="top_banner" href="#"><i class="fa fa-shopping-cart" aria-hidden="true"></i></a></li>
+                        <li><a class="top_banner" href="<%=request.getContextPath()%>/front_end/store/store_cart.jsp"><i class="fa fa-shopping-cart shopping-cart" aria-hidden="true"></i><span class="badge">${total_items}</span></a></li>
                         <li><a class="top_banner" href="#"><i class="fa fa-envelope" aria-hidden="true"></i></a></li>
-                    </ul>
+                      </ul>
                 </div>
                 <div class="clearfix"> </div>
             </div>
@@ -147,18 +156,18 @@
                         <!-- //當網頁寬度太小時，導覽列會縮成一個按鈕 -->
                         <!-- Collect the nav links, forms, and other content for toggling -->
                         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                            <ul class="nav navbar-nav">
-								<li><a href="<%=request.getContextPath()%>/front_end/news.jsp">最新消息</a></li>
-								<li><a href="<%=request.getContextPath()%>/front_end/attractions/att.jsp">景點介紹</a></li>
-								<li><a href="<%=request.getContextPath()%>/front_end/trip/trip.jsp">行程規劃</a></li>
-								<li><a href="<%=request.getContextPath()%>/blog.index">旅遊記</a></li>
-								<li><a href="<%=request.getContextPath()%>/front_end/ask.jsp">問答區</a></li>
-								<li><a href="<%=request.getContextPath()%>/front_end/galley.jsp">照片牆</a></li>
-								<li><a href="<%=request.getContextPath()%>/front_end/together.jsp">揪團</a></li>
-								<li><a href="<%=request.getContextPath()%>/front_end/buy.jsp">交易平台</a></li>
-								<li><a href="<%=request.getContextPath()%>/front_end/ad/ad.jsp">專欄</a></li>
+							<ul class="nav navbar-nav">
+								<li><a href="<%=request.getContextPath()%>/front_end/news/news.jsp">最新消息</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/attractions/att.jsp">景點介紹</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/trip/trip.jsp">行程規劃</a></li>
+                                <li><a href="<%=request.getContextPath()%>/blog.index">旅遊記</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/question/question.jsp">問答區</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/photowall/photo_wall.jsp">照片牆</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/grp/grpIndex.jsp">揪團</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/store/store.jsp">交易平台</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/ad/ad.jsp">專欄</a></li>
 								<div class="clearfix"></div>
-                            </ul>
+							</ul>
                         </div>
                     </nav>
                 </div>
@@ -167,15 +176,13 @@
         </div>
     </div>
     <!-- //banner -->
-    
-    
     <div id="kb" class="carousel kb_elastic animate_text kb_wrapper" data-ride="carousel" data-interval="6000" data-pause="hover">
         <!-- 搜尋 -->
         <FORM METHOD="GET" ACTION="<%=request.getContextPath()%>/blog.do">
 	        <div class="row" style="position: absolute">
 	            <div class="col-sm-6 col-sm-offset-3">
 	                <div class="input-group" id="search_place">
-	                    <input type="text" name="keyword" class="form-control" placeholder="搜尋遊記、行程、景點、餐廳、飯店">
+	                    <input type="text" name="keyword" class="form-control" placeholder="搜尋遊記、揪團、問答、會員、景點">
 	                    <input type="hidden" name="action" value="searchAll">
 	                    <span class="input-group-btn">
 	                <button class="btn btn-default submit" type="submit">
@@ -194,8 +201,8 @@
             <div class="item active">
                 <div class="slider">
                     <a href="#">
-                        <div class="carousel-caption kb_caption slider-grid" style="padding-top:0px;">
-                            <h3 style="line-height:290px">金門國家公園</h3>
+                        <div class="carousel-caption kb_caption slider-grid" style="padding:7.2em 0 0 0;">
+                            <h3>Singapore</h3>
 <!--                             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p> -->
                         </div>
                     </a>
@@ -206,8 +213,8 @@
             <div class="item">
                 <div class="slider slider1">
                     <a href="#">
-                        <div class="carousel-caption kb_caption kb_caption_right slider-grid" style="padding-top:0px;">
-                            <h3 style="line-height:290px">Taroko National Park</h3>
+                        <div class="carousel-caption kb_caption kb_caption_right slider-grid" style="padding:7.2em 0 0 0;">
+                            <h3>Hawaii</h3>
 <!--                             <p>Vivamus vel nulla venenatis, tincidunt mi vel, consequat erat.</p> -->
                         </div>
                     </a>
@@ -218,8 +225,8 @@
             <div class="item">
                 <div class="slider slider2">
                     <a href="#">
-                        <div class="carousel-caption kb_caption kb_caption_center slider-grid" style="padding-top:0px;">
-                            <h3 style="line-height:290px">Taipei</h3>
+                        <div class="carousel-caption kb_caption kb_caption_center slider-grid" style="padding:7.2em 0 0 0;">
+                            <h3>Hong Kong</h3>
 <!--                             <p>Nunc turpis purus, vestibulum at quam ac, feugiat dignissim nunc</p> -->
                         </div>
                     </a>
@@ -248,37 +255,39 @@
             </div>
 
             <div class="about-grids">
+            
+            <c:forEach var="attVO" items="${attSvc.allRandom}">
                 <div class="col-md-3 about-grid">
-                    <div class="about-grid-info effect-1">
-                        <a href="#">
-                            <h4>San Francisco</h4>
+                    <div class="about-grid-info effect-1" style="background: url('<%= request.getContextPath()%>/trip/getPicture.do?att_no=${attVO.att_no}') no-repeat 50% 50%;background-size:cover;border-radius:50%">
+                        <a href="<%=request.getContextPath()%>/front_end/attractions/attDetail.jsp?att_no=${attVO.att_no}">
+                            <h4 style="font-family:'Oswald','Noto Sans TC', sans-serif !important">${attVO.att_name}</h4>
                         </a>
                     </div>
                 </div>
+			</c:forEach>
+<!--                 <div class="col-md-3 about-grid"> -->
+<!--                     <div class="about-grid-info about-grid-info1 effect-1"> -->
+<!--                         <a href="#"> -->
+<!--                             <h4>Maldives</h4> -->
+<!--                         </a> -->
+<!--                     </div> -->
+<!--                 </div> -->
 
-                <div class="col-md-3 about-grid">
-                    <div class="about-grid-info about-grid-info1 effect-1">
-                        <a href="#">
-                            <h4>Maldives</h4>
-                        </a>
-                    </div>
-                </div>
+<!--                 <div class="col-md-3 about-grid"> -->
+<!--                     <div class="about-grid-info about-grid-info2 effect-1"> -->
+<!--                         <a href="#"> -->
+<!--                             <h4>Ireland</h4> -->
+<!--                         </a> -->
+<!--                     </div> -->
+<!--                 </div> -->
 
-                <div class="col-md-3 about-grid">
-                    <div class="about-grid-info about-grid-info2 effect-1">
-                        <a href="#">
-                            <h4>Ireland</h4>
-                        </a>
-                    </div>
-                </div>
-
-                <div class="col-md-3 about-grid">
-                    <div class="about-grid-info about-grid-info3 effect-1">
-                        <a href="#">
-                            <h4>New Zealand</h4>
-                        </a>
-                    </div>
-                </div>
+<!--                 <div class="col-md-3 about-grid"> -->
+<!--                     <div class="about-grid-info about-grid-info3 effect-1"> -->
+<!--                         <a href="#"> -->
+<!--                             <h4>New Zealand</h4> -->
+<!--                         </a> -->
+<!--                     </div> -->
+<!--                 </div> -->
 
                 <div class="clearfix"> </div>
             </div>
@@ -456,9 +465,9 @@
                     </div>
                     <div class="footer-grid-info">
                         <ul>
-                            <li><a href="about.html">關於Travel Maker</a></li>
-                            <li><a href="about.html">聯絡我們</a></li>
-                            <li><a href="about.html">常見問題</a></li>
+                            <li><a href="<%=request.getContextPath()%>/front_end/about_us/about_us.jsp">關於Travel Maker</a></li>
+                            <li><a href="<%=request.getContextPath()%>/front_end/content/content.jsp">聯絡我們</a></li>
+                            <li><a href="<%=request.getContextPath()%>/front_end/faq/faq.jsp">常見問題</a></li>
                         </ul>
                     </div>
                 </div>
@@ -500,7 +509,7 @@
             </div>
             <div class="copyright">
                 <p>Copyright &copy; 2018 All rights reserved
-                    <a href="index.html" target="_blank" title="TravelMaker">TravelMaker</a>
+                    <a href="<%=request.getContextPath()%>/front_end/index.jsp" target="_blank" title="TravelMaker">TravelMaker</a>
                 </p>
             </div>
         </div>

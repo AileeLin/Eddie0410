@@ -14,9 +14,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
+import idv.david.websocketchat.model.NoticeMessageVO;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
-
+import idv.david.websocketchat.model.NoticeMessageVO;
 
 @ServerEndpoint("/chat/{mem_id}")
 public class ChatServlet {
@@ -83,6 +84,22 @@ public class ChatServlet {
 	//收到訊息時會觸發
 	@OnMessage
 	public void onMessage(Session userSession, String message) {
+		
+		//*************************華霖的通知****************************//
+		if(message.contains("title")) {
+			NoticeMessageVO noticeMessage = gson.fromJson(message, NoticeMessageVO.class);
+			String sender = noticeMessage.getSender();
+			String receiver = noticeMessage.getReceiver();
+			
+			Session receiverSession = sessionsMap.get(receiver);
+			if (receiverSession != null && receiverSession.isOpen()) {
+				receiverSession.getAsyncRemote().sendText(message);
+			}
+			System.out.println("這是通知:"+message);
+			return;
+		}
+		//*************************華霖的通知****************************//
+
 		
 		//取出傳來的訊息，擷取裡面要發送的聊天對話編號
 		JsonObject jsonObject = gson.fromJson(message,JsonObject.class);

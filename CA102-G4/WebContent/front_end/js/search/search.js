@@ -62,6 +62,48 @@ $(document).ready(function() {
 		        }
 		    });
 		});
-		
 
+		$(function(){
+		    var len = 200; // 超過100個字以"..."取代
+		    $(".descriptionBlogContent").each(function(i){
+		        if($(this).text().length>len){
+		            $(this).attr("title",$(this).text());
+		            var text=$(this).text().substring(0,len-1)+"...";
+		            $(this).text(text);
+		        }
+		    });
+		});
+		
+		$(function(){
+		    var len = 200; // 超過200個字以"..."取代
+		    $(".memberExtra").each(function(i){
+		        if($(this).text().length>len){
+		            $(this).attr("title",$(this).text());
+		            var text=$(this).text().substring(0,len-1)+"...";
+		            $(this).text(text);
+		        }
+		    });
+		});
+		
+		$(function(){
+		    var len = 200; // 超過200個字以"..."取代
+		    $(".attractionsExtra").each(function(i){
+		        if($(this).text().length>len){
+		            $(this).attr("title",$(this).text());
+		            var text=$(this).text().substring(0,len-1)+"...";
+		            $(this).text(text);
+		        }
+		    });
+		});
+		
+		$(function(){
+			var len = 200; // 超過200個字以"..."取代
+			$(".descriptionTogetherContent").each(function(i){
+				if($(this).text().length>len){
+					$(this).attr("title",$(this).text());
+					var text=$(this).text().substring(0,len-1)+"...";
+					$(this).text(text);
+				}
+			});
+		});
 });

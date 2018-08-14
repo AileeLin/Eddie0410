@@ -12,9 +12,11 @@ public interface QuestionDAO_interface {
     public int update(QuestionVO questionVO);
     public int delete(String  question_id);
     public QuestionVO findByPrimaryKey(String question_id);
-    public List<QuestionVO> getAll();
+    public List<QuestionVO> getAll();    
+    public List<QuestionVO> find_by_State();
     
-    public QuestionVO findByState();
+    public int updateQ(QuestionVO questionVO);
     
-  	public int update_State(String mem_id,String question_id,Integer q_State);
+  	// ¥@»Ê¥´ªº
+  	public List<QuestionVO> findByKeyword(String keyword);
 }

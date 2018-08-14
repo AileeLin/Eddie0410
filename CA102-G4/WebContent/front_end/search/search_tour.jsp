@@ -14,7 +14,7 @@
 	if(memberVO != null){		
 		login = "display:none;";
 		logout = "display:'';";
-	}else{
+	}else{ 
 		login = "display:'';";
 		logout = "display:none;";
 		 }
@@ -24,6 +24,15 @@
 	if(login_state_temp!=null){
 		login_state=(boolean)login_state_temp;
 	}
+%>
+<%
+	//取得購物車商品數量
+	Object total_items_temp = session.getAttribute("total_items");
+	int total_items = 0;
+	if(total_items_temp != null ){
+		total_items= (Integer) total_items_temp;
+	}
+	pageContext.setAttribute("total_items",total_items);
 %>
 <!DOCTYPE html>
 <html>
@@ -57,12 +66,12 @@
     <!-- //JQUERY -->
 
     <!-- bootstrap css、JS檔案 -->
-    <link href="css/index_bootstrap.css" rel="stylesheet" type="text/css" media="all" />
-    <script src="js/index_bootstrap.js"></script>
+    <link href="<%=request.getContextPath()%>/front_end/css/all/index_bootstrap.css" rel="stylesheet" type="text/css" media="all" />
+    <script src="<%=request.getContextPath()%>/front_end/js/all/index_bootstrap.js"></script>
     <!-- //bootstrap-css -->
 
     <!-- 套首頁herder和footer css -->
-    <link href="css/index_style_header_footer.css" rel="stylesheet" type="text/css" media="all" />
+    <link href="<%=request.getContextPath()%>/front_end/css/all/index_style_header_footer.css" rel="stylesheet" type="text/css" media="all" />
     <!-- //套首頁herder和footer css -->
 
     <!-- font-awesome icons -->
@@ -75,27 +84,30 @@
     <!-- //font字體 -->
 
     <!-- blog 自定義的css -->
-    <link href="css/blog_self/blog_semantic.min.css" rel="stylesheet" type="text/css">
-    <link href="css/blog_self/blog.css" rel="stylesheet" type="text/css" media="all">
-    <link href="css/blog_self/blog_divider.css" rel="stylesheet" type="text/css">
-    <link href="css/blog_self/blog_button.css" rel="stylesheet" type="text/css">
-    <link href="css/blog_self/blog_icon.css" rel="stylesheet" type="text/css">
+    <link href="<%=request.getContextPath()%>/front_end/css/blog/blog_semantic.min.css" rel="stylesheet" type="text/css">
+    <link href="<%=request.getContextPath()%>/front_end/css/blog/blog.css" rel="stylesheet" type="text/css" media="all">
+    <link href="<%=request.getContextPath()%>/front_end/css/blog/blog_divider.css" rel="stylesheet" type="text/css">
+    <link href="<%=request.getContextPath()%>/front_end/css/blog/blog_button.css" rel="stylesheet" type="text/css">
+    <link href="<%=request.getContextPath()%>/front_end/css/blog/blog_icon.css" rel="stylesheet" type="text/css">
     <!-- //blog 自定義的css -->
+    
     <!-- search 自定義的css -->
-    <link rel="stylesheet" href="css/search/search.css">
-    <link rel="stylesheet" href="css/search/search_blog.css">
+    <link rel="stylesheet" href="<%=request.getContextPath()%>/front_end/css/search/search.css">
+    <link rel="stylesheet" href="<%=request.getContextPath()%>/front_end/css/search/search_blog.css">
     <!-- //search 自定義的css -->
+    
     <!-- blog 自定義的js -->
-    <script src="js/blog_self/blog_semantic.min.js"></script>
-    <script src="js/search/search.js"></script>
+    <script src="<%=request.getContextPath()%>/front_end/js/blog/blog_semantic.min.js"></script>
+    <script src="<%=request.getContextPath()%>/front_end/js/search/search.js"></script>
     <!-- //blog 自定義的js -->
 
-    <!-- 景點幻燈片 -->
-    <link href="swiper-4.3.3/dist/css/swiper.min.css" rel="stylesheet">
-    <script src="swiper-4.3.3/dist/js/swiper.min.js"></script>
-    <!-- 景點幻燈片 -->
+    <!-- 旋轉木馬 -->
+    <link href="<%=request.getContextPath()%>/front_end/swiper-4.3.3/dist/css/swiper.min.css" rel="stylesheet">
+    <script src="<%=request.getContextPath()%>/front_end/swiper-4.3.3/dist/js/swiper.min.js"></script>
+    <!-- 旋轉木馬 -->
+    
     <!-- LogoIcon -->
-    <link href="images/Logo_Black_use.png" rel="icon" type="image/png">
+    <link href="<%=request.getContextPath()%>/front_end/images/all/Logo_Black_use.png" rel="icon" type="image/png">
     <!--    <link rel="icon" href="images/Logo_Black_use.ico" type="image/x-icon">-->
     <!-- //LogoIcon -->
 </head>
@@ -113,11 +125,23 @@
                     </ul>
                 </div>
                 <div class="top-banner-right">
-                    <ul>
-                        <li><a class="top_banner" href="#"><i class="fa fa-user" aria-hidden="true"></i></a></li>
-                        <li><a class="top_banner" href="#"><i class="fa fa-shopping-cart" aria-hidden="true"></i></a></li>
+                	<!-- 暫時登出用的 -->
+                     <ul>
+                        <li>
+                        	<!-- 判斷是否登入，若有登入將會出現登出按鈕 -->
+                         <c:choose>
+                          <c:when test="<%=login_state %>">
+                           <a href="<%= request.getContextPath()%>/front_end/member/member.do?action=logout"><span class=" top_banner"><i class=" fas fa-sign-out-alt" aria-hidden="true"></i></span></a>
+                          </c:when>
+                          <c:otherwise>
+                           <a href="<%= request.getContextPath()%>/front_end/member/mem_login.jsp"><span class="top_banner"><i class=" fa fa-user" aria-hidden="true"></i></span></a>
+                          </c:otherwise>
+                         </c:choose>
+                         </li>
+                        <li style="<%= logout %>"><a class="top_banner" href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_home.jsp"><i class="fa fa-user" aria-hidden="true"></i></a></li>
+                        <li><a class="top_banner" href="<%=request.getContextPath()%>/front_end/store/store_cart.jsp"><i class="fa fa-shopping-cart shopping-cart" aria-hidden="true"></i><span class="badge">${total_items}</span></a></li>
                         <li><a class="top_banner" href="#"><i class="fa fa-envelope" aria-hidden="true"></i></a></li>
-                    </ul>
+                      </ul>
                 </div>
                 <div class="clearfix"> </div>
             </div>
@@ -125,8 +149,8 @@
         <div class="header">
             <div class="container">
                 <div class="logo">
-                    <h1>
-                        <a href="index.html">Travel Maker</a>
+                     <h1>
+                        <a href="<%=request.getContextPath()%>/front_end/index.jsp">Travel Maker</a>
                     </h1>
                 </div>
                 <div class="top-nav">
@@ -137,19 +161,17 @@
                         <!-- //當網頁寬度太小時，導覽列會縮成一個按鈕 -->
                         <!-- Collect the nav links, forms, and other content for toggling -->
                         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                            <ul class="nav navbar-nav">
-                                <li><a href="news.html">最新消息</a></li>
-                                <li><a href="tour.html">景點介紹</a></li>
-                                <li><a href="plan.html">行程規劃</a></li>
-                                <li><a href="blog.html">旅遊記</a></li>
-                                <li><a href="ask.html">問答區</a></li>
-                                <li><a href="galley.html">照片牆</a></li>
-                                <li><a href="chat.html">聊天室</a></li>
-                                <li><a href="together.html">揪團</a></li>
-                                <li><a href="buy.html">交易平台</a></li>
-                                <li><a href="advertisement.html">專欄</a></li>
-
-                                <div class="clearfix"> </div>
+                           <ul class="nav navbar-nav">
+								<li><a href="<%=request.getContextPath()%>/front_end/news/news.jsp">最新消息</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/attractions/att.jsp">景點介紹</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/trip/trip.jsp">行程規劃</a></li>
+                                <li><a href="<%=request.getContextPath()%>/blog.index">旅遊記</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/question/question.jsp">問答區</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/photowall/photo_wall.jsp">照片牆</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/grp/grpIndex.jsp">揪團</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/store/store.jsp">交易平台</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/ad/ad.jsp">專欄</a></li>
+								<div class="clearfix"></div>
                             </ul>
                         </div>
                     </nav>
@@ -165,32 +187,35 @@
         <div class="ui hidden divider"></div>
         <!-- //我是隔板 -->
         <!-- 搜尋BAR -->
-        <div class="ui fluid action input">
-            <input type="text" placeholder="搜索行程、旅遊記、會員、問答、揪團、景點">
-            <div class="ui button">搜尋</div>
-        </div>
+         <FORM class="keywordForm" METHOD="GET" ACTION="<%=request.getContextPath()%>/blog.do">
+	        <div class="ui fluid action input">
+	            <input type="text" name="keyword" placeholder="搜尋遊記、揪團、問答、會員、景點" value="${param.keyword}">
+	            <input type="hidden" name="action" value="searchTour">
+	            <div class="ui button submitKeyword">搜尋</div>
+	        </div>
+        </FORM>
         <!-- 搜尋BAR -->
         <!-- 我是隔板 -->
         <div class="ui hidden divider"></div>
         <!-- //我是隔板 -->
         <!-- Menu -->
-        <div class="ui tabular menu">
-            <a class="item" href="search_index.html">
+	  	<div class="ui tabular menu">
+            <a class='item ${param.action=="searchAll"?"active":""}' href="<%=request.getContextPath()%>/blog.do?action=searchAll&keyword=${param.keyword}">
                 最佳
             </a>
-            <a class="item" href="search_blog.html">
+            <a class='item ${param.action=="searchBlog"?"active":""}' href="<%=request.getContextPath()%>/blog.do?action=searchBlog&keyword=${param.keyword}">
                 旅遊記
             </a>
-            <a class="item" href="search_member.html">
+            <a class='item ${param.action=="searchMember"?"active":""}' href="<%=request.getContextPath()%>/blog.do?action=searchMember&keyword=${param.keyword}">
                 會員
             </a>
-            <a class="item" href="search_ask.html">
+            <a class='item ${param.action=="searchAsk"?"active":""}' href="<%=request.getContextPath()%>/blog.do?action=searchAsk&keyword=${param.keyword}">
                 問答
             </a>
-            <a class="item" href="search_together.html">
+            <a class='item ${param.action=="searchTogether"?"active":""}' href="<%=request.getContextPath()%>/blog.do?action=searchTogether&keyword=${param.keyword}">
                 揪團
             </a>
-            <a class="item active" href="search_tour.html">
+            <a class='item ${(param.action=="searchTour") || (param.action == null)?"active":""}' href="<%=request.getContextPath()%>/blog.do?action=searchTour&keyword=${param.keyword}">
                 景點
             </a>
         </div>
@@ -200,183 +225,59 @@
         <div class="ui hidden divider"></div>
         <!-- //我是隔板 -->
         <!-- 搜尋時間 -->
-        <div class="time">
-            <p>共找到 1034 個結果，花費 0.345 秒</p>
+ 		<div class="time">
+        	<div class="load"><span id="resultCount">共找到 ${AttractionsList.size()} 個結果</span>，花費 <span id="time"> 秒</span></div>
         </div>
         <!-- //搜尋時間 -->
         <!-- 下面搜尋結果 -->
         <div class="row">
-            <table class="table table-hover">
-                <tbody>
+            <c:if test="${not empty AttractionsList}">
+	            <table class="table table-hover">
+	                <tbody>
+	                	<%@ include file="page3.file"%>
+	                	<c:forEach var="attractionsVO" items="${AttractionsList}" begin="<%=pageIndex%>" end="<%=pageIndex+rowsPerPage-1%>">
+		                    <tr>
+		                        <td>
+		                            <div class="item">
+		                                <div class="content">
+		                                    <a class="ui header title" target="_blank" href="<%=request.getContextPath()%>/front_end/attractions/attDetail.jsp?att_no=${attractionsVO.att_no}">
+		                                    ${attractionsVO.att_name}
+		                                	</a>
+		                                    <div class="description text-truncate attractionsArea">
+		                                    ${attractionsVO.country}${attractionsVO.administrative_area==null?"":" - "}${attractionsVO.administrative_area}
+		                                    </div>
+		                                    <div class="extra attractionsExtra">
+			                                    <c:set var="att_information" value="${attractionsVO.att_information}"/> 
+			                                    <%= ((String)pageContext.getAttribute("att_information")).replaceAll("<[^>]*>","").trim()%>
+		                                    </div>
+		                                </div>
+		                            </div>
+		                        </td>
+		                    </tr>
+						</c:forEach>
+	                </tbody>
+	            </table>
 
-                    <tr>
-                        <td>
-                            <div class="item">
-                                <div class="content">
-                                    <a class="ui header title" target="_blank" href="#">
-                                    日本橋
-                                </a>
-                                    <div class="description text-truncate">
-                                        日本橋是東京都的道路元標 也就是道路網的起點 “日本橋”的題字是德川慶喜(15代將軍)的字跡 1603年江戶德川幕府 以此為全國道路網建設計劃五街道的基點 橋頭的青銅獅像 有守護之意 橋中的青銅麒麟 則象徵東京的繁榮 加上日本推理小說 東野圭吾的麒麟之翼的故事景點 以及改拍電影的取景 正是位於此處 所以可以來此散散步 朝聖一下
-                                    </div>
-                                    <div class="extra">
-                                        <i class="far fa-calendar-alt calendar"></i>2016-12-08 11:56:02
-                                        <div class="ui small label">交通要地</div>
-                                        <div class="ui small label">名勝古蹟</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
+		      	<!-- 上一頁button -->
+				<%@ include file="page2.file"%>
+				<!-- //下一頁button -->
+				<!-- 頁數資訊 -->
+				<div class="page_info">
+					顯示第<%= whichPage %>頁，共<%= pageNumber %>頁
+				</div>
+				<!-- //頁數資訊 -->
+			</c:if>
+			<c:if test="${empty AttractionsList}">
+				<div class="ui left aligned search_results empty" style="text-align:center;height:300px;border:1px solid lightgray">
+					<p style="color:darkgray;height:100%;line-height:300px;font-size:40px">沒有相關關鍵字的景點!!</p>
+				</div>
+			</c:if>
 
-                    <tr>
-                        <td>
-                            <div class="item">
-                                <div class="content">
-                                    <a class="ui header title" target="_blank" href="#">
-                                    日本橋車站
-                                </a>
-                                    <div class="description text-truncate">
-                                        位於大阪市中央區日本橋1丁目、為大阪市營地下鐵堺筋線、千日前線的一座鐵路車站。
-                                    </div>
-                                    <div class="extra">
-                                        <i class="far fa-calendar-alt calendar"></i>2016-12-08 11:56:02
-                                        <div class="ui small label">交通要地</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>
-                            <div class="item">
-                                <div class="content">
-                                    <a class="ui header title" target="_blank" href="#">
-                                    日本武道館
-                                </a>
-                                    <div class="description text-truncate">
-                                        日本武道館是日本鼓勵傳統的武道而興建的大會場，近年來以舉辦演唱會及舞蹈演藝表演為主。
-
-                                    </div>
-                                    <div class="extra">
-                                        <i class="far fa-calendar-alt calendar"></i>2016-12-08 11:56:02
-                                        <div class="ui small label">展覽會館</div>
-                                        <div class="ui small label">學校・公共設施</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>
-                            <div class="item">
-                                <div class="content">
-                                    <a class="ui header title" target="_blank" href="#">
-                                    日本橋三越百貨
-                                </a>
-                                    <div class="description text-truncate">
-                                        三越為日本百貨公司集團。
-                                    </div>
-                                    <div class="extra">
-                                        <i class="far fa-calendar-alt calendar"></i>2016-12-08 11:56:02
-                                        <div class="ui small label">名牌・精品</div>
-                                        <div class="ui small label">購物・商店</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>
-                            <div class="item">
-                                <div class="content">
-                                    <a class="ui header title" target="_blank" href="#">
-                                    JINS コレド日本橋店
-                                </a>
-                                    <div class="description text-truncate">
-                                        知名眼鏡連鎖專賣店，目前日本全國約有185家以上店鋪，以及網路商店經營。
-                                    </div>
-                                    <div class="extra">
-                                        <i class="far fa-calendar-alt calendar"></i>2016-12-08 11:56:02
-                                        <div class="ui small label">購物・商店</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>
-                            <div class="item">
-                                <div class="content">
-                                    <a class="ui header title" target="_blank" href="#">
-                                    日本科學未來館
-                                </a>
-                                    <div class="description text-truncate">
-                                        「日本科学未来館」為展示許多21世紀新科技或是新發明的博物館。
-                                    </div>
-                                    <div class="extra">
-                                        <i class="far fa-calendar-alt calendar"></i>2016-12-08 11:56:02
-                                        <div class="ui small label">博物館・美術館</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>
-                            <div class="item">
-                                <div class="content">
-                                    <a class="ui header title" target="_blank" href="#">
-                                    日本海さかな街
-                                </a>
-                                    <div class="description text-truncate">
-                                        敦賀港直送新鮮海產，號稱日本海最大的漁獲市場。
-                                    </div>
-                                    <div class="extra">
-                                        <i class="far fa-calendar-alt calendar"></i>2016-12-08 11:56:02
-                                        <div class="ui small label">購物・商店</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-
-
-                </tbody>
-
-            </table>
 
         </div>
         <!-- //下面搜尋結果 -->
-        <!-- 換頁bar -->
-        <div class="ui page grid padded page_bar">
-            <!-- 上一頁button -->
-            <div class="ui buttons">
-                <button class="ui labeled icon button">
-                    <i class="left chevron icon"></i> 上一頁
-                </button>
-            </div>
-            <!-- //上一頁button -->
-            <!-- 下一頁button -->
-            <div class="ui buttons">
-                <button class="ui right labeled icon button">
-                    下一頁
-                    <i class="right chevron icon"></i>
-                </button>
-            </div>
-            <!-- //下一頁button -->
-            <!-- 頁數資訊 -->
-            <div class="page_info">
-                顯示第1頁，共4頁
-            </div>
-            <!-- //頁數資訊 -->
-        </div>
-        <!-- //換頁bar -->
+        
+
 
         <!-- 我是隔板 -->
         <div class="ui hidden divider"></div>
@@ -395,9 +296,9 @@
                     </div>
                     <div class="footer-grid-info">
                         <ul>
-                            <li><a href="about.html">關於Travel Maker</a></li>
-                            <li><a href="about.html">聯絡我們</a></li>
-                            <li><a href="about.html">常見問題</a></li>
+                            <li><a href="<%=request.getContextPath()%>/front_end/about_us/about_us.jsp">關於Travel Maker</a></li>
+                            <li><a href="<%=request.getContextPath()%>/front_end/content/content.jsp">聯絡我們</a></li>
+                            <li><a href="<%=request.getContextPath()%>/front_end/faq/faq.jsp">常見問題</a></li>
                         </ul>
                     </div>
                 </div>
@@ -439,12 +340,36 @@
             </div>
             <div class="copyright">
                 <p>Copyright &copy; 2018 All rights reserved
-                    <a href="index.html" target="_blank" title="TravelMaker">TravelMaker</a>
+                    <a href="<%=request.getContextPath()%>/front_end/index.jsp" target="_blank" title="TravelMaker">TravelMaker</a>
                 </p>
             </div>
         </div>
     </div>
     <!-- //footer -->
+    
+     <script>
+		var start = Date.now();
+		var elapsedMs;
+		// run the clock and stop when all the images load
+		var timeEl = document.getElementById('time');
+		var clockUpdate;
+
+		function setElapsedTimeDisplay() {
+			elapsedMs = (Date.now() - start);
+			timeEl.firstChild.data = (elapsedMs / 1000).toFixed(3) + ' 秒';
+		}
+
+		clockUpdate = window.setInterval(function() {
+			setElapsedTimeDisplay();
+		}, 17);
+
+		window.onload = function() {
+			if (console)
+				console.log("window.onload 載入完成");
+			setElapsedTimeDisplay();
+			clearInterval(clockUpdate);
+		}
+	</script>
 </body>
 
 </html>

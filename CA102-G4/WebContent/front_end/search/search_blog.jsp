@@ -8,7 +8,7 @@
 	response.setHeader("Pragma","no-cache"); 
 	response.setHeader("Cache-Control","no-store"); 
 	response.setDateHeader("Expires", 0);
-	
+	 
 	MemberVO memberVO = (MemberVO)session.getAttribute("memberVO");
 	String login,logout;
 	if(memberVO != null){		
@@ -25,6 +25,18 @@
 		login_state=(boolean)login_state_temp;
 	}
 %>
+<%
+	//取得購物車商品數量
+	Object total_items_temp = session.getAttribute("total_items");
+	int total_items = 0;
+	if(total_items_temp != null ){
+		total_items= (Integer) total_items_temp;
+	}
+	pageContext.setAttribute("total_items",total_items);
+%>
+<jsp:useBean id="memSvc" scope="page" class="com.mem.model.MemberService"></jsp:useBean>
+<jsp:useBean id="blogTagNameSvc" scope="page" class="com.blog_tag_name.model.blogTagNameService"></jsp:useBean>
+<jsp:useBean id="blogTagSvc" scope="page" class="com.blog_tag.model.blogTagService"></jsp:useBean>
 <!DOCTYPE html>
 <html>
 
@@ -81,19 +93,22 @@
     <link href="<%=request.getContextPath()%>/front_end/css/blog/blog_button.css" rel="stylesheet" type="text/css">
     <link href="<%=request.getContextPath()%>/front_end/css/blog/blog_icon.css" rel="stylesheet" type="text/css">
     <!-- //blog 自定義的css -->
+    
     <!-- search 自定義的css -->
     <link rel="stylesheet" href="<%=request.getContextPath()%>/front_end/css/search/search.css">
     <link rel="stylesheet" href="<%=request.getContextPath()%>/front_end/css/search/search_blog.css">
     <!-- //search 自定義的css -->
+    
     <!-- blog 自定義的js -->
     <script src="<%=request.getContextPath()%>/front_end/js/blog/blog_semantic.min.js"></script>
     <script src="<%=request.getContextPath()%>/front_end/js/search/search.js"></script>
     <!-- //blog 自定義的js -->
 
-    <!-- 景點幻燈片 -->
+    <!-- 旋轉木馬 -->
     <link href="<%=request.getContextPath()%>/front_end/swiper-4.3.3/dist/css/swiper.min.css" rel="stylesheet">
     <script src="<%=request.getContextPath()%>/front_end/swiper-4.3.3/dist/js/swiper.min.js"></script>
-    <!-- 景點幻燈片 -->
+    <!-- 旋轉木馬 -->
+    
     <!-- LogoIcon -->
     <link href="<%=request.getContextPath()%>/front_end/images/all/Logo_Black_use.png" rel="icon" type="image/png">
     <!--    <link rel="icon" href="images/Logo_Black_use.ico" type="image/x-icon">-->
@@ -126,8 +141,8 @@
                           </c:otherwise>
                          </c:choose>
                          </li>
-                        <li style="<%= logout %>"><a class="top_banner" href="<%=request.getContextPath()%>/front_end/personal_area_home.html"><i class="fa fa-user" aria-hidden="true"></i></a></li>
-                        <li><a class="top_banner" href="#"><i class="fa fa-shopping-cart" aria-hidden="true"></i></a></li>
+                        <li style="<%= logout %>"><a class="top_banner" href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_home.jsp"><i class="fa fa-user" aria-hidden="true"></i></a></li>
+                        <li><a class="top_banner" href="<%=request.getContextPath()%>/front_end/store/store_cart.jsp"><i class="fa fa-shopping-cart shopping-cart" aria-hidden="true"></i><span class="badge">${total_items}</span></a></li>
                         <li><a class="top_banner" href="#"><i class="fa fa-envelope" aria-hidden="true"></i></a></li>
                     </ul>
                 </div>
@@ -150,15 +165,15 @@
                         <!-- Collect the nav links, forms, and other content for toggling -->
                         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                             <ul class="nav navbar-nav">
-								<li><a href="<%=request.getContextPath()%>/front_end/news.jsp">最新消息</a></li>
-								<li><a href="<%=request.getContextPath()%>/front_end/tour.jsp">景點介紹</a></li>
-								<li><a href="<%=request.getContextPath()%>/front_end/plan.jsp">行程規劃</a></li>
-								<li><a href="<%=request.getContextPath()%>/blog.index">旅遊記</a></li>
-								<li><a href="<%=request.getContextPath()%>/front_end/ask.jsp">問答區</a></li>
-								<li><a href="<%=request.getContextPath()%>/front_end/galley.jsp">照片牆</a></li>
-								<li><a href="<%=request.getContextPath()%>/front_end/together.jsp">揪團</a></li>
-								<li><a href="<%=request.getContextPath()%>/front_end/buy.jsp">交易平台</a></li>
-								<li><a href="<%=request.getContextPath()%>/front_end/advertisement.jsp">專欄</a></li>
+								<li><a href="<%=request.getContextPath()%>/front_end/news/news.jsp">最新消息</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/attractions/att.jsp">景點介紹</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/trip/trip.jsp">行程規劃</a></li>
+                                <li><a href="<%=request.getContextPath()%>/blog.index">旅遊記</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/question/question.jsp">問答區</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/photowall/photo_wall.jsp">照片牆</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/grp/grpIndex.jsp">揪團</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/store/store.jsp">交易平台</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/ad/ad.jsp">專欄</a></li>
 								<div class="clearfix"></div>
                             </ul>
                         </div>
@@ -177,33 +192,34 @@
         <!-- 搜尋BAR -->
         <FORM class="keywordForm" METHOD="GET" ACTION="<%=request.getContextPath()%>/blog.do">
 	        <div class="ui fluid action input">
-	            <input type="text" placeholder="搜索行程、旅遊記、會員、問答、揪團、景點">
-	            <div class="ui button">搜尋</div>
+	            <input type="text" name="keyword" placeholder="搜尋遊記、揪團、問答、會員、景點" value="${param.keyword}">
+	            <input type="hidden" name="action" value="searchBlog">
+	            <div class="ui button submitKeyword">搜尋</div>
 	        </div>
-	    </FORM>
+        </FORM>
         <!-- 搜尋BAR -->
         <!-- 我是隔板 -->
         <div class="ui hidden divider"></div>
         <!-- //我是隔板 -->
         <!-- Menu -->
-        <div class="ui tabular menu">
-            <a class="item active" href="<%=request.getContextPath()%>/front_end/search/search_index.jsp">
+	  	<div class="ui tabular menu">
+            <a class='item ${param.action=="searchAll"?"active":""}' href="<%=request.getContextPath()%>/blog.do?action=searchAll&keyword=${param.keyword}">
                 最佳
             </a>
-            <a class="item" href="<%=request.getContextPath()%>/front_end/search/search_blog.jsp">
+            <a class='item ${(param.action=="searchBlog") || (param.action == null)?"active":""}' href="<%=request.getContextPath()%>/blog.do?action=searchBlog&keyword=${param.keyword}">
                 旅遊記
             </a>
-            <a class="item" href="<%=request.getContextPath()%>/front_end/search/search_member.jsp">
+            <a class='item ${param.action=="searchMember"?"active":""}' href="<%=request.getContextPath()%>/blog.do?action=searchMember&keyword=${param.keyword}">
                 會員
             </a>
-            <a class="item" href="<%=request.getContextPath()%>/front_end/search/search_ask.jsp">
+            <a class='item ${param.action=="searchAsk"?"active":""}' href="<%=request.getContextPath()%>/blog.do?action=searchAsk&keyword=${param.keyword}">
                 問答
             </a>
-            <a class="item" href="<%=request.getContextPath()%>/front_end/search/search_together.jsp">
+            <a class='item ${param.action=="searchTogether"?"active":""}' href="<%=request.getContextPath()%>/blog.do?action=searchTogether&keyword=${param.keyword}">
                 揪團
             </a>
-            <a class="item" href="<%=request.getContextPath()%>/front_end/search/search_tour.jsp">
-                景點
+            <a class='item ${param.action=="searchTour"?"active":""}' href="<%=request.getContextPath()%>/blog.do?action=searchTour&keyword=${param.keyword}">
+                景點   
             </a>
         </div>
         <!-- //Menu -->
@@ -213,170 +229,68 @@
         <!-- //我是隔板 -->
         <!-- 搜尋時間 -->
         <div class="time">
-            <p>共找到 1034 個結果，花費 0.345 秒</p>
+        	<div class="load"><span id="resultCount">共找到 ${blogList.size()} 個結果</span>，花費 <span id="time"> 秒</span></div>
         </div>
         <!-- //搜尋時間 -->
         <!-- 下面搜尋結果 -->
         <div class="row">
+          <c:if test="${not empty blogList}">
             <table class="table table-hover">
                 <tbody>
-
-                    <tr>
-                        <td>
-                            <div class="item">
-                                <div class="content">
-                                    <a class="ui header title" target="_blank" href="#">
-                                    [大阪]大阪城
-                                </a>
-                                    <div class="description text-truncate">
-                                        如果要我在日本選一個城市生活，我一定會選擇大阪，雖然京都的古色香讓人癡迷，但在城市生活慣的飄兒，還是習慣充滿活力、娛樂與美食的大阪，如果要我在日本選一個城市生活，我一定會選擇大阪，雖然京都的古色香讓人癡迷，但在城市生活慣的飄兒，還是習慣充滿活力、娛樂與美食的大阪，
-                                    </div>
-                                    <div class="extra">
-                                        <a href="#" target="_blank">
-                                            <i class="fas fa-user user"></i>黃世銘
-                                        </a>
-                                        <i class="far fa-calendar-alt calendar"></i>2016-12-08 11:56:02
-                                    </div>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>
-                            <div class="item">
-                                <div class="content">
-                                    <a class="ui header title" target="_blank" href="#">
-                                    [大阪]大阪城
-                                </a>
-                                    <div class="description text-truncate">
-                                        如果要我在日本選一個城市生活，我一定會選擇大阪，雖然京都的古色香讓人癡迷，但在城市生活慣的飄兒，還是習慣充滿活力、娛樂與美食的大阪，如果要我在日本選一個城市生活，我一定會選擇大阪，雖然京都的古色香讓人癡迷，但在城市生活慣的飄兒，還是習慣充滿活力、娛樂與美食的大阪，
-                                    </div>
-                                    <div class="extra">
-                                        <a href="#" target="_blank">
-                                            <i class="fas fa-user user"></i>黃世銘
-                                        </a>
-                                        <i class="far fa-calendar-alt calendar"></i>2016-12-08 11:56:02
-                                    </div>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>
-                            <div class="item">
-                                <div class="content">
-                                    <a class="ui header title" target="_blank" href="#">
-                                    [大阪]大阪城
-                                </a>
-                                    <div class="description text-truncate">
-                                        如果要我在日本選一個城市生活，我一定會選擇大阪，雖然京都的古色香讓人癡迷，但在城市生活慣的飄兒，還是習慣充滿活力、娛樂與美食的大阪，如果要我在日本選一個城市生活，我一定會選擇大阪，雖然京都的古色香讓人癡迷，但在城市生活慣的飄兒，還是習慣充滿活力、娛樂與美食的大阪，
-                                    </div>
-                                    <div class="extra">
-                                        <a href="#" target="_blank">
-                                            <i class="fas fa-user user"></i>黃世銘
-                                        </a>
-                                        <i class="far fa-calendar-alt calendar"></i>2016-12-08 11:56:02
-                                    </div>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>
-                            <div class="item">
-                                <div class="content">
-                                    <a class="ui header title" target="_blank" href="#">
-                                    [大阪]大阪城
-                                </a>
-                                    <div class="description text-truncate">
-                                        如果要我在日本選一個城市生活，我一定會選擇大阪，雖然京都的古色香讓人癡迷，但在城市生活慣的飄兒，還是習慣充滿活力、娛樂與美食的大阪，如果要我在日本選一個城市生活，我一定會選擇大阪，雖然京都的古色香讓人癡迷，但在城市生活慣的飄兒，還是習慣充滿活力、娛樂與美食的大阪，
-                                    </div>
-                                    <div class="extra">
-                                        <a href="#" target="_blank">
-                                            <i class="fas fa-user user"></i>黃世銘
-                                        </a>
-                                        <i class="far fa-calendar-alt calendar"></i>2016-12-08 11:56:02
-                                    </div>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>
-                            <div class="item">
-                                <div class="content">
-                                    <a class="ui header title" target="_blank" href="#">
-                                    [大阪]大阪城
-                                </a>
-                                    <div class="description text-truncate">
-                                        如果要我在日本選一個城市生活，我一定會選擇大阪，雖然京都的古色香讓人癡迷，但在城市生活慣的飄兒，還是習慣充滿活力、娛樂與美食的大阪，如果要我在日本選一個城市生活，我一定會選擇大阪，雖然京都的古色香讓人癡迷，但在城市生活慣的飄兒，還是習慣充滿活力、娛樂與美食的大阪，
-                                    </div>
-                                    <div class="extra">
-                                        <a href="#" target="_blank">
-                                            <i class="fas fa-user user"></i>黃世銘
-                                        </a>
-                                        <i class="far fa-calendar-alt calendar"></i>2016-12-08 11:56:02
-                                    </div>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>
-                            <div class="item">
-                                <div class="content">
-                                    <a class="ui header title" target="_blank" href="#">
-                                    [大阪]大阪城
-                                </a>
-                                    <div class="description text-truncate">
-                                        如果要我在日本選一個城市生活，我一定會選擇大阪，雖然京都的古色香讓人癡迷，但在城市生活慣的飄兒，還是習慣充滿活力、娛樂與美食的大阪，如果要我在日本選一個城市生活，我一定會選擇大阪，雖然京都的古色香讓人癡迷，但在城市生活慣的飄兒，還是習慣充滿活力、娛樂與美食的大阪，
-                                    </div>
-                                    <div class="extra">
-                                        <a href="#" target="_blank">
-                                            <i class="fas fa-user user"></i>黃世銘
-                                        </a>
-                                        <i class="far fa-calendar-alt calendar"></i>2016-12-08 11:56:02
-                                    </div>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-
+                	<%@ include file="page1.file"%>
+					<c:forEach var="blogVO" items="${blogList}" begin="<%=pageIndex%>" end="<%=pageIndex+rowsPerPage-1%>">
+	                    <tr>
+	                        <td>
+	                            <div class="item">
+	                                <div class="content">
+	                                    <a class="ui header title" target="_blank" href="<%=request.getContextPath()%>/blog.do?action=article&blogID=${blogVO.blog_id}">
+	                                    ${blogVO.blog_title}
+	                                </a>
+	                                    <div class="description text-truncate descriptionBlogContent">
+			                                <c:set var="blog_content" value="${blogVO.blog_content}"/> 
+			                                <%= ((String)pageContext.getAttribute("blog_content")).replaceAll("<[^>]*>","").trim()%>
+		                                    </div>
+	                                    <div class="extra" style="color:rgba(0, 0, 0, .4)">
+	                                        <a href="#" target="_blank">
+	                                            <i class="fas fa-user user"></i>
+	                                            ${memSvc.findByPrimaryKey(blogVO.mem_id).mem_Name}
+	                                        </a>
+	                                        <i class="far fa-calendar-alt calendar"></i>
+	                                        ${blogVO.travel_date}
+	                                        
+	                                        <c:forEach var="blogTagVO" items="${blogTagSvc.getAllByABlog(blogVO.blog_id)}">
+		                                        <a class="ui small label" style="cursor: pointer;" href='<%=request.getContextPath()%>/blog.do?orderby=recent&keyword=${blogTagNameSvc.findByBtn_id(blogTagVO.btn_id).btn_name}&item=tag&action=keyword' target="_blank">	
+		                                            ${blogTagNameSvc.findByBtn_id(blogTagVO.btn_id).btn_class} - ${blogTagNameSvc.findByBtn_id(blogTagVO.btn_id).btn_name}
+		                                        </a>
+		                                    </c:forEach>
+	                                    </div>
+	                                </div>
+	                            </div>
+	                        </td>
+	                    </tr>
+					</c:forEach>
                 </tbody>
-
-            </table>
-
+              </table>
+		      	<!-- 上一頁button -->
+				<%@ include file="page2.file"%>
+				<!-- //下一頁button -->
+				<!-- 頁數資訊 -->
+				<div class="page_info">
+					顯示第<%= whichPage %>頁，共<%= pageNumber %>頁
+				</div>
+				<!-- //頁數資訊 -->
+              
+			</c:if>
+			
+			<c:if test="${empty blogList}">
+				<div class="ui left aligned search_results empty" style="text-align:center;height:300px;border:1px solid lightgray">
+					<p style="color:darkgray;height:100%;line-height:300px;font-size:40px">沒有相關關鍵字的旅遊記!!</p>
+				</div>
+			</c:if>
         </div>
         <!-- //下面搜尋結果 -->
-        <!-- 換頁bar -->
-        <div class="ui page grid padded page_bar">
-            <!-- 上一頁button -->
-            <div class="ui buttons">
-                <button class="ui labeled icon button">
-                    <i class="left chevron icon"></i> 上一頁
-                </button>
-            </div>
-            <!-- //上一頁button -->
-            <!-- 下一頁button -->
-            <div class="ui buttons">
-                <button class="ui right labeled icon button">
-                    下一頁
-                    <i class="right chevron icon"></i>
-                </button>
-            </div>
-            <!-- //下一頁button -->
-            <!-- 頁數資訊 -->
-            <div class="page_info">
-                顯示第1頁，共4頁
-            </div>
-            <!-- //頁數資訊 -->
-        </div>
-        <!-- //換頁bar -->
+
+
 
         <!-- 我是隔板 -->
         <div class="ui hidden divider"></div>
@@ -395,9 +309,9 @@
                     </div>
                     <div class="footer-grid-info">
                         <ul>
-                            <li><a href="about.html">關於Travel Maker</a></li>
-                            <li><a href="about.html">聯絡我們</a></li>
-                            <li><a href="about.html">常見問題</a></li>
+                            <li><a href="<%=request.getContextPath()%>/front_end/about_us/about_us.jsp">關於Travel Maker</a></li>
+                            <li><a href="<%=request.getContextPath()%>/front_end/content/content.jsp">聯絡我們</a></li>
+                            <li><a href="<%=request.getContextPath()%>/front_end/faq/faq.jsp">常見問題</a></li>
                         </ul>
                     </div>
                 </div>
@@ -439,12 +353,37 @@
             </div>
             <div class="copyright">
                 <p>Copyright &copy; 2018 All rights reserved
-                    <a href="index.html" target="_blank" title="TravelMaker">TravelMaker</a>
+                    <a href="<%=request.getContextPath()%>/front_end/index.jsp" target="_blank" title="TravelMaker">TravelMaker</a>
                 </p>
             </div>
         </div>
     </div>
     <!-- //footer -->
+    
+    	<script>
+		var start = Date.now();
+		var elapsedMs;
+		// run the clock and stop when all the images load
+		var timeEl = document.getElementById('time');
+		var clockUpdate;
+
+		function setElapsedTimeDisplay() {
+			elapsedMs = (Date.now() - start);
+			timeEl.firstChild.data = (elapsedMs / 1000).toFixed(3) + ' 秒';
+		}
+
+		clockUpdate = window.setInterval(function() {
+			setElapsedTimeDisplay();
+		}, 17);
+
+		window.onload = function() {
+			if (console)
+				console.log("window.onload 載入完成");
+			setElapsedTimeDisplay();
+			clearInterval(clockUpdate);
+		}
+	</script>
+	
 </body>
 
 </html>

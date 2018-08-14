@@ -4,14 +4,13 @@
 <%@ page import="com.mem.model.*"%>
 <%@ page import="java.util.*"%>
 <%@ page import="com.photo_wall_like.model.*"%>
+<%@ page import="com.photo_tag_list.model.*"%>
+<%@ page import="com.photo_tag.model.*"%>
 
 <%
 
 	MemberService memSvc = new MemberService();
-
-	// 	// 這裡應該要用session 取得登入者的ID
-	String mem_Id = "M000009";
-	request.setAttribute("mem_Id", mem_Id);
+	
 
 	MemberVO memberVO = (MemberVO) session.getAttribute("memberVO");
 	String login, logout;
@@ -28,21 +27,35 @@
 	if (login_state_temp != null) {
 		login_state = (boolean) login_state_temp;
 	}
-
+	
+	/***************取出登入者會員資訊******************/
+	String memId = ((MemberVO)session.getAttribute("memberVO")).getMem_Id();
+	
 	String photo_No = request.getParameter("photo_No");
-
-	System.out.println(mem_Id);
-	System.out.println(photo_No);
-
+	
+	System.out.println("登入者的="+memId);
+	
+	System.out.println("照片牆的="+photo_No);
+	
 	Photo_wallService photo_wallSvc = new Photo_wallService();
+	
 	Photo_wallVO photo_wallVO = photo_wallSvc.findByPrimaryKey(photo_No);
 	pageContext.setAttribute("photo_wallVO", photo_wallVO);
+	
+	System.out.println(photo_wallVO);
+	
+	
+	Photo_tag_listService photo_tag_listSvc = new Photo_tag_listService();
+	List<Photo_tag_listVO> list = photo_tag_listSvc.getAll_Photo_No(photo_No);
+	pageContext.setAttribute("list", list);
+	
+	
+	String mem_Id = request.getParameter("mem_Id");
 
 	MemberVO memVO = memSvc.findByPrimaryKey(photo_wallVO.getMem_Id());
-	System.out.println(mem_Id);
-
-	//  	System.out.println(memVO.getEncoded());   //檢查照片是否有編碼	
-	//  	System.out.println(memVO.getMem_Id()); 	  //檢查是否有ID
+// 	 	System.out.println(memVO.getEncoded());   //檢查照片是否有編碼	
+//	 	System.out.println(memVO.getMem_Id()); 	  //取得照片牆的發文者
+	
 	pageContext.setAttribute("memVO", memVO);
 
 	photo_wall_likeService photo_wall_likeSvc = new photo_wall_likeService();
@@ -52,25 +65,24 @@
 
 	// 取得被收藏次數
 
-
 %>
 
-<jsp:useBean id="memberSvc" scope="page"
-	class="com.mem.model.MemberService" />
+<jsp:useBean id="memberSvc" scope="page" class="com.mem.model.MemberService" />
+<jsp:useBean id="photo_tagSvc" scope="page" class="com.photo_tag.model.Photo_tagService" />
 
 <!DOCTYPE html>
 <html>
 
 <head>
 <!-- 網頁title -->
-<title>Travle Maker</title>
+<title>Travel Maker</title>
 <!-- //網頁title -->
 <!-- 指定螢幕寬度為裝置寬度，畫面載入初始縮放比例 100% -->
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <!-- //指定螢幕寬度為裝置寬度，畫面載入初始縮放比例 100% -->
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- 設定網頁keywords -->
-<meta name="keywords" content="TravleMaker,travlemaker,自助旅行,照片牆" />
+<meta name="keywords" content="TravelMaker,Travelmaker,自助旅行,照片牆" />
 <!-- //設定網頁keywords -->
 <!-- 隱藏iPhone Safari位址列的網頁 -->
 <script type="application/x-javascript">
@@ -171,6 +183,33 @@
 	rel='stylesheet' type='text/css'>
 <!-- //font字體 -->
 
+	<style>
+	
+	
+.profile_photo {
+    border-radius: 50px;
+    width: 50px;
+    display: inline-block;
+}
+
+.row_photo{
+    height: 590px;
+    margin: 0px auto;
+    margin-top: 1px;
+    position: none;
+    z-index: 100;
+}
+
+.tab-content{
+	margin-left:10px;
+}
+
+.tag_context{
+ 	height:150px;
+}
+
+	</style>
+
 </head>
 
 <body>
@@ -191,20 +230,22 @@
 				<div class="top-banner-right">
 
 					<ul>
-						<li><%=(login_state)
-					? "<a href=\"/CA102G4/front_end/member/member.do?action=logout\"><span class=\" top_banner\"><i class=\" fas fa-sign-out-alt\" aria-hidden=\"true\"></i></span></a>"
-					: "<a href=\"/CA102G4/front_end/member/mem_login.jsp\"><span class=\" top_banner\"><i class=\" fa fa-user\" aria-hidden=\"true\"></i></span></a>"%>
-						</li>
-
-
-						<li style="<%=logout%>"><a class="top_banner"
-							href="member/select_page.jsp"><i class="fa fa-user"
-								aria-hidden="true"></i></a></li>
-
-						<li><a class="top_banner" href="#"><i
-								class="fa fa-shopping-cart" aria-hidden="true"></i></a></li>
-						<li><a class="top_banner" href="#"><i
-								class="fa fa-envelope" aria-hidden="true"></i></a></li>
+						<li>
+                        	<!-- 判斷是否登入，若有登入將會出現登出按鈕 -->
+                         <c:choose>
+                          <c:when test="<%=login_state %>">
+                           <a href="<%= request.getContextPath()%>/front_end/member/member.do?action=logout"><span class=" top_banner"><i class=" fas fa-sign-out-alt" aria-hidden="true"></i></span></a>
+                          </c:when>
+                          <c:otherwise>
+                           <a href="<%= request.getContextPath()%>/front_end/member/mem_login.jsp"><span class="top_banner"><i class=" fa fa-user" aria-hidden="true"></i></span></a>
+                          </c:otherwise>
+                         </c:choose>
+                         </li>
+                         
+                        <li style="<%= logout %>"><a class="top_banner" href="<%=request.getContextPath()%>/front_end/personal_area_home.html"><i class="fa fa-user" aria-hidden="true"></i></a></li>
+                        
+						<li><a class="top_banner" href="#"><i class="fa fa-shopping-cart" aria-hidden="true"></i></a></li>
+						<li><a class="top_banner" href="#"><i class="fa fa-envelope" aria-hidden="true"></i></a></li>
 					</ul>
 				</div>
 				<div class="clearfix"></div>
@@ -228,16 +269,15 @@
 						<div class="collapse navbar-collapse"
 							id="bs-example-navbar-collapse-1">
 							<ul class="nav navbar-nav">
-								<li><a href="news.html">最新消息</a></li>
-								<li><a href="tour.html">景點介紹</a></li>
-								<li><a href="plan.html">行程規劃</a></li>
-								<li><a href="blog.html">旅遊記</a></li>
-								<li><a href="ask.html">問答區</a></li>
-								<li><a href="galley.html">照片牆</a></li>
-								<li><a href="chat.html">聊天室</a></li>
-								<li><a href="together.html">揪團</a></li>
-								<li><a href="buy.html">交易平台</a></li>
-								<li><a href="advertisement.html">專欄</a></li>
+								<li><a href="<%=request.getContextPath()%>/front_end/news/news.jsp">最新消息</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/attractions/att.jsp">景點介紹</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/trip/trip.jsp">行程規劃</a></li>
+                                <li><a href="<%=request.getContextPath()%>/blog.index">旅遊記</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/question/question.jsp">問答區</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/photowall/photo_wall.jsp">照片牆</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/grp/grpIndex.jsp">揪團</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/store/store.jsp">交易平台</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/ad/ad.jsp">專欄</a></li>
 
 								<div class="clearfix"></div>
 							</ul>
@@ -254,43 +294,39 @@
 		<li><a href="<%=request.getContextPath()%>/front_end/index.jsp">回到首頁</a></li>
 
 		<li><a
-			href="<%=request.getContextPath()%>/front_end/photowall/photowall.jsp">照片牆</a></li>
+			href="<%=request.getContextPath()%>/front_end/photowall/photo_wall.jsp">照片牆</a></li>
 
 		<li class="active">瀏覽照片牆</li>
-
-
 
 	</ol>
 
 	<!-- view photowall -->
 
 	<div class="container">
+	<div class="row row_photo">
 		<div class="card">
-
 			<div class="container-fliud">
 				<div class="wrapper row">
-
-
-					<div class="preview col-md-6">
+					<div class="preview col-md-6 col-xs-6 col-s-6">
 						<div class="preview-pic tab-content">
-
 							<div class="preview-pic tab-content">
-								<img src="data:image/*;base64,${photo_wallVO.encoded}">
+								<img style="margin:0px" src="data:image/*;base64,${photo_wallVO.encoded}">
 							</div>
 
 						</div>
 					</div>
 
 
-					<div class="details col-md-6">
+					<div class="details col-md-6 col-xs-6 col-s-6">
 						<div class="profile_all">
 							<div class="profile_photo">
-								<img src="data:image/*;base64,${memVO.encoded}" width="30"
+								<img style="margin:0px; border-radius:50%; text-decoration:none;" 
+								src="data:image/*;base64,${memVO.encoded}" width="30"
 									height="30">
 
 							</div>
 							<div class="profile_photo_hr">
-								<a href="#" class="product-title">${memberSvc.findByPrimaryKey(photo_wallVO.mem_Id).mem_Name}</a>
+								<a href="#" class="product-title" style="color:black;">${memberSvc.findByPrimaryKey(photo_wallVO.mem_Id).mem_Name}</a>
 
 								<%-- 							<a href="#" class="product-title">${memVO.mem_Name}</a> --%>
 							</div>
@@ -299,15 +335,15 @@
 						<div class="rating">
 							<div class="icon_all">
 
-								<img src="" width="20" height="20">&nbsp;87人看過
+<!-- 								<img src="" width="20" height="20">&nbsp;87人看過 -->
 
 								<div id="collectMessage"></div>
 
 								<div class="ui basic buttons">
 
-									<button class="ui.button.collect like_heart_position" id="collect">
-											<i class="collection far fa-heart"
-												style="font-weight:<%=(cnt == 0) ? "400" : "900"%>;color:<%=(cnt == 0) ? "black" : "red"%>">
+									<button  class="ui.button.collect like_heart_position" id="collect" style="margin:0px">
+											<i class="collection far fa-heart" style="font-weight:<%=(cnt == 0) ? "400" : "900"%>;
+												color:<%=(cnt == 0) ? "black" : "red"%>">
 											</i> 喜歡
 
 									</button>
@@ -320,17 +356,24 @@
 							</div>
 							<div>
 								<table class="tag_context">
-									<tr>
-										<th>我的標籤</th>
-										<td>${photo_wallVO.photo_Content}</td>
-									</tr>
+
+										<c:forEach var="Photo_tag_listVO" items="${list}">
+										<c:forEach var="Photo_tagVO" items="${photo_tagSvc.all}">
+										<c:if test="${Photo_tagVO.photo_Tag_No==Photo_tag_listVO.photo_Tag_No}">
+									<tr style="height:fit-content"><td>${Photo_tagVO.tag_Content}</td></tr>
+									</c:if>
+										</c:forEach>
+										</c:forEach>
+										
+										
+									<tr><td style="max-width:330px;height:fit-content">${photo_wallVO.photo_Content}</td></tr>
 								</table>
 							</div>
-							<div class="">
+							<div style="float:right">
 								<button type="button" data-toggle="modal" data-target="#myModal"
-									class="fas fa-exclamation-triangle" style="border: 0;"></button>
+									class="fas fa-exclamation-triangle" style="border:0; background-color:white; height: 32px;"></button>
 							</div>
-							<hr class="hr_setting">
+							<hr class="hr_setting" >
 						</div>
 						<div class="action">
 
@@ -343,6 +386,7 @@
 					</div>
 				</div>
 			</div>
+		</div>
 		</div>
 	</div>
 

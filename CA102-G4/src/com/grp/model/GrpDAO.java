@@ -63,6 +63,12 @@ import com.tools.jdbcUtil_CompositeQuery_Grp;
 		private static final String GET_JOIN_GRP = 
 				"SELECT GRP_PHOTO,TRIP_START,GRP_TITLE,TRIP_DETAILS,GRP_TITLE,GRP_MEM.GRP_ID FROM GRP JOIN GRP_MEM ON GRP.GRP_ID = GRP_MEM.GRP_ID WHERE GRP_MEM.MEM_ID = ? ORDER BY TRIP_START DESC";		
 		
+		//成團後更改揪團狀態(=2成團)
+		private static final String UPDATE_GRP_STATUS =
+				"UPDATE GRP SET GRP_STATUS = ? WHERE GRP_ID = ? ";
+		
+		
+		
 		@Override
 		public void insert(GrpVO grpVO) {
 			
@@ -151,26 +157,38 @@ import com.tools.jdbcUtil_CompositeQuery_Grp;
 			PreparedStatement pstmt = null;
 			
 			try {
-				
+
 				con = ds.getConnection();
 
 				pstmt = con.prepareStatement(UPDATE);
-				
+
 				pstmt.setTimestamp(1, grpVO.getGrp_End());
+						
 				pstmt.setInt(2, grpVO.getGrp_Cnt());
+				
 				pstmt.setInt(3, grpVO.getGrp_Acpt());
+								
 				pstmt.setString(4, grpVO.getTrip_No());
+				
 				pstmt.setTimestamp(5, grpVO.getTrip_Start());
+				
 				pstmt.setTimestamp(6, grpVO.getTrip_End());
+				
 				pstmt.setString(7, grpVO.getTrip_Locale());
+				
 				pstmt.setString(8, grpVO.getTrip_Details());
-				pstmt.setBytes(9, grpVO.getGrp_Photo());
-				pstmt.setString(10, grpVO.getChatroom_Id());
+				
+				pstmt.setBytes(9, grpVO.getGrp_Photo());				
+
+				pstmt.setString(10, grpVO.getChatroom_Id());				
+
 				pstmt.setString(11, grpVO.getGrp_Title());
-				pstmt.setString(12, grpVO.getGrp_Price());
+				
+				pstmt.setString(12, grpVO.getGrp_Price());				
+
 				pstmt.setString(13, grpVO.getGrp_Id());
 				pstmt.executeUpdate();
-				
+
 
 				
 			} catch (SQLException se) {
@@ -456,25 +474,45 @@ import com.tools.jdbcUtil_CompositeQuery_Grp;
 		public List<GrpVO> getAll(Map<String, String[]> map) {
 			List<GrpVO> list = new ArrayList<GrpVO>();
 			GrpVO grpVO = null;
-		
+			System.out.println("萬用複合查詢0");
 			Connection con = null;
 			PreparedStatement pstmt = null;
 			ResultSet rs = null;
 		
 			try {
-				
+				System.out.println("萬用複合查詢1");
+
 				con = ds.getConnection();
 				String finalSQL = "SELECT * FROM GRP "
 				      + jdbcUtil_CompositeQuery_Grp.get_WhereCondition(map)
 			          + "order by GRP_ID";
 				pstmt = con.prepareStatement(finalSQL);
+				
 				System.out.println("●●finalSQL(by DAO) = "+finalSQL);
+				
 				rs = pstmt.executeQuery();
-		
+				
+				//System.out.println(pstmt.executeQuery());
+				
+				
+				
 				while (rs.next()) {
+					
+					System.out.println("萬用複合查詢3");
+
 					grpVO = new GrpVO();
+					
+					System.out.println("萬用複合查詢4grpVO"+grpVO);
+
+					
 					grpVO.setMem_Id(rs.getString("MEM_ID"));
+					
+					System.out.println("MEM_ID="+rs.getString("MEM_ID"));
+					
 					grpVO.setGrp_Id(rs.getString("GRP_ID"));
+					
+					System.out.println("MEM_ID="+rs.getString("GRP_ID"));
+
 					grpVO.setGrp_Start(rs.getTimestamp("GRP_START"));
 					grpVO.setGrp_End(rs.getTimestamp("GRP_END"));
 					grpVO.setGrp_Cnt(rs.getInt("GRP_CNT"));
@@ -489,14 +527,26 @@ import com.tools.jdbcUtil_CompositeQuery_Grp;
 					grpVO.setChatroom_Id(rs.getString("CHATROOM_ID"));
 					grpVO.setGrp_Title(rs.getString("GRP_TITLE"));
 					grpVO.setGrp_Price(rs.getString("GRP_PRICE"));
+					System.out.println("萬用複合查詢3");
+
 					list.add(grpVO);
+					System.out.println("萬用複合查詢4");
+
 				}
 		
 				// Handle any SQL errors
 			} catch (SQLException se) {
+				
+				System.out.println("萬用複合查詢6");
+
 				throw new RuntimeException("A database error occured. "
 						+ se.getMessage());
+				
 			} finally {
+				
+				System.out.println("萬用複合查詢7");
+
+				
 				if (rs != null) {
 					try {
 						rs.close();
@@ -583,6 +633,47 @@ import com.tools.jdbcUtil_CompositeQuery_Grp;
 			}
 			return list;
 		}
+
+		@Override
+		public void update_status(GrpVO grpVO) {
+			
+			Connection con = null;
+			PreparedStatement pstmt = null;
+			
+		try {
+			
+			con = ds.getConnection();
+
+			pstmt = con.prepareStatement(UPDATE_GRP_STATUS);
+			
+			pstmt.setInt(1, grpVO.getGrp_Status());
+			pstmt.setString(2, grpVO.getGrp_Id());
+			pstmt.executeUpdate();
+			
+		} catch (SQLException se) {
+			throw new RuntimeException("A database error occured. "
+					+ se.getMessage());
+			// Clean up JDBC resources
+		} finally {
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (con != null) {
+				try {
+					con.close();
+				} catch (Exception e) {
+					e.printStackTrace(System.err);
+				}
+			}
+		}
+	}
+
+		
+		
 	}
 		
 

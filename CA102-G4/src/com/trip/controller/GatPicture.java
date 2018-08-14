@@ -137,7 +137,7 @@ public class GatPicture extends HttpServlet {
 		Context ctx;
 		try {
 			ctx = new javax.naming.InitialContext();
-			DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/CA102G4DB");
+			DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/CA102G4");
 			if (ds != null) {
 				con = ds.getConnection();
 			}

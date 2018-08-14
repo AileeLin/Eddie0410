@@ -24,7 +24,7 @@ if(login_state_temp!=null){
 
 if(login_state_backEnd!=true){
  session.setAttribute("location","/CA102G4/back_end/admin/get_all_member.jsp");
- response.sendRedirect("/CA102G4/back_end/admin/back_login.jsp");
+ response.sendRedirect(request.getContextPath()+"/back_end/admin/back_login.jsp");
 }
 
 	MemberService memberSvc = new MemberService();

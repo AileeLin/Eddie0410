@@ -4,22 +4,34 @@
 
 <%
 
-	MemberVO memberVO = (MemberVO) request.getAttribute("memberVO"); 
-	if(memberVO == null){
-		memberVO = (MemberVO)session.getAttribute("memberVO");
-	}
+MemberVO memberVO = (MemberVO)session.getAttribute("memberVO");
 
- 	boolean login_state = false;
- 	Object login_state_temp = session.getAttribute("login_state");
- 	if(login_state_temp!=null){
- 		login_state=(boolean)login_state_temp;
- 	}
- 	
- 	if(login_state!=true){
-		session.setAttribute("location", "/CA102G4/front_end/member/update_mem_password.jsp");
- 		response.sendRedirect("/CA102G4/front_end/member/mem_login.jsp");
- 		return;
- 	}
+String login,logout;
+if(memberVO != null){		
+	login = "display:none;";
+	logout = "display:'';";
+}else{
+	login = "display:'';";
+	logout = "display:none;";
+}
+String grp_Id = request.getParameter("grp_Id");
+pageContext.setAttribute("grp_Id",grp_Id);
+
+
+boolean login_state = false ;
+Object login_state_temp = session.getAttribute("login_state");
+
+//確認登錄狀態
+if(login_state_temp != null ){
+	login_state= (boolean) login_state_temp ;
+}
+
+//若登入狀態為不是true，紀錄當前頁面並重導到登入畫面。
+if( login_state != true){
+	session.setAttribute("location", request.getRequestURI());
+	response.sendRedirect(request.getContextPath()+"/front_end/member/mem_login.jsp");
+	return;
+}
 
 	// String arti_no = request.getParameter("arti_no");
 	// ArticleDAO dao = new ArticleDAO();
@@ -32,10 +44,10 @@
 
 <head>
 
-<title>Travle Maker</title>
+<title>Travel Maker</title>
 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="keywords" content="TravleMaker,travlemaker,自助旅行,登入畫面" />
+<meta name="keywords" content="TravelMaker,Travelmaker,自助旅行,登入畫面" />
 <!-- jQuery&ajax -->
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -95,17 +107,30 @@ margin-top: 50px;
 					<ul>
 						<li><i class="fa fa-phone" aria-hidden="true"></i> <a
 							href="tel:034257387"> 03-4257387</a></li>
-						<li><a href="mailto:TravleMaker@gmail.com"><i
+						<li><a href="mailto:TravelMaker@gmail.com"><i
 								class="fa fa-envelope" aria-hidden="true"></i>
-								TravleMaker@gmail.com</a></li>
+								TravelMaker@gmail.com</a></li>
 					</ul>
 				</div>
 				<div class="top-banner-right">
 					<ul>
-						<li><a class="top_banner" href="#"><i class="fa fa-user"
-								aria-hidden="true"></i></a></li>
-						<li><a class="top_banner" href="#"><i
-								class="fa fa-shopping-cart" aria-hidden="true"></i></a></li>
+						<li>
+		                      	 <!-- 判斷是否登入，若有登入將會出現登出按鈕 -->
+		                         <c:choose>
+		                          <c:when test="<%=login_state %>">
+		                           	<a href="<%= request.getContextPath()%>/front_end/member/member.do?action=logout"><span class=" top_banner"><i class=" fas fa-sign-out-alt" aria-hidden="true"></i></span></a>
+		                          </c:when>
+		                          <c:otherwise>
+		                           	<a href="<%= request.getContextPath()%>/front_end/member/mem_login.jsp"><span class="top_banner"><i class=" fa fa-user" aria-hidden="true"></i></span></a>
+		                          </c:otherwise>
+		                         </c:choose>
+		                    </li>
+	                    	<li style="<%= logout %>"><a class="top_banner" href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_home.jsp"><i class="fa fa-user" aria-hidden="true"></i></a></li>          	
+                           	<li>
+								<a class="top_banner" href="<%=request.getContextPath()%>/front_end/store/store_cart.jsp">
+									<i class="fa fa-shopping-cart shopping-cart" aria-hidden="true"></i><span class="badge">${total_items}</span>
+								</a>
+							</li>
 						<li><a class="top_banner" href="#"><i
 								class="fa fa-envelope" aria-hidden="true"></i></a></li>
 					</ul>
@@ -117,7 +142,7 @@ margin-top: 50px;
 			<div class="container">
 				<div class="logo">
 					<h1>
-						<a href="index.html">Travle Maker</a>
+						<a href="index.html">Travel Maker</a>
 					</h1>
 				</div>
 				<div class="top-nav">
@@ -131,16 +156,15 @@ margin-top: 50px;
 						<div class="collapse navbar-collapse"
 							id="bs-example-navbar-collapse-1">
 							<ul class="nav navbar-nav">
-								<li><a href="news.html">最新消息</a></li>
-								<li><a href="tour.html">景點介紹</a></li>
-								<li><a href="plan.html">行程規劃</a></li>
-								<li><a href="blog.html">旅遊記</a></li>
-								<li><a href="ask.html">問答區</a></li>
-								<li><a href="galley.html">照片牆</a></li>
-								<li><a href="chat.html">聊天室</a></li>
-								<li><a href="together.html">揪團</a></li>
-								<li><a href="buy.html">交易平台</a></li>
-								<li><a href="advertisement.html">專欄</a></li>
+								<li><a href="<%=request.getContextPath()%>/front_end/news/news.jsp">最新消息</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/attractions/att.jsp">景點介紹</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/trip/trip.jsp">行程規劃</a></li>
+                                <li><a href="<%=request.getContextPath()%>/blog.index">旅遊記</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/question/question.jsp">問答區</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/photowall/photo_wall.jsp">照片牆</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/grp/grpIndex.jsp">揪團</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/store/store.jsp">交易平台</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/ad/ad.jsp">專欄</a></li>
 								<div class="clearfix"></div>
 							</ul>
 						</div>
@@ -155,8 +179,8 @@ margin-top: 50px;
 
 
 		<!-- Sidebar  -->
-
-		<div class="sidebar_menu">
+	<div class="container" >
+		<div class="sidebar_menu" style="margin-left:0px">
 			<div class="has_children">
 				<li class="fas fa-user">&nbsp;我的帳戶</li> <a id="dropdown_item"
 					href="/CA102G4/front_end/member/update_mem_profile.jsp">個人檔案</a> 
@@ -294,7 +318,7 @@ margin-top: 50px;
 			</div>
 				
 </form>					
-					
+		</div>			
 			</div>
 
 
@@ -307,7 +331,7 @@ margin-top: 50px;
 					</div>
 					<div class="footer-grid-info">
 						<ul>
-							<li><a href="about.html">關於Travle Maker</a></li>
+							<li><a href="about.html">關於Travel Maker</a></li>
 							<li><a href="about.html">聯絡我們</a></li>
 							<li><a href="about.html">常見問題</a></li>
 						</ul>
@@ -355,7 +379,7 @@ margin-top: 50px;
 			<div class="copyright">
 				<p>
 					Copyright &copy; 2018 All rights reserved <a href="index.html"
-						target="_blank" title="TravleMaker">TravleMaker</a>
+						target="_blank" title="TravelMaker">TravelMaker</a>
 				</p>
 			</div>
 		</div>

@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %> 
 <%@ page import="java.util.*"%>
 <%@ page import="com.blog.model.*"%>
 <%@ page import="com.mem.model.*"%>
@@ -14,7 +15,7 @@
 	if(memberVO != null){		
 		login = "display:none;";
 		logout = "display:'';";
-	}else{
+	}else{ 
 		login = "display:'';";
 		logout = "display:none;";
 		 }
@@ -25,6 +26,18 @@
 		login_state=(boolean)login_state_temp;
 	}
 %>
+<%
+	//取得購物車商品數量
+	Object total_items_temp = session.getAttribute("total_items");
+	int total_items = 0;
+	if(total_items_temp != null ){
+		total_items= (Integer) total_items_temp;
+	}
+	pageContext.setAttribute("total_items",total_items);
+%>
+<jsp:useBean id="memSvc" scope="page" class="com.mem.model.MemberService"></jsp:useBean>
+<jsp:useBean id="qcSvc" scope="page" class="com.qa_classification.model.Qa_classificationService"></jsp:useBean>
+<jsp:useBean id="qlSvc" scope="page" class="com.qa_list.model.Qa_listService"></jsp:useBean>
 <!DOCTYPE html>
 <html>
 
@@ -57,12 +70,12 @@
     <!-- //JQUERY -->
 
     <!-- bootstrap css、JS檔案 -->
-    <link href="css/index_bootstrap.css" rel="stylesheet" type="text/css" media="all" />
-    <script src="js/index_bootstrap.js"></script>
+    <link href="<%=request.getContextPath()%>/front_end/css/all/index_bootstrap.css" rel="stylesheet" type="text/css" media="all" />
+    <script src="<%=request.getContextPath()%>/front_end/js/all/index_bootstrap.js"></script>
     <!-- //bootstrap-css -->
 
     <!-- 套首頁herder和footer css -->
-    <link href="css/index_style_header_footer.css" rel="stylesheet" type="text/css" media="all" />
+    <link href="<%=request.getContextPath()%>/front_end/css/all/index_style_header_footer.css" rel="stylesheet" type="text/css" media="all" />
     <!-- //套首頁herder和footer css -->
 
     <!-- font-awesome icons -->
@@ -75,27 +88,27 @@
     <!-- //font字體 -->
 
     <!-- blog 自定義的css -->
-    <link href="css/blog_self/blog_semantic.min.css" rel="stylesheet" type="text/css">
-    <link href="css/blog_self/blog.css" rel="stylesheet" type="text/css" media="all">
-    <link href="css/blog_self/blog_divider.css" rel="stylesheet" type="text/css">
-    <link href="css/blog_self/blog_button.css" rel="stylesheet" type="text/css">
-    <link href="css/blog_self/blog_icon.css" rel="stylesheet" type="text/css">
+    <link href="<%=request.getContextPath()%>/front_end/css/blog/blog_semantic.min.css" rel="stylesheet" type="text/css">
+    <link href="<%=request.getContextPath()%>/front_end/css/blog/blog.css" rel="stylesheet" type="text/css" media="all">
+    <link href="<%=request.getContextPath()%>/front_end/css/blog/blog_divider.css" rel="stylesheet" type="text/css">
+    <link href="<%=request.getContextPath()%>/front_end/css/blog/blog_button.css" rel="stylesheet" type="text/css">
+    <link href="<%=request.getContextPath()%>/front_end/css/blog/blog_icon.css" rel="stylesheet" type="text/css">
     <!-- //blog 自定義的css -->
     <!-- search 自定義的css -->
-    <link rel="stylesheet" href="css/search/search.css">
-    <link rel="stylesheet" href="css/search/search_blog.css">
+    <link rel="stylesheet" href="<%=request.getContextPath()%>/front_end/css/search/search.css">
+    <link rel="stylesheet" href="<%=request.getContextPath()%>/front_end/css/search/search_blog.css">
     <!-- //search 自定義的css -->
     <!-- blog 自定義的js -->
-    <script src="js/blog_self/blog_semantic.min.js"></script>
-    <script src="js/search/search.js"></script>
+    <script src="<%=request.getContextPath()%>/front_end/js/blog/blog_semantic.min.js"></script>
+    <script src="<%=request.getContextPath()%>/front_end/js/search/search.js"></script>
     <!-- //blog 自定義的js -->
 
     <!-- 景點幻燈片 -->
-    <link href="swiper-4.3.3/dist/css/swiper.min.css" rel="stylesheet">
-    <script src="swiper-4.3.3/dist/js/swiper.min.js"></script>
+    <link href="<%=request.getContextPath()%>/front_end/swiper-4.3.3/dist/css/swiper.min.css" rel="stylesheet">
+    <script src="<%=request.getContextPath()%>/front_end/swiper-4.3.3/dist/js/swiper.min.js"></script>
     <!-- 景點幻燈片 -->
     <!-- LogoIcon -->
-    <link href="images/Logo_Black_use.png" rel="icon" type="image/png">
+    <link href="<%=request.getContextPath()%>/front_end/images/all/Logo_Black_use.png" rel="icon" type="image/png">
     <!--    <link rel="icon" href="images/Logo_Black_use.ico" type="image/x-icon">-->
     <!-- //LogoIcon -->
 </head>
@@ -114,8 +127,8 @@
                 </div>
                 <div class="top-banner-right">
                     <ul>
-                        <li><a class="top_banner" href="#"><i class="fa fa-user" aria-hidden="true"></i></a></li>
-                        <li><a class="top_banner" href="#"><i class="fa fa-shopping-cart" aria-hidden="true"></i></a></li>
+                        <li style="<%= logout %>"><a class="top_banner" href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_home.jsp"><i class="fa fa-user" aria-hidden="true"></i></a></li>
+                        <li><a class="top_banner" href="<%=request.getContextPath()%>/front_end/store/store_cart.jsp"><i class="fa fa-shopping-cart shopping-cart" aria-hidden="true"></i><span class="badge">${total_items}</span></a></li>
                         <li><a class="top_banner" href="#"><i class="fa fa-envelope" aria-hidden="true"></i></a></li>
                     </ul>
                 </div>
@@ -126,7 +139,7 @@
             <div class="container">
                 <div class="logo">
                     <h1>
-                        <a href="index.html">Travel Maker</a>
+                        <a href="<%=request.getContextPath()%>/front_end/index.jsp">Travel Maker</a>
                     </h1>
                 </div>
                 <div class="top-nav">
@@ -138,18 +151,16 @@
                         <!-- Collect the nav links, forms, and other content for toggling -->
                         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                             <ul class="nav navbar-nav">
-                                <li><a href="news.html">最新消息</a></li>
-                                <li><a href="tour.html">景點介紹</a></li>
-                                <li><a href="plan.html">行程規劃</a></li>
-                                <li><a href="blog.html">旅遊記</a></li>
-                                <li><a href="ask.html">問答區</a></li>
-                                <li><a href="galley.html">照片牆</a></li>
-                                <li><a href="chat.html">聊天室</a></li>
-                                <li><a href="together.html">揪團</a></li>
-                                <li><a href="buy.html">交易平台</a></li>
-                                <li><a href="advertisement.html">專欄</a></li>
-
-                                <div class="clearfix"> </div>
+                               	<li><a href="<%=request.getContextPath()%>/front_end/news/news.jsp">最新消息</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/attractions/att.jsp">景點介紹</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/trip/trip.jsp">行程規劃</a></li>
+                                <li><a href="<%=request.getContextPath()%>/blog.index">旅遊記</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/question/question.jsp">問答區</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/photowall/photo_wall.jsp">照片牆</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/grp/grpIndex.jsp">揪團</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/store/store.jsp">交易平台</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/ad/ad.jsp">專欄</a></li>
+								<div class="clearfix"> </div>
                             </ul>
                         </div>
                     </nav>
@@ -165,33 +176,36 @@
         <div class="ui hidden divider"></div>
         <!-- //我是隔板 -->
         <!-- 搜尋BAR -->
-        <div class="ui fluid action input">
-            <input type="text" placeholder="搜索行程、旅遊記、會員、問答、揪團、景點">
-            <div class="ui button">搜尋</div>
-        </div>
+        <FORM class="keywordForm" METHOD="GET" ACTION="<%=request.getContextPath()%>/blog.do">
+	        <div class="ui fluid action input">
+	            <input type="text" name="keyword" placeholder="搜尋遊記、揪團、問答、會員、景點" value="${param.keyword}">
+	            <input type="hidden" name="action" value="searchAsk">
+	            <div class="ui button submitKeyword">搜尋</div>
+	        </div>
+        </FORM>
         <!-- 搜尋BAR -->
         <!-- 我是隔板 -->
         <div class="ui hidden divider"></div>
         <!-- //我是隔板 -->
         <!-- Menu -->
-        <div class="ui tabular menu">
-            <a class="item" href="search_index.html">
+	  	<div class="ui tabular menu">
+            <a class='item ${param.action=="searchAll"?"active":""}' href="<%=request.getContextPath()%>/blog.do?action=searchAll&keyword=${param.keyword}">
                 最佳
             </a>
-            <a class="item" href="search_blog.html">
+            <a class='item ${param.action=="searchBlog"?"active":""}' href="<%=request.getContextPath()%>/blog.do?action=searchBlog&keyword=${param.keyword}">
                 旅遊記
             </a>
-            <a class="item" href="search_member.html">
+            <a class='item ${param.action=="searchMember"?"active":""}' href="<%=request.getContextPath()%>/blog.do?action=searchMember&keyword=${param.keyword}">
                 會員
             </a>
-            <a class="item active" href="search_ask.html">
+            <a class='item ${(param.action=="searchAsk") || (param.action == null)?"active":""}' href="<%=request.getContextPath()%>/blog.do?action=searchAsk&keyword=${param.keyword}">
                 問答
             </a>
-            <a class="item" href="search_together.html">
+            <a class='item ${param.action=="searchTogether"?"active":""}' href="<%=request.getContextPath()%>/blog.do?action=searchTogether&keyword=${param.keyword}">
                 揪團
             </a>
-            <a class="item" href="search_tour.html">
-                景點
+            <a class='item ${param.action=="searchTour"?"active":""}' href="<%=request.getContextPath()%>/blog.do?action=searchTour&keyword=${param.keyword}">
+                景點   
             </a>
         </div>
         <!-- //Menu -->
@@ -201,176 +215,64 @@
         <!-- //我是隔板 -->
         <!-- 搜尋時間 -->
         <div class="time">
-            <p>共找到 1034 個結果，花費 0.345 秒</p>
+            <div class="load"><span id="resultCount">共找到 ${QuestionList.size()} 個結果</span>，花費 <span id="time"> 秒</span></div>
         </div>
         <!-- //搜尋時間 -->
         <!-- 下面搜尋結果 -->
         <div class="row">
-            <table class="table table-hover">
-                <tbody>
-
-                    <tr>
-                        <td>
-                            <div class="item">
-                                <div class="content">
-                                    <a class="ui header title" target="_blank" href="#">
-                                    日本橋到環球影城
-                                </a>
-                                    <div class="description text-truncate">
-                                        從日本橋到環球影城，若搭近鐵轉JR，日本橋到西九条轉JR線到環球，路程中需出站??從日本橋到環球影城，若搭近鐵轉JR，日本橋到西九条轉JR線到環球，路程中需出站??從日本橋到環球影城，若搭近鐵轉JR，日本橋到西九条轉JR線到環球，路程中需出站??從日本橋到環球影城，若搭近鐵轉JR，日本橋到西九条轉JR線到環球，路程中需出站??
-                                    </div>
-                                    <div class="extra">
-                                        <a href="#" target="_blank">
-                                            <i class="fas fa-user user"></i>黃世銘
-                                        </a>
-                                        <i class="far fa-calendar-alt calendar"></i>2016-12-08 11:56:02
-                                        <div class="ui small label">交通</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>
-                            <div class="item">
-                                <div class="content">
-                                    <a class="ui header title" target="_blank" href="#">
-                                    若用鐵路旅行日本
-                                </a>
-                                    <div class="description text-truncate">
-                                        大家好 若用鐵路旅行日本 大家會是如何建議 我搜尋不到相關文章 謝謝大家大家好 若用鐵路旅行日本 大家會是如何建議 我搜尋不到相關文章 謝謝大家大家好 若用鐵路旅行日本 大家會是如何建議 我搜尋不到相關文章 謝謝大家大家好 若用鐵路旅行日本 大家會是如何建議 我搜尋不到相關文章 謝謝大家大家好 若用鐵路旅行日本 大家會是如何建議 我搜尋不到相關文章 謝謝大家大家好 若用鐵路旅行日本 大家會是如何建議 我搜尋不到相關文章 謝謝大家大家好 若用鐵路旅行日本 大家會是如何建議 我搜尋不到相關文章 謝謝大家
-                                    </div>
-                                    <div class="extra">
-                                        <a href="#" target="_blank">
-                                            <i class="fas fa-user user"></i>黃世銘
-                                        </a>
-                                        <i class="far fa-calendar-alt calendar"></i>2016-12-08 11:56:02
-                                        <div class="ui small label">交通</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>
-                            <div class="item">
-                                <div class="content">
-                                    <a class="ui header title" target="_blank" href="#">
-                                    帶去日本的4G手機....
-                                </a>
-                                    <div class="description text-truncate">
-                                        問個關於日本4G的問題....
-                                    </div>
-                                    <div class="extra">
-                                        <a href="#" target="_blank">
-                                            <i class="fas fa-user user"></i>黃世銘
-                                        </a>
-                                        <i class="far fa-calendar-alt calendar"></i>2016-12-08 11:56:02
-                                        <div class="ui small label">其他</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>
-                            <div class="item">
-                                <div class="content">
-                                    <a class="ui header title" target="_blank" href="#">
-                                    買JR東日本周遊(東北)相關問題
-                                </a>
-                                    <div class="description text-truncate">
-                                        我看不懂這張在東京市區可以搭乘的有那些(汗) 是不是 JR東日本官網的那張"JR東日本主要鐵道路線圖:首都區" 上面有列的路線都可以搭??
-                                    </div>
-                                    <div class="extra">
-                                        <a href="#" target="_blank">
-                                            <i class="fas fa-user user"></i>黃世銘
-                                        </a>
-                                        <i class="far fa-calendar-alt calendar"></i>2016-12-08 11:56:02
-                                        <div class="ui small label">票券</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>
-                            <div class="item">
-                                <div class="content">
-                                    <a class="ui header title" target="_blank" href="#">
-                                    日本開車駕照的問題
-                                </a>
-                                    <div class="description text-truncate">
-                                        如題，去日本想要開車旅行，請問應該辦理哪些手續？如題，去日本想要開車旅行，請問應該辦理哪些手續？如題，去日本想要開車旅行，請問應該辦理哪些手續？如題，去日本想要開車旅行，請問應該辦理哪些手續？如題，去日本想要開車旅行，請問應該辦理哪些手續？如題，去日本想要開車旅行，請問應該辦理哪些手續？
-                                    </div>
-                                    <div class="extra">
-                                        <a href="#" target="_blank">
-                                            <i class="fas fa-user user"></i>黃世銘
-                                        </a>
-                                        <i class="far fa-calendar-alt calendar"></i>2016-12-08 11:56:02
-                                        <div class="ui small label">其他</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>
-                            <div class="item">
-                                <div class="content">
-                                    <a class="ui header title" target="_blank" href="#">
-                                    在日本租車的注意事項？
-                                </a>
-                                    <div class="description text-truncate">
-                                        請問在日本租車，除了備妥相關文件，還需要注意哪些事情？請問在日本租車，除了備妥相關文件，還需要注意哪些事情？請問在日本租車，除了備妥相關文件，還需要注意哪些事情？請問在日本租車，除了備妥相關文件，還需要注意哪些事情？請問在日本租車，除了備妥相關文件，還需要注意哪些事情？請問在日本租車，除了備妥相關文件，還需要注意哪些事情？
-                                    </div>
-                                    <div class="extra">
-                                        <a href="#" target="_blank">
-                                            <i class="fas fa-user user"></i>黃世銘
-                                        </a>
-                                        <i class="far fa-calendar-alt calendar"></i>2016-12-08 11:56:02
-                                        <div class="ui small label">交通</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-
-                </tbody>
-
-            </table>
-
+        	 <c:if test="${not empty QuestionList}">
+	            <table class="table table-hover">
+	                <tbody>
+						<%@ include file="page6.file"%>
+						<c:forEach var="QuestionVO" items="${QuestionList}" begin="<%=pageIndex%>" end="<%=pageIndex+rowsPerPage-1%>">
+		                    <tr>
+		                        <td>
+		                            <div class="item">
+		                                <div class="content">
+		                                    <a class="ui header title" target="_blank" href="<%=request.getContextPath()%>/front_end/qa_reply/qa_reply.jsp?question_id=${QuestionVO.question_id}">
+		                                    ${QuestionVO.question_content}
+		                                </a>
+		                                    <div class="description text-truncate">
+		                                    </div>
+		                                    <div class="extra" style="color:rgba(0, 0, 0, .4)">
+		                                        <a href="#" target="_blank">
+		                                            <i class="fas fa-user user"></i>
+		                                            ${memSvc.findByPrimaryKey(QuestionVO.mem_id).mem_Name}
+		                                        </a>
+		                                        <i class="far fa-calendar-alt calendar"></i>
+		                                        <fmt:formatDate value="${QuestionVO.build_date}" type="both"/>
+		                                        
+		                                        <c:forEach var="qcVO" items="${qcSvc.getOneNoticeByQuestion_id(QuestionVO.question_id)}">
+		                                        	<div class="ui small label">	
+		                                        		${qlSvc.getOneQa_list(qcVO.list_id).list_name}
+		                                        	</div>
+		                                        </c:forEach>
+		                                    </div>
+		                                </div>
+		                            </div>
+		                        </td>
+		                    </tr>
+		                </c:forEach>
+	           		</tbody>
+	            </table>
+	            
+	            <!-- 上一頁button -->
+				<%@ include file="page2.file"%>
+				<!-- //下一頁button -->
+				<!-- 頁數資訊 -->
+				<div class="page_info">
+					顯示第<%= whichPage %>頁，共<%= pageNumber %>頁
+				</div>
+				<!-- //頁數資訊 -->
+			</c:if>
+			<c:if test="${empty QuestionList}">
+				<div class="ui left aligned search_results empty" style="text-align:center;height:300px;border:1px solid lightgray">
+					<p style="color:darkgray;height:100%;line-height:300px;font-size:40px">沒有相關關鍵字的問題!!</p>
+				</div>
+			</c:if>
         </div>
         <!-- //下面搜尋結果 -->
-        <!-- 換頁bar -->
-        <div class="ui page grid padded page_bar">
-            <!-- 上一頁button -->
-            <div class="ui buttons">
-                <button class="ui labeled icon button">
-                    <i class="left chevron icon"></i> 上一頁
-                </button>
-            </div>
-            <!-- //上一頁button -->
-            <!-- 下一頁button -->
-            <div class="ui buttons">
-                <button class="ui right labeled icon button">
-                    下一頁
-                    <i class="right chevron icon"></i>
-                </button>
-            </div>
-            <!-- //下一頁button -->
-            <!-- 頁數資訊 -->
-            <div class="page_info">
-                顯示第1頁，共4頁
-            </div>
-            <!-- //頁數資訊 -->
-        </div>
-        <!-- //換頁bar -->
+
 
         <!-- 我是隔板 -->
         <div class="ui hidden divider"></div>
@@ -389,9 +291,9 @@
                     </div>
                     <div class="footer-grid-info">
                         <ul>
-                            <li><a href="about.html">關於Travel Maker</a></li>
-                            <li><a href="about.html">聯絡我們</a></li>
-                            <li><a href="about.html">常見問題</a></li>
+                           <li><a href="<%=request.getContextPath()%>/front_end/about_us/about_us.jsp">關於Travel Maker</a></li>
+                           <li><a href="<%=request.getContextPath()%>/front_end/content/content.jsp">聯絡我們</a></li>
+                           <li><a href="<%=request.getContextPath()%>/front_end/faq/faq.jsp">常見問題</a></li>
                         </ul>
                     </div>
                 </div>
@@ -433,12 +335,37 @@
             </div>
             <div class="copyright">
                 <p>Copyright &copy; 2018 All rights reserved
-                    <a href="index.html" target="_blank" title="TravelMaker">TravelMaker</a>
+                    <a href="<%=request.getContextPath()%>/front_end/index.jsp" target="_blank" title="TravelMaker">TravelMaker</a>
                 </p>
             </div>
         </div>
     </div>
     <!-- //footer -->
+    
+    <script>
+		var start = Date.now();
+		var elapsedMs;
+		// run the clock and stop when all the images load
+		var timeEl = document.getElementById('time');
+		var clockUpdate;
+
+		function setElapsedTimeDisplay() {
+			elapsedMs = (Date.now() - start);
+			timeEl.firstChild.data = (elapsedMs / 1000).toFixed(3) + ' 秒';
+		}
+
+		clockUpdate = window.setInterval(function() {
+			setElapsedTimeDisplay();
+		}, 17);
+
+		window.onload = function() {
+			if (console)
+				console.log("window.onload 載入完成");
+			setElapsedTimeDisplay();
+			clearInterval(clockUpdate);
+		}
+	</script>
+	
 </body>
 
 </html>

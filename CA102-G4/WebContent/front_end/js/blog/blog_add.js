@@ -1,15 +1,25 @@
 $(document).ready(function () {
 
-    $('[data-content="發佈文章"]').popup();
+    $("#submitButton").popup();
     
-    $('[data-content="修改文章"]').popup();
+    $("#myBtn").popup();
+        
+    var scrollCheckTimer = null,
+    scrollDelay = 250;  
     
     $(window).scroll(function () {
-        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-            $("#myBtn").fadeIn("slow");
-        } else {
-            $("#myBtn").fadeOut("slow");
-        }
+    	
+    	clearTimeout(scrollCheckTimer); 
+    	
+    	scrollCheckTimer = setTimeout(function(){
+            if (document.body.scrollTop > 30 || document.documentElement.scrollTop > 30) {
+            	$("#myBtn").css("display","block");
+                $("#myBtn").animate({top:'441px'});
+            }else{
+            	$("#myBtn").animate({top:'1000px'});
+            }
+        } , scrollDelay );
+
     });
 
     $("#myBtn").click(function () {
@@ -54,14 +64,15 @@ $(document).ready(function () {
         draggable: false,
         buttons: {
             "確定": function () {
-                if ($(".default.text").html() != '選擇您的行程') {
-                    $(".addItinerary>span").html($(".ItineraryInput").val());
-                    $(".loadItineraryTitle").empty();
-                    $(".loadItineraryContent").empty();
+//                if ($(".default.text").html() != '選擇您的行程') {
+//                    $(".addItinerary>span").html($(".ItineraryInput").val());
+//                    $(".loadItineraryTitle").empty();
+//                    $(".loadItineraryContent").empty();
+                	$("#form2").submit();
                     $(this).dialog("close");
-                } else {
-                    $(this).dialog("close");
-                }
+//                } else {
+//                    $(this).dialog("close");
+//                }
             },
             "取消": function () {
                 $(this).dialog("close");
@@ -123,4 +134,12 @@ $(document).ready(function () {
       maxSelections: 3
     });
     
+    $("#submitButton").click(function(){
+    	$("form[name=form2]").submit();
+    });
+    
+    $(".item").click(function(){
+    	$("#trip_no").val($(this).attr("value"));
+    	$("#actionID").val("loadSelectedTrip");
+    });
 });

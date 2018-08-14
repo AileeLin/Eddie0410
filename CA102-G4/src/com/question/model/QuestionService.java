@@ -61,11 +61,24 @@ public class QuestionService {
 		dao.insertQ(questionVO, list);
 	}
 	
-	public void update_State(String mem_id,String question_id,Integer q_State) {
-		dao.update_State(mem_id,question_id,q_State);
+	
+	public List<QuestionVO> getOneState() {
+		return dao.find_by_State();
 	}
 	
-	public QuestionVO getOneState() {
-		return dao.findByState();
+	public	QuestionVO updateQ(String question_id,Integer q_state) {
+		
+		QuestionVO QuestionVO = new QuestionVO();
+		
+		QuestionVO.setQuestion_id(question_id);
+		QuestionVO.setQ_state(q_state);
+		
+		dao.updateQ(QuestionVO);
+		
+		return QuestionVO;
+	}
+	
+	public List<QuestionVO> findByKeyword(String keyword) {
+		return dao.findByKeyword(keyword);
 	}
 }	

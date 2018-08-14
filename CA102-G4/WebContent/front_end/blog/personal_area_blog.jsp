@@ -11,7 +11,7 @@
 	blogService blogSvc = new blogService();
 	// 取得controller轉交查詢的list資料
 	List list = (List)request.getAttribute("list");
-	//
+	// 
 // 	blogVO blogVO = blogSvc.findByPrimaryKey(request.getParameter("blogID"));
 	//這裡的會員ID，應該要從session拿，取得登入者的ID
 // 	List<blogVO> list = blogSvc.findByMemId(blogVO.getMem_id());
@@ -37,6 +37,15 @@
 	 	response.sendRedirect("/CA102G4/front_end/member/mem_login.jsp");
 	 	return;
 	 	}
+%>
+<%
+	//取得購物車商品數量
+	Object total_items_temp = session.getAttribute("total_items");
+	int total_items = 0;
+	if(total_items_temp != null ){
+		total_items= (Integer) total_items_temp;
+	}
+	pageContext.setAttribute("total_items",total_items);
 %>
 <!DOCTYPE html>
 <html>
@@ -134,11 +143,11 @@
                 </div>
                 <div class="top-banner-right">
                      <ul>
-                          <li> <a href="<%= request.getContextPath()%>/front_end/member/member.do?action=logout"><span class=" top_banner"><i class=" fas fa-sign-out-alt" aria-hidden="true"></i></span></a></li>
-                          <li> <a href="<%= request.getContextPath()%>/front_end/member/mem_login.jsp"><span class="top_banner"><i class=" fa fa-user" aria-hidden="true"></i></span></a></li>
-						  <li><a class="top_banner" href="#"><i class="fa fa-shopping-cart" aria-hidden="true"></i></a></li>
-                       	  <li><a class="top_banner" href="#"><i class="fa fa-envelope" aria-hidden="true"></i></a></li>
-                    </ul>
+                          <li><a href="<%= request.getContextPath()%>/front_end/member/member.do?action=logout"><span class=" top_banner"><i class=" fas fa-sign-out-alt" aria-hidden="true"></i></span></a></li>
+                          <li><a class="top_banner" href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_home.jsp"><i class="fa fa-user" aria-hidden="true"></i></a></li>
+                          <li><a class="top_banner" href="<%=request.getContextPath()%>/front_end/store/store_cart.jsp"><i class="fa fa-shopping-cart shopping-cart" aria-hidden="true"></i><span class="badge">${total_items}</span></a></li>
+                          <li><a class="top_banner" href="#"><i class="fa fa-envelope" aria-hidden="true"></i></a></li>
+                     </ul>
                 </div>
                 <div class="clearfix"> </div>
             </div>
@@ -159,15 +168,15 @@
                         <!-- Collect the nav links, forms, and other content for toggling -->
                         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                             <ul class="nav navbar-nav">
-								<li><a href="<%=request.getContextPath()%>/front_end/news.jsp">最新消息</a></li>
-								<li><a href="<%=request.getContextPath()%>/front_end/tour.jsp">景點介紹</a></li>
-								<li><a href="<%=request.getContextPath()%>/front_end/plan.jsp">行程規劃</a></li>
-								<li><a href="<%=request.getContextPath()%>/blog.index">旅遊記</a></li>
-								<li><a href="<%=request.getContextPath()%>/front_end/ask.jsp">問答區</a></li>
-								<li><a href="<%=request.getContextPath()%>/front_end/galley.jsp">照片牆</a></li>
-								<li><a href="<%=request.getContextPath()%>/front_end/together.jsp">揪團</a></li>
-								<li><a href="<%=request.getContextPath()%>/front_end/buy.jsp">交易平台</a></li>
-								<li><a href="<%=request.getContextPath()%>/front_end/advertisement.jsp">專欄</a></li>
+								<li><a href="<%=request.getContextPath()%>/front_end/news/news.jsp">最新消息</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/attractions/att.jsp">景點介紹</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/trip/trip.jsp">行程規劃</a></li>
+                                <li><a href="<%=request.getContextPath()%>/blog.index">旅遊記</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/question/question.jsp">問答區</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/photowall/photo_wall.jsp">照片牆</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/grp/grpIndex.jsp">揪團</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/store/store.jsp">交易平台</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/ad/ad.jsp">專欄</a></li>
 								<div class="clearfix"></div>
                             </ul>
                         </div>
@@ -190,10 +199,19 @@
             <!--會員訊息--> 
             <div class="mem_ind_info"> 
                 <div class="mem_ind_img">
-                    <img src="<%=request.getContextPath()%>/front_end/readPic?action=member&id=${memberVO.mem_Id}">
+                   	<c:choose>
+                  		<c:when test="${memberVO.mem_Photo == null}">
+                  			<img src='<%=request.getContextPath()%>/front_end/images/all/mem_nopic.jpg'>
+                  		</c:when>
+                  		<c:otherwise>
+                  			<img src='<%=request.getContextPath()%>/front_end/readPic?action=member&id=${memberVO.mem_Id}'>
+                  		</c:otherwise>
+                  	</c:choose>
                 </div>
                 <div class="mem_ind_name">
-                    <p>${memberVO.mem_Name}</p>
+                    <p>${memberVO.mem_Name}
+                    	${memberVO.mem_Sex == 1 ? "<i class='fas fa-male' style='color:#4E9EE2'></i>" : "<i class='fas fa-female' style='color:#EC7555'></i>"}	
+                    </p> 
                     <p class="text-truncate" style="font-size:0.9em;padding-top:10px;max-height:110px">
 					   ${memberVO.mem_Profile}
                     </p>
@@ -202,57 +220,62 @@
         </div>
         <!--//會員個人頁面標頭-->
         <div class="mem_ind_content">
-            <!-- 頁籤項目 -->
-            <ul class="nav nav-tabs" role="tablist">
-                <li class="nav-item">
-                    <a href="personal_area_home.html">
-                        <i class="fas fa-home"></i>首頁
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="personal_area_friend.html">
-                        <i class="fas fa-user-friends"></i>好友
-                    </a>
-                </li>
-                <li class="nav-item active">
-                    <a>
-                        <i class="fab fa-blogger"></i>旅遊記
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#trip">
-                        <i class="fas fa-map"></i>行程
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#together">
-                        <i class="fas fa-bullhorn"></i>揪團
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#question">
-                        <i class="question circle icon"></i>問答
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#gallery">
-                        <i class="image icon"></i>相片
-                    </a>
-                </li>
+          <!-- 頁籤項目 -->
+          <ul class="nav nav-tabs" role="tablist">
+            <li class="nav-item">
+              <a href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_home.jsp">
+                  <i class="fas fa-home"></i>首頁
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_friend.jsp">
+                  <i class="fas fa-user-friends"></i>好友
+              </a>
+            </li>
+            <li class="nav-item active">
+              <a href="<%=request.getContextPath()%>/blog.do?action=myBlog&mem_id=${memberVO.mem_Id}">
+                  <i class="fab fa-blogger"></i>旅遊記
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="<%=request.getContextPath()%>/front_end/trip/personal_area_trip.jsp">
+                  <i class="fas fa-map"></i>行程
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="<%=request.getContextPath()%>/front_end/grp/personal_area_grp.jsp">
+                  <i class="fas fa-bullhorn"></i>揪團
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="<%=request.getContextPath()%>/front_end/personal/personal_area_question.jsp">
+                  <i class="question circle icon"></i>問答
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_photoWall.jsp">
+                  <i class="image icon"></i>相片
+              </a>
+            </li>
+            
+             <li class="nav-item">
+              <a href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_sell.jsp">
+                  <i class="money bill alternate icon"></i>銷售
+              </a>
+            </li>
 
-                <li class="nav-item">
-                    <a href="#gallery">
-                        <i class="shopping bag icon"></i>交易
-                    </a>
-                </li>
-
-                <li class="nav-item" style="float: right">
-                    <a href="#setting">
-                        <i class="cog icon"></i>設置
-                    </a>
-                </li>
-            </ul>
-            <!-- //頁籤項目 -->
+             <li class="nav-item">
+              <a href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_buy.jsp">
+                  <i class="shopping cart icon"></i>購買
+              </a>
+            </li>
+            <li class="nav-item" style="float: right">
+              <a href="<%=request.getContextPath()%>/front_end/member/update_mem_profile.jsp">
+                  <i class="cog icon"></i>設置
+              </a>
+            </li>
+          </ul>
+          <!-- //頁籤項目 -->
             
 		<!-- Menu -->
 		<div id="all_fri_search">
@@ -356,9 +379,9 @@
                     </div>
                     <div class="footer-grid-info">
                         <ul>
-                            <li><a href="about.html">關於Travel Maker</a></li>
-                            <li><a href="about.html">聯絡我們</a></li>
-                            <li><a href="about.html">常見問題</a></li>
+                           <li><a href="<%=request.getContextPath()%>/front_end/about_us/about_us.jsp">關於Travel Maker</a></li>
+                           <li><a href="<%=request.getContextPath()%>/front_end/content/content.jsp">聯絡我們</a></li>
+                           <li><a href="<%=request.getContextPath()%>/front_end/faq/faq.jsp">常見問題</a></li>
                         </ul>
                     </div>
                 </div>
@@ -400,7 +423,7 @@
             </div>
             <div class="copyright">
                 <p>Copyright &copy; 2018 All rights reserved
-                    <a href="index.html" target="_blank" title="TravelMaker">TravelMaker</a>
+                    <a href="<%=request.getContextPath()%>/front_end/index.jsp" target="_blank" title="TravelMaker">TravelMaker</a>
                 </p>
             </div>
         </div>

@@ -184,12 +184,26 @@ public class QuestionServlet extends HttpServlet {
 					
 					java.sql.Date build_date = new java.sql.Date(System.currentTimeMillis());
 					
+					Integer q_state =0;
+					
 					QuestionVO questionVO = new QuestionVO();
 					questionVO.setMem_id(mem_id);
 					questionVO.setBuild_date(build_date);
 					questionVO.setQuestion_content(question_content);
+					questionVO.setQ_state(q_state);
 					
 					String[] list_id = req.getParameterValues("list_id");
+					if (list_id == null || list_id.length == 0) {
+						errorMsgs.add("請勾選標籤");
+					}	
+					
+					if (!errorMsgs.isEmpty()) {
+						req.setAttribute("questionVO", questionVO); 
+						RequestDispatcher failureView = req.getRequestDispatcher("/front_end/ask/ask.jsp");
+						failureView.forward(req, res);
+						return; //程式中斷
+					}
+					
 					List<Qa_classificationVO> list = new ArrayList<>();
 			        for(String list_one_id : list_id){
 			        	Qa_classificationVO qa_classVO = new Qa_classificationVO();
@@ -205,7 +219,6 @@ public class QuestionServlet extends HttpServlet {
 						failureView.forward(req, res);
 						return; //程式中斷
 					}
-					
 					/***************************2.開始新增資料***************************************/
 					QuestionService questionSvc = new QuestionService();
 					questionSvc.insertQuestionAndQa_class(questionVO, list);
@@ -213,7 +226,6 @@ public class QuestionServlet extends HttpServlet {
 					/***************************3.新增完成,準備轉交(Send the Success view)***********/
 					RequestDispatcher successView = req.getRequestDispatcher("/front_end/question/question.jsp"); 
 					successView.forward(req, res);				
-					
 					/***************************其他可能的錯誤處理**********************************/
 				} catch (Exception e) {
 					errorMsgs.add(e.getMessage());

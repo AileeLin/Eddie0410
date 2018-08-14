@@ -610,7 +610,9 @@ public class blogDAO implements blogDAO_interface {
 				blogVO.setTrip_no(rs.getString("TRIP_NO"));
 				blogVO.setBlog_views(rs.getInt("BLOG_VIEWS"));
 				blogVO.setBlog_status(rs.getInt("BLOG_STATUS"));
+				
 			}
+			
 		} catch (SQLException se) {
 			throw new RuntimeException("A database error occured. " + se.getMessage());
 		} finally {

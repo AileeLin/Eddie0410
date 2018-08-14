@@ -7,7 +7,7 @@
 <%@ page import="com.photo_report.model.*" %>
 <%@ page import="com.productReport.model.*" %>
 <%@ page import="java.util.*" %>
-<%
+<% 
 	//**********************管理者登入身分驗證********************************//
 	AdminVO adminVO = (AdminVO)session.getAttribute("adminVO");
 	if(adminVO == null){
@@ -197,7 +197,7 @@
                                     <a href="<%=request.getContextPath()%>/back_end/photo_wall/photo_report.jsp">照片牆檢舉</a>
                                 </li>
                                 <li>
-                                    <a href="#">商品檢舉</a>
+                                    <a href="<%=request.getContextPath()%>/back_end/store/product_report.jsp">商品檢舉</a>
                                 </li>
                             </ul>
                         </li>
@@ -270,7 +270,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <a href="#">
+                            <a href="<%=request.getContextPath()%>/back_end/member/member_report.jsp">
                                 <div class="panel-footer">
                                     <span class="pull-left">View Details</span>
                                     <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
@@ -380,7 +380,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <a href="#">
+                            <a href="<%=request.getContextPath()%>/back_end/store/product_report.jsp">
                                 <div class="panel-footer">
                                     <span class="pull-left">View Details</span>
                                     <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>

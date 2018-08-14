@@ -22,9 +22,13 @@ public class QuestionJDBCDAO implements QuestionDAO_interface{
 	
 	private static final String UPDATE_STMT = "UPDATE QUESTION SET MEM_ID=?, QUESTION_CONTENT=?, BUILD_DATE=? WHERE QUESTION_ID = ?";
 	
-	private static final String DELETE_STMT = "DELETE FROM QUESTION WHERE QUESTION_ID = ?";
+	private static final String DELETE_STMT = "DELETE FROM QUESTION WHERE QUESTION_ID AND MEM_ID = ?";
 	private static final String FIND_BY_PK = "SELECT * FROM QUESTION WHERE QUESTION_ID = ?";
 	private static final String GET_ALL = "SELECT * FROM QUESTION";
+	
+	// 世銘打的
+	private static final String FIND_BY_KEYWORD_STMT = "SELECT * FROM QUESTION WHERE UPPER(QUESTION_CONTENT) LIKE UPPER(?)";
+
 	@Override
 	public int insert(QuestionVO questionVO) {
 		int updateCount = 0;
@@ -326,13 +330,77 @@ public class QuestionJDBCDAO implements QuestionDAO_interface{
 		
 	}
 	@Override
-	public int update_State(String mem_id, String question_id, Integer q_State) {
-		return 0;
-	}
-	@Override
-	public QuestionVO findByState() {
+	public List<QuestionVO> find_by_State() {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	@Override
+	public int updateQ(QuestionVO questionVO) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	// 世銘打的
+	@Override
+	public List<QuestionVO> findByKeyword(String keyword) {
+		List<QuestionVO> list = new ArrayList<QuestionVO>();
+		QuestionVO question = null;
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+
+		try {
+
+			Class.forName(DRIVER);
+			con = DriverManager.getConnection(URL, USER, PASSWORD);
+			pstmt = con.prepareStatement(FIND_BY_KEYWORD_STMT);
+			pstmt.setString(1, "%"+keyword+"%");
+			
+			rs = pstmt.executeQuery();
+			
+			while (rs.next()) {
+				question = new QuestionVO();
+				question.setQuestion_id(rs.getString("question_id"));
+				question.setMem_id(rs.getString("mem_id"));
+				question.setQuestion_content(rs.getString("question_content"));
+				question.setBuild_date(rs.getDate("build_date"));
+				list.add(question);
+			}
+			
+			// Handle any driver errors
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException("Couldn't load database driver. "
+					+ e.getMessage());
+			// Handle any SQL errors
+		} catch (SQLException se) {
+			throw new RuntimeException("A database error occured. "
+					+ se.getMessage());
+			// Clean up JDBC resources
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (con != null) {
+				try {
+					con.close();
+				} catch (Exception e) {
+					e.printStackTrace(System.err);
+				}
+			}
+		}
+		return list;
+	}
+
 }
 

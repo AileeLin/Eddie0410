@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
 
+import org.apache.commons.lang3.StringUtils;
 
 import com.product.model.ProductService;
 import com.product.model.ProductVO;
@@ -42,7 +43,10 @@ public class ProductServlet extends HttpServlet {
 		req.setCharacterEncoding("UTF-8");
 		String action = req.getParameter("action");
 		 if ("insert".equals(action)) { // 來自 front_end/store/store_add_product.jsp的請求  
-				
+			 HttpSession session = req.getSession();
+			 String judgeDuplicate = req.getParameter("judgeDuplicate");
+			 String token = (String) session.getAttribute("token");
+			if(StringUtils.isNotBlank(token) && token.equals(judgeDuplicate)) {
 			 	Map<String,String> errorMsgs = new LinkedHashMap<String,String>();
 				// Store this set in the request scope, in case we need to
 				// send the ErrorPage view.
@@ -266,22 +270,22 @@ public class ProductServlet extends HttpServlet {
 					
 					/***************************3.修改完成,準備轉交(Send the Success view)*************/
 					req.setAttribute("productVO", productVO); // 資料庫update成功後,正確的的productVO物件,存入req
-					if(requestURL.equals("/product/addProduct.jsp")) {
-						String url = "/product/listAllProduct.jsp";
-						RequestDispatcher successView = req.getRequestDispatcher(url); // 資料庫取出的list物件,存入request
-						successView.forward(req, res);
-					}else if(requestURL.equals("/front_end/store/store_add_product.jsp")) {
+					if(requestURL.equals("/front_end/store/store_add_product.jsp")) {
 						String url = "/front_end/personal_area/personal_area_sell.jsp";
 						RequestDispatcher successView = req.getRequestDispatcher(url);
 						successView.forward(req, res);
 					}
-
+					session.removeAttribute("token");
 					/***************************其他可能的錯誤處理*************************************/
 				} catch (Exception e) {
 					e.printStackTrace();
 					errorMsgs.put("修改資料失敗:",e.getMessage());
 					RequestDispatcher failureView = req.getRequestDispatcher(requestURL);
 					failureView.forward(req, res);
+				}}else {
+					String url = "/front_end/personal_area/personal_area_sell.jsp";
+					RequestDispatcher successView = req.getRequestDispatcher(url);
+					successView.forward(req, res);
 				}
 			}
 		

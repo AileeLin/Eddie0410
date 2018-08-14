@@ -14,12 +14,22 @@ $(document).ready(function () {
         }
     });
 
+    var scrollCheckTimer = null,
+    scrollDelay = 250;  
+    
     $(window).scroll(function () {
-        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-            $("#myBtn").fadeIn("slow");
-        } else {
-            $("#myBtn").fadeOut("slow");
-        }
+    	
+    	clearTimeout(scrollCheckTimer); 
+    	
+    	scrollCheckTimer = setTimeout(function(){
+            if (document.body.scrollTop > 30 || document.documentElement.scrollTop > 30) {
+            	$("#myBtn").css("display","block");
+                $("#myBtn").animate({top:'441px'});
+            }else{
+            	$("#myBtn").animate({top:'1000px'});
+            }
+        } , scrollDelay );
+
     });
 
     $(".ui.button.reply").click(function(){
@@ -45,7 +55,8 @@ $(document).ready(function () {
         show: 'blind',
         title: '訊息',
         modal: true,
-        width: '150px',
+        height:200,
+        width: 300,
         autofocus: false,
         resizable: false,
         draggable: false,
@@ -102,7 +113,8 @@ $(document).ready(function () {
        show: 'blind',
        title: '訊息',
        modal: true,
-       width: 220,
+       width: 250,
+       height:210,
        autofocus: false,
        resizable: false,
        draggable: false,
@@ -154,7 +166,7 @@ $(document).ready(function () {
 		 show: 'blind',
 		 title: '訊息',
 		 modal: true,
-		 width: '250px',
+		 width: 250,
 		 autofocus: false,
 		 resizable: false,
 		 draggable: false,

@@ -2,8 +2,25 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page import="java.util.*"%>
 <%@ page import="com.trip.model.*"%>
+<%@ page import="com.mem.model.*"%>
 
 <%
+	MemberVO memberVO = (MemberVO)session.getAttribute("memberVO");
+	String login,logout;
+	if(memberVO != null){		
+		login = "display:none;";
+		logout = "display:'';";
+	}else{
+		login = "display:'';";
+		logout = "display:none;";
+		 }
+	 
+	boolean login_state = false;
+	Object login_state_temp = session.getAttribute("login_state");
+	if(login_state_temp!=null){
+		login_state=(boolean)login_state_temp;
+	}
+	
 	List<TripVO> list;
 	list = (List<TripVO>)request.getAttribute("list");
 	if(list==null){
@@ -25,7 +42,7 @@
 <!-- //指定螢幕寬度為裝置寬度，畫面載入初始縮放比例 100% -->
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- 設定網頁keywords -->
-<meta name="keywords" content="TravleMaker,travlemaker,自助旅行" />
+<meta name="keywords" content="TravelMaker,Travelmaker,自助旅行" />
 <!-- //設定網頁keywords -->
 <!-- 隱藏iPhone Safari位址列的網頁 -->
 <script type="application/x-javascript">
@@ -67,6 +84,10 @@
 	rel='stylesheet' type='text/css'>
 <!-- //font字體 -->
 
+<!-- LogoIcon -->
+<link href="<%=request.getContextPath()%>/front_end/images/all/Logo_Black_use.png" rel="icon" type="image/png">
+<!-- //LogoIcon -->
+
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <script
 	src="<%=request.getContextPath()%>/front_end/js/all/bootstrap.js"></script>
@@ -105,19 +126,38 @@
 							<ul>
 								<li><i class="fa fa-phone" aria-hidden="true"></i> <a
 									href="tel:034257387"> 03-4257387</a></li>
-								<li><a href="mailto:TravleMaker@gmail.com"><i
+								<li><a href="mailto:TravelMaker@gmail.com"><i
 										class="fa fa-envelope" aria-hidden="true"></i>
-										TravleMaker@gmail.com</a></li>
+										TravelMaker@gmail.com</a></li>
 							</ul>
 						</div>
 						<div class="top-banner-right">
 							<ul>
-								<li><a class="top_banner" href="#"><i
-										class="fa fa-user" aria-hidden="true"></i></a></li>
-								<li><a class="top_banner" href="#"><i
-										class="fa fa-shopping-cart" aria-hidden="true"></i></a></li>
-								<li><a class="top_banner" href="#"><i
-										class="fa fa-envelope" aria-hidden="true"></i></a></li>
+								<li>
+									<!-- 判斷是否登入，若有登入將會出現登出按鈕 -->
+									<c:choose>
+										<c:when test="<%=login_state%>">
+											<a href="<%=request.getContextPath()%>/front_end/member/member.do?action=logout"><span
+												class=" top_banner"><i class=" fas fa-sign-out-alt" aria-hidden="true"></i></span></a>
+										</c:when>
+										<c:otherwise>
+											<a href="<%=request.getContextPath()%>/front_end/member/mem_login.jsp"><span
+												class="top_banner"><i class=" fa fa-user" aria-hidden="true"></i></span></a>
+										</c:otherwise>
+									</c:choose>
+								</li> 
+								<li style="<%=logout%>"><a class="top_banner"
+									href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_home.jsp">
+									<i class="fa fa-user" aria-hidden="true"></i></a>
+								</li>
+									
+								<li>
+									<a class="top_banner" href="<%=request.getContextPath()%>/front_end/store/store_cart.jsp"><i class="fa fa-shopping-cart shopping-cart" aria-hidden="true"></i><span class="badge">${total_items}</span></a>
+								</li>
+								
+								<li><a class="top_banner" href="#">
+									<i class="fa fa-envelope" aria-hidden="true"></i></a>
+								</li>
 							</ul>
 						</div>
 						<div class="clearfix"></div>
@@ -127,7 +167,7 @@
 					<div class="container">
 						<div class="logo">
 							<h1>
-								<a href="<%=request.getContextPath()%>/front_end/index.jsp">Travle
+								<a href="<%=request.getContextPath()%>/front_end/index.jsp">Travel
 									Maker</a>
 							</h1>
 						</div>
@@ -155,8 +195,6 @@
 										href="<%=request.getContextPath()%>/front_end/question/question.jsp">問答區</a></li>
 									<li><a
 										href="<%=request.getContextPath()%>/front_end/galley/galley.html">照片牆</a></li>
-									<li><a
-										href="<%=request.getContextPath()%>/front_end/chat/chat.html">聊天室</a></li>
 									<li><a
 										href="<%=request.getContextPath()%>/front_end/togetger/together.html">揪團</a></li>
 									<li><a
@@ -209,9 +247,9 @@
 			</div>
 		</form>
 		<ul class="nav nav-tabs">
-			<li role="presentation" class="active"><a href="#">最新建立</a></li>
+			<li role="presentation" class="active"><a href="<%=request.getContextPath()%>/front_end/trip/trip.jsp">最新建立</a></li>
 			<li role="presentation"><a href="#">最多瀏覽</a></li>
-			<li role="presentation"><a href="#">我的行程</a></li>
+			<li role="presentation"><a href="<%=request.getContextPath()%>/front_end/trip/personal_area_trip.jsp">我的行程</a></li>
 		</ul>
 
 
@@ -277,7 +315,7 @@
 					</div>
 					<div class="footer-grid-info">
 						<ul>
-							<li><a href="<%=request.getContextPath()%>/front_end/about_us/about_us.jsp">關於Travle Maker</a></li>
+							<li><a href="<%=request.getContextPath()%>/front_end/about_us/about_us.jsp">關於Travel Maker</a></li>
 							<li><a href="<%=request.getContextPath()%>/front_end/content/content.jsp">聯絡我們</a></li>
 							<li><a href="<%=request.getContextPath()%>/front_end/faq/faq.jsp">常見問題</a></li>
 						</ul>
@@ -325,7 +363,7 @@
 			<div class="copyright">
 				<p>
 					Copyright &copy; 2018 All rights reserved <a href="<%=request.getContextPath()%>/front_end/index.jsp"
-						target="_blank" title="TravleMaker">TravleMaker</a>
+						target="_blank" title="TravelMaker">TravelMaker</a>
 				</p>
 			</div>
 		</div>

@@ -36,7 +36,12 @@ public class Photo_reportDAO implements Photo_reportDAO_interface {
 	private static final String GET_ALL = 
 			"SELECT * FROM PHOTO_REPORT ORDER BY PHOTO_NO,MEM_ID";
 	
-	
+	//更改照片牆審核狀態
+	private static final String UPDATE_ON_STATE_STMT=
+			"UPDATE PHOTO_REPORT SET PHO_REP_STATS = 1 WHERE MEM_ID=? AND PHOTO_NO=?";
+	private static final String UPDATE_OFF_STATE_STMT=
+			"UPDATE PHOTO_REPORT SET PHO_REP_STATS = 2 WHERE MEM_ID=? AND PHOTO_NO=?";
+		
 	@Override
 	public void insert(Photo_reportVO photo_reportVO) {
 		Connection con = null;
@@ -268,6 +273,78 @@ public class Photo_reportDAO implements Photo_reportDAO_interface {
 			}
 		}
 		return list;
+	}
+	
+	@Override
+	public int update_review_State(String mem_Id, String photo_No, Integer pho_Rep_Stats) {
+		Connection con = null ;
+		PreparedStatement pstmt= null;
+		int count=0;
+		if(pho_Rep_Stats == 1) {
+			try {
+				con=ds.getConnection();
+				pstmt=con.prepareStatement(UPDATE_ON_STATE_STMT);
+				
+				pstmt.setString(1,mem_Id);
+				pstmt.setString(2,photo_No);
+				
+				
+				count=pstmt.executeUpdate();
+				
+			}catch(SQLException se) {
+				throw new RuntimeException("資料庫發生錯誤"+se.getMessage());
+			}finally {
+				if(pstmt != null) {
+					try {
+						pstmt.close();
+					}catch(SQLException se) {
+						se.printStackTrace(System.err);
+					}
+				}
+				
+				if(con != null) {
+					try {
+					  con.close();
+					}catch(Exception e) {
+					  e.printStackTrace(System.err);
+					}
+				}
+			}
+			
+		}else if(pho_Rep_Stats == 2) {		
+			try {
+
+				con=ds.getConnection();
+				pstmt=con.prepareStatement(UPDATE_OFF_STATE_STMT);
+				
+				pstmt.setString(1,mem_Id);
+				pstmt.setString(2,photo_No);
+				
+				count=pstmt.executeUpdate();
+				
+			}catch(SQLException se) {
+				throw new RuntimeException("資料庫發生錯誤"+se.getMessage());
+			}finally {
+				if(pstmt != null) {
+					try {
+						pstmt.close();
+					}catch(SQLException se) {
+						se.printStackTrace(System.err);
+					}
+				}
+				
+				if(con != null) {
+					try {
+					  con.close();
+					}catch(Exception e) {
+					  e.printStackTrace(System.err);
+					}
+				}
+			}
+			
+			
+		}
+		return count;
 	}
 	
 }

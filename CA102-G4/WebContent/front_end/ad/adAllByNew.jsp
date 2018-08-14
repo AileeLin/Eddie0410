@@ -8,7 +8,7 @@
     List<AdVO> list = AdSer.getNewAD();
     pageContext.setAttribute("list",list);
     
-    
+     
 	//若有登入，可以看到登出按鈕
 	MemberVO memberVO = (MemberVO)session.getAttribute("memberVO");
 	String login,logout;
@@ -328,7 +328,7 @@
                 </div>
                 <div class="copyright">
                     <p>Copyright &copy; 2018 All rights reserved
-                        <a href="index.jsp" target="_blank" title="TravelMaker">TravelMaker</a>
+                        <a href="<%=request.getContextPath()%>/front_end/index.jsp" target="_blank" title="TravelMaker">TravelMaker</a>
                     </p>
                 </div>
             </div>

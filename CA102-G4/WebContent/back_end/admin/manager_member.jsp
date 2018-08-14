@@ -23,7 +23,7 @@
 	
 	if(login_state_backEnd!=true){
 	 session.setAttribute("location","/CA102G4/back_end/back_index.jsp");
-	 response.sendRedirect("/CA102G4/back_end/admin/back_login.jsp");
+	 response.sendRedirect(request.getContextPath()+"/back_end/admin/back_login.jsp");
 	}
 
 	MemberService memberSvc = new MemberService();
@@ -184,6 +184,7 @@
 						<i class="fas fa-align-left"></i>
 					</button>
 					<span style="float: right">
+					<span style="font-size:1.5em;margin-right:10px;vertical-align:sub;">Welcome！${adminVO.admin_Name}</span>
 					<c:choose>
                           <c:when test="<%=login_state_backEnd %>">
                            <a href="<%= request.getContextPath()%>/admin.do?action=logout"><span class=" top_banner btn btn-info"><i class=" fas fa-sign-out-alt" aria-hidden="true"></i></span></a>
@@ -191,14 +192,14 @@
                           <c:otherwise>
                            <a href="<%= request.getContextPath()%>/admin_login.jsp"><span class="top_banner btn btn-info"><i class=" fa fa-user" aria-hidden="true"></i></span></a>
                           </c:otherwise>
-                        </c:choose>
+                       </c:choose>
 					</span>
 				</div>
 			</nav>
 
 			<div class="row">
 				<div class="col-lg-12">
-					<h1 class="page-header">Welcome ${adminVO.admin_Name}!</h1>
+					<h1 class="page-header"></h1>
 				</div>
 			</div>
 

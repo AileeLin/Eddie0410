@@ -86,7 +86,8 @@ public class GrpService {
 			 Timestamp trip_Start,
 			 Timestamp trip_End,
 			 String trip_Details,
-			 byte[] pic) {
+			 byte[] pic
+	 		 ){
 		 
 		 System.out.println("update123");
 		 
@@ -129,9 +130,23 @@ public class GrpService {
 		return dao.getAll(map);
 	}
 	
-	
-	//**************搜尋某會員所有開團資訊(不論狀況為0123)*******//
+	 //*******搜尋某會員所有開團資訊(不論狀況為0123)//
 	public List<GrpVO> getAll_ByMemId(String mem_Id) {
 		return dao.getAll_ByMemID(mem_Id);
 	}
+	
+	
+	//成團後更改揪團狀態(=2成團)
+		 public GrpVO update_status(String grp_Id,Integer grp_Status){
+			 			 
+		  GrpVO grpVO = new GrpVO();
+
+		  grpVO.setGrp_Id(grp_Id);
+		  grpVO.setGrp_Status(grp_Status);
+
+		  dao.update_status(grpVO);
+
+		  return grpVO;
+		 }
+	
 }

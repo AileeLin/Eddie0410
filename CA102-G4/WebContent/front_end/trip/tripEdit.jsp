@@ -10,14 +10,24 @@
 <%@ page import="com.mem.model.*"%>
 
 <%
-	// 	//會員認證
-	// 	MemberVO memVO = (MemberVO)session.getAttribute("memberVO");
-	// 	if(memVO==null){
-	// 		session.setAttribute("location", request.getRequestURI());
-	// 		session.setAttribute("att_no", request.getParameter("att_no"));
-	// 		response.sendRedirect(request.getContextPath()+"/front_end/member/mem_login.jsp");
-	// 		return;
-	// 	}
+ 
+	MemberVO memberVO = (MemberVO) request.getAttribute("memberVO"); 
+	if(memberVO == null){
+		memberVO = (MemberVO)session.getAttribute("memberVO");
+	}
+	
+	boolean login_state = false;   
+	Object login_state_temp = session.getAttribute("login_state");
+	if(login_state_temp!=null){
+		login_state=(boolean)login_state_temp;
+	}
+	
+	if(login_state!=true){
+		session.setAttribute("location", request.getRequestURI());
+		response.sendRedirect("/CA102G4/front_end/member/mem_login.jsp");
+		return;
+	}
+
 
 	TripVO tripVO = (TripVO) session.getAttribute("tripVO_edit");
 	List<TripDaysVO> tdList = (List<TripDaysVO>) session.getAttribute("tdList");
@@ -37,8 +47,12 @@
 		list = attSvc.getAll();
 		pageContext.setAttribute("list", list);
 	}
+	
+	AttractionsTripService attTripSvc = new AttractionsTripService(); 
+	
 	request.setAttribute("list", list);
 	pageContext.setAttribute("attSvc", attSvc);
+	pageContext.setAttribute("attTripSvc", attTripSvc);
 %>
 
 <html>
@@ -51,7 +65,7 @@
 <!-- //指定螢幕寬度為裝置寬度，畫面載入初始縮放比例 100% -->
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- 設定網頁keywords -->
-<meta name="keywords" content="TravleMaker,travlemaker,自助旅行" />
+<meta name="keywords" content="TravelMaker,Travelmaker,自助旅行" />
 <!-- //設定網頁keywords -->
 <!-- 隱藏iPhone Safari位址列的網頁 -->
 <script type="application/x-javascript">
@@ -86,6 +100,10 @@
 <link
 	href="<%=request.getContextPath()%>/front_end/css/trip/tripEdit.css"
 	rel="stylesheet">
+	
+<link
+	href="<%=request.getContextPath()%>/front_end/css/trip/gMap_style.css"
+	rel="stylesheet">
 <!-- //css -->
 
 <!-- font-awesome icons -->
@@ -105,9 +123,9 @@
 <script
 	src="<%=request.getContextPath()%>/front_end/js/all/bootstrap.js"></script>
 <style>
-#attTable tr, #attTable th, #attTable td {
-	padding: 5px !important;
-}
+	#attTable tr, #attTable th, #attTable td {
+		padding: 5px !important;
+	}
 </style>
 </head>
 <body>
@@ -121,19 +139,29 @@
 						<ul>
 							<li><i class="fa fa-phone" aria-hidden="true"></i> <a
 								href="tel:034257387"> 03-4257387</a></li>
-							<li><a href="mailto:TravleMaker@gmail.com"><i
+							<li><a href="mailto:TravelMaker@gmail.com"><i
 									class="fa fa-envelope" aria-hidden="true"></i>
-									TravleMaker@gmail.com</a></li>
+									TravelMaker@gmail.com</a></li>
 						</ul>
 					</div>
 					<div class="top-banner-right">
 						<ul>
-							<li><a class="top_banner" href="#"><i class="fa fa-user"
-									aria-hidden="true"></i></a></li>
-							<li><a class="top_banner" href="#"><i
-									class="fa fa-shopping-cart" aria-hidden="true"></i></a></li>
-							<li><a class="top_banner" href="#"><i
-									class="fa fa-envelope" aria-hidden="true"></i></a></li>
+							<li>
+								<a href="<%=request.getContextPath()%>/front_end/member/member.do?action=logout">
+									<span class=" top_banner">
+										<i class=" fas fa-sign-out-alt" aria-hidden="true"></i>
+									</span>
+								</a>
+							</li>
+							<li>
+								<a class="top_banner" href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_home.jsp"><i class="fa fa-user" aria-hidden="true"></i></a>
+							</li>
+							<li>
+								<a class="top_banner" href="#"><i class="fa fa-shopping-cart" aria-hidden="true"></i></a>
+							</li>
+							<li>
+								<a class="top_banner" href="#"><i class="fa fa-envelope" aria-hidden="true"></i></a>
+							</li>
 						</ul>
 					</div>
 					<div class="clearfix"></div>
@@ -143,7 +171,7 @@
 				<div class="container">
 					<div class="logo">
 						<h1>
-							<a href="<%=request.getContextPath()%>/front_end/index.jsp">Travle Maker</a>
+							<a href="<%=request.getContextPath()%>/front_end/index.jsp">Travel Maker</a>
 						</h1>
 					</div>
 					<div class="top-nav">
@@ -170,8 +198,6 @@
 										href="<%=request.getContextPath()%>/front_end/question/question.jsp">問答區</a></li>
 									<li><a
 										href="<%=request.getContextPath()%>/front_end/galley/galley.html">照片牆</a></li>
-									<li><a
-										href="<%=request.getContextPath()%>/front_end/chat/chat.html">聊天室</a></li>
 									<li><a
 										href="<%=request.getContextPath()%>/front_end/togetger/together.html">揪團</a></li>
 									<li><a
@@ -266,7 +292,7 @@
 			<!--//行程天數 -->
 
 			<!--行程內容-->
-			<div class="col-lg-5 col-md-5 col-sm-5 col-5">
+			<div class="col-lg-4 col-md-4 col-sm-4 col-4">
 				<div id="card_tripDay" class="card bg-light p-2 mx-0 my-2 w-100"
 					style="overflow-y: auto;">
 					<% int dayCount = 0;%>
@@ -420,65 +446,173 @@
 			<!--//行程內容-->
 
 			<div class="col-lg-6 col-md-6 col-sm-6 col-6 p-0">
-				
-				留給google map使用
-				
-				<!-- 我是景點列表 -->
-				<div class="card bg-light mx-0 my-2 border-dark" id="attList">
-					<!--<div class="card-header p-1"> -->
-
-					<!-- </div> -->
+				<div class="card bg-light mx-0 my-2" id="gmap-all">
 					<div class="card-body p-1">
-						<h3 style="display: inline-block !important;" class="card-title">景點列表</h3>
-						<%@ include file="/front_end/trip/include/tripEditpage1.file"%>
-						<form method="post"
-							action="<%=request.getContextPath()%>/attractions/att.do">
-							<div>
-								<div class="input-group input-group-sm">
-									<input type="hidden" name="action" value="tripEditSearch">
-									<input type="text"  placeholder="輸入關鍵字..."
-										name="keyword"> 
-									<span class="input-group-append">
-										<button class="btn btn-default" type="submit">
-											<i class="fas fa-search"></i>
-										</button>
-									</span>
-								</div>
-							</div>
-						</form>
-
-						<div>
-							<c:forEach var="attVO" items="${list}" begin="<%=pageIndex%>"
-								end="<%=pageIndex+rowsPerPage-1%>">
-								<div class="col-sm-3 col-md-3 col-lg-3 col-3">
-									<div class="card">
-										<a href="javascript:void(0)" data-toggle="modal"
-											data-target="#attDetail_${attVO.att_no}" class="card-link"
-											style="color: #fff" title="${attVO.att_name}">
-											<div class="wrapper">
-												<img class="card-img" id="${attVO.att_no}"
-													src="<%= request.getContextPath()%>/trip/getPicture.do?att_no=${attVO.att_no}">
-											</div>
-											<div class="card-img-overlay">
-												<p class="card-text" style="padding: 40% 0 0 0;">
-												<h5 align="center">
-													<i class="fas fa-map-marker-alt"></i>${attVO.att_name}</h5>
-												</p>
-											</div>
-										</a>
+					    <div id="map"></div>
+						    <div id="right-panel" style="overflow-y: scroll">
+						      <p>Total Distance: <span id="total"></span></p>
+						    </div>
+					</div>
+				</div>
+				    <script>
+				        var map;
+				        var directionsService;
+				        var directionsDisplay;
+				        var waypts = [];
+				
+				        function initMap() {
+				            map = new google.maps.Map(document.getElementById('map'), {
+				                zoom: 7,
+				                mapTypeId: google.maps.MapTypeId.TERRAIN,
+				                center: {
+				                    lat: 23.57565,
+				                    lng: 120.973882
+				                } 
+				            });
+				
+				            var transitLayer = new google.maps.TransitLayer();
+				            transitLayer.setMap(map);
+				
+				            directionsService = new google.maps.DirectionsService;
+				            directionsDisplay = new google.maps.DirectionsRenderer({
+				                draggable: true,
+				                map: map,
+				                panel: document.getElementById('right-panel')
+				            });
+				
+				            directionsDisplay.addListener('directions_changed', function() {
+				                computeTotalDistance(directionsDisplay.getDirections());
+				                // console.log(directionsDisplay.getDirections().request);
+				            });
+							<% int whichDays = 1;
+								if(request.getParameter("belongDays") != null){
+									whichDays = Integer.parseInt(request.getParameter("belongDays"));
+								}
+							%>
+							<% List<AttractionsTripVO> attTripList = new ArrayList<>(); %>
+							<% List<Object> detailListGM = tripDayMap.get(whichDays);%>
+							<% for(Object detail : detailListGM){
+									if(detail instanceof AttractionsTripVO){
+										attTripList.add((AttractionsTripVO)detail);
+									}
+								}
+							%>
+							<% pageContext.setAttribute("attTripList", attTripList);%>
+							<%System.out.println(attTripList.size()); %>
+							<%if(attTripList==null){%>
+							<%}else if(attTripList.size()>2){%>
+								<c:forEach var="attTripGMap" items="${attTripList}" begin="1" end="${attTripList.size()-1}" varStatus="s">
+									waypts.push({
+						                location: new google.maps.LatLng(${attSvc.getOneAttByPK(attTripGMap.att_no).att_lat}, ${attSvc.getOneAttByPK(attTripGMap.att_no).att_lon}),
+						                stopover: true
+						            });
+					            </c:forEach>
+					            
+					            displayRoute(
+					            		new google.maps.LatLng(<%= attSvc.getOneAttByPK(attTripList.get(0).getAtt_no()).getAtt_lat()%>, <%= attSvc.getOneAttByPK(attTripList.get(0).getAtt_no()).getAtt_lon()%>),
+					            		new google.maps.LatLng(<%= attSvc.getOneAttByPK(attTripList.get(attTripList.size()-1).getAtt_no()).getAtt_lat()%>, <%= attSvc.getOneAttByPK(attTripList.get(attTripList.size()-1).getAtt_no()).getAtt_lon()%>),
+					            		directionsService,
+					            		directionsDisplay);
+			            	<%}else if(attTripList.size()==2){%>
+			            		displayRoute(
+				            		new google.maps.LatLng(<%= attSvc.getOneAttByPK(attTripList.get(0).getAtt_no()).getAtt_lat()%>, <%= attSvc.getOneAttByPK(attTripList.get(0).getAtt_no()).getAtt_lon()%>),
+				            		new google.maps.LatLng(<%= attSvc.getOneAttByPK(attTripList.get(attTripList.size()-1).getAtt_no()).getAtt_lat()%>, <%= attSvc.getOneAttByPK(attTripList.get(attTripList.size()-1).getAtt_no()).getAtt_lon()%>),
+				            		directionsService,
+				            		directionsDisplay);
+			            	<%}else if(attTripList.size()==1){%>
+				            	displayRoute(
+					            		new google.maps.LatLng(<%= attSvc.getOneAttByPK(attTripList.get(0).getAtt_no()).getAtt_lat()%>, <%= attSvc.getOneAttByPK(attTripList.get(0).getAtt_no()).getAtt_lon()%>),
+					            		new google.maps.LatLng(<%= attSvc.getOneAttByPK(attTripList.get(0).getAtt_no()).getAtt_lat()%>, <%= attSvc.getOneAttByPK(attTripList.get(0).getAtt_no()).getAtt_lon()%>),
+					            		directionsService,
+					            		directionsDisplay);
+			            	<%}%>
+				        }
+				
+				        function displayRoute(origin, destination, service, display) {
+				
+				            service.route({
+				                origin: origin,
+				                destination: destination,
+				                waypoints: waypts,
+				                travelMode: 'DRIVING',
+				                avoidTolls: true
+				            }, function(response, status) {
+				                if (status === 'OK') {
+// 				                    console.log(response);
+				                    display.setDirections(response);
+				                } else {
+				                    alert('Could not display directions due to: ' + status);
+				                }
+				            });
+				        }
+				
+				        function computeTotalDistance(result) {
+				            var total = 0;
+				            var myroute = result.routes[0];
+				            for (var i = 0; i < myroute.legs.length; i++) {
+				                total += myroute.legs[i].distance.value;
+				            }
+				            total = total / 1000;
+				            document.getElementById('total').innerHTML = total + ' km';
+				        }
+				
+				    </script>
+				</div>
+				<div class="col-lg-1 col-md-1 col-sm-1 col-1 p-0">
+					<!-- 我是景點列表 -->
+					<div class="card bg-light mx-0 my-2 border-dark" id="attList">
+						<!--<div class="card-header p-1"> -->
+	
+						<!-- </div> -->
+						<div class="card-body p-1">
+							<h3 style="display: inline-block !important;" class="card-title">景點列表</h3>
+							<%@ include file="/front_end/trip/include/tripEditpage1.file"%>
+							<form method="post"
+								action="<%=request.getContextPath()%>/attractions/att.do">
+								<div>
+									<div class="input-group input-group-sm">
+										<input type="hidden" name="action" value="tripEditSearch">
+										<input type="text"  placeholder="輸入關鍵字..."
+											name="keyword"> 
+										<span class="input-group-append">
+											<button class="btn btn-default" type="submit">
+												<i class="fas fa-search"></i>
+											</button>
+										</span>
 									</div>
 								</div>
-							</c:forEach>
-						</div>
-						<%
-							if (list.size() == 0) {
-						%>
-						<div align="center">
-							<h3>查無資料</h3>
-						</div>
-						<%
-							}
-						%>
+							</form>
+	
+							<div>
+								<c:forEach var="attVO" items="${list}" begin="<%=pageIndex%>"
+									end="<%=pageIndex+rowsPerPage-1%>">
+									<div class="col-sm-3 col-md-3 col-lg-3 col-3">
+										<div class="card">
+											<a href="javascript:void(0)" data-toggle="modal"
+												data-target="#attDetail_${attVO.att_no}" class="card-link"
+												style="color: #fff" title="${attVO.att_name}">
+												<div class="wrapper">
+													<img class="card-img" id="${attVO.att_no}"
+														src="<%= request.getContextPath()%>/trip/getPicture.do?att_no=${attVO.att_no}">
+												</div>
+												<div class="card-img-overlay">
+													<p class="card-text" style="padding: 40% 0 0 0;">
+													<h5 align="center">
+														<i class="fas fa-map-marker-alt"></i>${attVO.att_name}</h5>
+													</p>
+												</div>
+											</a>
+										</div>
+									</div>
+								</c:forEach>
+							</div>
+							<%
+								if (list.size() == 0) {
+							%>
+							<div align="center">
+								<h3>查無資料</h3>
+							</div>
+						<%}%>
 						<%@ include file="/front_end/trip/include/tripEditpage2.file"%>
 						<!-- //我是景點列表 -->
 					</div>
@@ -590,6 +724,7 @@
 										<h3>${attVO.att_name}</h3>
 									</div>
 									<div class="col-lg-2 col-md-2 col-sm-2 col-2 p-0">
+										<p style="font-size: 12px">加入哪一天行程</p>
 										<select style="font-size: 14px" class="custom-select" name="belongDays">
 											<c:forEach var="tripDaysVO" items="${tdList}" varStatus="s">
 												<option value="${s.count}">第${tripDaysVO.tripDay_days}天
@@ -1113,7 +1248,7 @@
 <!-- 					</div> -->
 <!-- 					<div class="footer-grid-info"> -->
 <!-- 						<ul> -->
-<%-- 							<li><a href="<%=request.getContextPath()%>/front_end/about_us/about_us.jsp">關於Travle Maker</a></li> --%>
+<%-- 							<li><a href="<%=request.getContextPath()%>/front_end/about_us/about_us.jsp">關於Travel Maker</a></li> --%>
 <%-- 							<li><a href="<%=request.getContextPath()%>/front_end/content/content.jsp">聯絡我們</a></li> --%>
 <%-- 							<li><a href="<%=request.getContextPath()%>/front_end/faq/faq.jsp">常見問題</a></li> --%>
 <!-- 						</ul> -->
@@ -1161,7 +1296,7 @@
 <!-- 			<div class="copyright"> -->
 <!-- 				<p> -->
 <!-- 					Copyright &copy; 2018 All rights reserved <a href="<%=request.getContextPath()%>/front_end/index.jsp" -->
-<!-- 						target="_blank" title="TravleMaker">TravleMaker</a> -->
+<!-- 						target="_blank" title="TravelMaker">TravelMaker</a> -->
 <!-- 				</p> -->
 <!-- 			</div> -->
 <!-- 		</div> -->
@@ -1258,6 +1393,10 @@
 	//      }});
 </script>
 
+<!--gMap使用 -->
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC_J7BIoAiflRgiGrns3ins84UVvBXHC10&callback=initMap"></script>
+
+
 <script type="text/javascript">
 	$(document).ready(function() {
 		//註冊 行程日期 change事件
@@ -1265,11 +1404,51 @@
 			this.form.submit();
 		});
 		//註冊 滾動事件
+		<%int countGM = 1; %>
 		<c:forEach var="tripDaysVO" items="${tdList}">
 		$("#btn_${tripDaysVO.tripDay_days}").click(function() {
 			$("html,body").animate({
 				scrollTop : $("#card_${tripDaysVO.tripDay_days}").offset().top
 			}, 500);
+			waypts.length = 0;
+			<% attTripList = new ArrayList<>(); %>
+			<% detailListGM = tripDayMap.get(countGM++);%>
+			<% for(Object detail : detailListGM){
+					if(detail instanceof AttractionsTripVO){
+						attTripList.add((AttractionsTripVO)detail);
+					}
+				}
+			%>
+			<% pageContext.setAttribute("attTripList", attTripList);%>
+			<%System.out.println(attTripList.size()); %>
+			<%if(attTripList==null){%>
+			<%}else if(attTripList.size()>2){%>
+				<c:forEach var="attTripGMap" items="${attTripList}" begin="1" end="${attTripList.size()-1}" varStatus="s">
+					waypts.push({
+		                location: new google.maps.LatLng(${attSvc.getOneAttByPK(attTripGMap.att_no).att_lat}, ${attSvc.getOneAttByPK(attTripGMap.att_no).att_lon}),
+		                stopover: true
+		            });
+	            </c:forEach>
+	            
+	            displayRoute(
+	            		new google.maps.LatLng(<%= attSvc.getOneAttByPK(attTripList.get(0).getAtt_no()).getAtt_lat()%>, <%= attSvc.getOneAttByPK(attTripList.get(0).getAtt_no()).getAtt_lon()%>),
+	            		new google.maps.LatLng(<%= attSvc.getOneAttByPK(attTripList.get(attTripList.size()-1).getAtt_no()).getAtt_lat()%>, <%= attSvc.getOneAttByPK(attTripList.get(attTripList.size()-1).getAtt_no()).getAtt_lon()%>),
+	            		directionsService,
+	            		directionsDisplay);
+        	<%}else if(attTripList.size()==2){%>
+        		displayRoute(
+            		new google.maps.LatLng(<%= attSvc.getOneAttByPK(attTripList.get(0).getAtt_no()).getAtt_lat()%>, <%= attSvc.getOneAttByPK(attTripList.get(0).getAtt_no()).getAtt_lon()%>),
+            		new google.maps.LatLng(<%= attSvc.getOneAttByPK(attTripList.get(attTripList.size()-1).getAtt_no()).getAtt_lat()%>, <%= attSvc.getOneAttByPK(attTripList.get(attTripList.size()-1).getAtt_no()).getAtt_lon()%>),
+            		directionsService,
+            		directionsDisplay);
+        	<%}else if(attTripList.size()==1){%>
+            	displayRoute(
+	            		new google.maps.LatLng(<%= attSvc.getOneAttByPK(attTripList.get(0).getAtt_no()).getAtt_lat()%>, <%= attSvc.getOneAttByPK(attTripList.get(0).getAtt_no()).getAtt_lon()%>),
+	            		new google.maps.LatLng(<%= attSvc.getOneAttByPK(attTripList.get(0).getAtt_no()).getAtt_lat()%>, <%= attSvc.getOneAttByPK(attTripList.get(0).getAtt_no()).getAtt_lon()%>),
+	            		directionsService,
+	            		directionsDisplay);
+        	<%}%>
+						
 		});
 		</c:forEach>
 		
@@ -1280,8 +1459,4 @@
 	    }, 800);
 	});
 </script>
-<script>
-	
-</script>
-
 </html>

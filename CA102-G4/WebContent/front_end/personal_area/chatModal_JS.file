@@ -205,9 +205,8 @@
         </div>
       </div> 
 	<!-- 顯示聊天名單的Modal END -->
-
-
-    <!-- 顯示圖片的Modal Start -->   
+	
+	<!-- 顯示圖片的Modal Start -->   
     <div class="modal fade " id="chatRoomPhoto_Modal" role="dialog">
         <div class="modal-dialog">
           <!-- Modal 顯示圖片視窗content start-->
@@ -224,12 +223,14 @@
       </div> 
 	<!-- 顯示圖片的Modal END -->
 
-
     <script>
-    
+    /***********************頁面準備好時，連線WS***********************/
+    $(document).ready(function(){
+	    connect();
+	 });
 	/***********************若有錯誤訊息時，就會跳出視窗***********************/
    	$('#errorModal').modal();
-	
+
    	/***********************聊天會用到的變數********************************/
 	var openChatRoomID;     //要開啟的聊天對話編號
 	var openChatRoomName;	//要開啟的聊天對話名稱
@@ -308,6 +309,16 @@
 		//收到訊息的時候
 		webSocket.onmessage = function(event){
 			var jsonObj = JSON.parse(event.data);
+			
+			/****************補通知*********************/
+			var titie = jsonObj.title; //通知才有的
+			if(titie != undefined){
+				alert("會進來通知"+titie+"-");
+				return;
+			}
+			/****************補通知********************/
+			
+
 			var msgType = jsonObj.TYPE; //有兩種可能：chat及history及status
 			var messageArea;            //聊天內容區塊
 			var msgTime;				//收到訊息:時間
@@ -327,13 +338,14 @@
 					<%@ include file="chatContent_div.file" %>
 					$("#"+openChatRoomID+"").removeClass("chatWindow_Content");
 					$(".input_chatContext").scrollTop(99999999); //讓聊天內容的捲軸都是在最下面
-
+					
 					if($("div.input_chatContainer_select[value='"+openChatRoomID+"']").html() == undefined){
 						//因為視窗存在的時候，可能有兩種狀況 1)有完成的div.input_chatContainer_select  2)先前存在sessionStorage
 						sessionStorage.setItem(openChatRoomID,$("div.input_chatContainer[value='"+openChatRoomID+"']").prop("outerHTML"));
 						return;
 					}
 					sessionStorage.setItem(openChatRoomID,$("div.input_chatContainer_select[value='"+openChatRoomID+"']").html());
+
 					return;
 				}
 
@@ -389,7 +401,6 @@
 					msgContent = msgContent.replace(/u003d/g, "=").replace(/u003c/g, "<").replace(/u0027/g, "'").replace(/u003e/g, ">");
 					
 					senderMemId = history_jsonObject[i].MEM_ID;
-					
 					//會把收到的訊息，append到聊天對話內容
 					<%@ include file="chatContent_div.file" %>
 				}
@@ -459,6 +470,13 @@
 		
 	}
 	/******************************WebSocket結束**************************/
+	
+	
+	
+	
+	
+	
+	
 	</script>
 
 	

@@ -9,7 +9,7 @@
 <html>
 
 <%
-	//**********************管理者登入身分驗證********************************//
+
 	AdminVO adminVO = (AdminVO)session.getAttribute("adminVO");
 	if(adminVO == null){
 		adminVO = (AdminVO)session.getAttribute("adminVO");
@@ -23,10 +23,9 @@
 	
 	if(login_state_backEnd!=true){
 		session.setAttribute("location",request.getRequestURI());
-		response.sendRedirect(request.getContextPath()+"/back_end/admin/back_login.jsp");
+		 response.sendRedirect(request.getContextPath()+"/back_end/admin/back_login.jsp");
 		return;
 	}
-	//**********************管理者登入身分驗證********************************//
 	
 	photo_reportService photo_reportSvc = new photo_reportService();
 	List<Photo_reportVO> reportList = photo_reportSvc.getAll();
@@ -193,9 +192,10 @@
 						<i class="fas fa-align-left"></i>
 					</button>
 					<span style="float: right">
-						<span style="font-size:1.5em;margin-right:10px;vertical-align:sub;">Welcome！${adminVO.admin_Name}</span>
-                        <c:choose>
-                          <c:when test="<%=login_state_backEnd %>">
+					<span style="font-size:1.5em;margin-right:10px;vertical-align:sub;">Welcome！${adminVO.admin_Name}</span>
+					<c:choose>
+					       <c:when test="<%=login_state_backEnd %>">
+					
                            <a href="<%= request.getContextPath()%>/admin.do?action=logout"><span class=" top_banner btn btn-info"><i class=" fas fa-sign-out-alt" aria-hidden="true"></i></span></a>
                           </c:when>
                           <c:otherwise>
@@ -208,7 +208,7 @@
 
 			<div class="row">
 				<div class="col-lg-12">
-					<h1 class="page-header">Welcome ${adminVO.admin_Name}!</h1>
+					<h1 class="page-header"></h1>
 				</div>
 			</div>
 
@@ -216,7 +216,7 @@
 						<div class="row">
 			
 				<div class="col-lg-12 col-md-12 col-sm-12 col-12">
-				<h1 class="h2">照片牆檢舉審核</h1>
+				<h1 class="h2">會員檢舉審核</h1>
 				<div class="btn-toolbar mb-2 mb-md-0">
 					<div role="tabpanel">
 
@@ -234,6 +234,7 @@
 										<th>會員編號</th>
 										<th>會員姓名</th>
 										<th>檢舉時間</th>
+										<th>檢舉原因</th>
 										<th>審核</th>
 										</tr>	
 									</thead>
@@ -244,7 +245,7 @@
 												<td>${Photo_reportVO.photo_No}</td>
 												<td>${memSvc.findByPrimaryKey(Photo_reportVO.mem_Id).mem_Name}(${Photo_reportVO.mem_Id})</td>
 												<td><fmt:formatDate pattern="MM月dd日  HH:mm" value="${Photo_reportVO.report_Time}" /></td>										
-												
+												<td></td>
 												<td>
 													<FORM METHOD="post" ACTION="<%=request.getContextPath()%>/photo_wall.do" style="margin-bottom: 0px;">
 												<input type="submit" class="btn btn-warning" value="審核">

@@ -105,13 +105,21 @@ public class ShoppingServlet extends HttpServlet {
 		}
 	}
 
-	private void reportProd(HttpServletRequest req, HttpServletResponse res) {
-		Integer product_id = Integer.parseInt(req.getParameter("product_id"));
-		String memId = req.getParameter("memId");
-		String reportDescr = req.getParameter("reportDescr");
+	private void reportProd(HttpServletRequest req, HttpServletResponse res) throws IOException {
 		
-		ProductReportService productReportSvc = new ProductReportService();
-		productReportSvc.addProductReport(product_id,memId,reportDescr,new Timestamp(System.currentTimeMillis()),1);
+		try {
+			Integer product_id = Integer.parseInt(req.getParameter("product_id"));
+			String memId = req.getParameter("memId");
+			String reportDescr = req.getParameter("reportDescr");
+			
+			ProductReportService productReportSvc = new ProductReportService();
+			productReportSvc.addProductReport(product_id,memId,reportDescr,new Timestamp(System.currentTimeMillis()),1);
+		}catch(Exception e) {
+			res.setContentType("text/html;charset=Big5");
+			PrintWriter w = res.getWriter();
+			w.print("您已經檢舉過囉!");
+		}
+		
 
 	}
 
@@ -140,6 +148,7 @@ public class ShoppingServlet extends HttpServlet {
 			}
 			ordSvc.updateOrd(ordVO);
 		}else {
+		
 			PrintWriter w = res.getWriter();
 			w.print("not null");
 		}

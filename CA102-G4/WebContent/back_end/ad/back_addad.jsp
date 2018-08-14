@@ -2,7 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page import="com.ad.model.*" %>
 <%@ page import="com.admin.model.*"%>
-<%
+<% 
 	//**********************管理者登入身分驗證********************************//
 	AdminVO adminVO = (AdminVO)session.getAttribute("adminVO");
 	if(adminVO == null){
@@ -197,7 +197,7 @@
                                     <a href="<%=request.getContextPath()%>/back_end/photo_wall/photo_report.jsp">照片牆檢舉</a>
                                 </li>
                                 <li>
-                                    <a href="#">商品檢舉</a>
+                                    <a href="<%=request.getContextPath()%>/back_end/store/product_report.jsp">商品檢舉</a>
                                 </li>
                             </ul>
                         </li>                        

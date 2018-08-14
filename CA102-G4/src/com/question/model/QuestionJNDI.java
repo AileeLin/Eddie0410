@@ -23,17 +23,23 @@ public class QuestionJNDI implements QuestionDAO_interface{
 	}
 	
 		private static final String INSERT_STMT = "Insert into QUESTION (QUESTION_ID, MEM_ID, QUESTION_CONTENT, BUILD_DATE,Q_STATE)"
-			 +  "values ('QU'||LPAD(to_char(QUESTION_SEQ.NEXTVAL), 9, '0'),?,?,?)";
+			 +  "values ('QU'||LPAD(to_char(QUESTION_SEQ.NEXTVAL), 9, '0'),?,?,?,0)";
 	
 		private static final String INSERT_STMT1 = "Insert into QA_CLASSIFICATION (LIST_ID,QUESTION_ID)"
 			+ " values (?,?)";
 		
 		private static final String UPDATE_STMT = "UPDATE QUESTION SET MEM_ID=?, QUESTION_CONTENT=?, BUILD_DATE=? Q_STATE=? WHERE QUESTION_ID = ?";
 		
-		private static final String DELETE_STMT = "DELETE FROM QUESTION WHERE QUESTION_ID = ?";
+		private static final String UPDATE = "UPDATE QUESTION SET  Q_STATE=? WHERE QUESTION_ID = ?";
+		
+		private static final String DELETE_STMT = "DELETE FROM QUESTION WHERE QUESTION_ID=? ";
 		private static final String FIND_BY_PK = "SELECT * FROM QUESTION WHERE QUESTION_ID = ?";
 		private static final String GET_ALL = "SELECT * FROM QUESTION";
-
+		
+		private static final String FIND_BY_STATE = "SELECT * FROM QUESTION WHERE Q_STATE= 0";
+		
+		// 世銘打的
+		private static final String FIND_BY_KEYWORD_STMT = "SELECT * FROM QUESTION WHERE UPPER(QUESTION_CONTENT) LIKE UPPER(?)";
 
 		@Override
 		public int insert(QuestionVO questionVO) {
@@ -135,7 +141,7 @@ public class QuestionJNDI implements QuestionDAO_interface{
 				pstmt = con.prepareStatement(DELETE_STMT);
 				
 				pstmt.setString(1, question_id);
-
+				
 				updateCount = pstmt.executeUpdate();
 
 
@@ -348,17 +354,164 @@ public class QuestionJNDI implements QuestionDAO_interface{
 					}
 				}
 			}
-			
-			
-		}
-		@Override
-		public int update_State(String mem_id, String question_id, Integer q_State) {
-			return 0;
-		}
-		@Override
-		public QuestionVO findByState() {
-			// TODO Auto-generated method stub
-			return null;
-		}
 
-}
+			
+		}
+		
+		
+		@Override
+		public List<QuestionVO> find_by_State() {
+			List<QuestionVO> list = new ArrayList<QuestionVO>();
+			QuestionVO question = null;
+			Connection con = null;
+			PreparedStatement pstmt = null;
+			ResultSet rs = null;
+
+			try {
+
+				con = ds.getConnection();
+				pstmt = con.prepareStatement(FIND_BY_STATE);
+				
+				rs = pstmt.executeQuery();
+				
+				while (rs.next()) {
+					question = new QuestionVO();
+					question.setQuestion_id(rs.getString("question_id"));
+					question.setMem_id(rs.getString("mem_id"));
+					question.setQuestion_content(rs.getString("question_content"));
+					question.setBuild_date(rs.getDate("build_date"));
+					question.setQ_state(rs.getInt("q_state"));
+					list.add(question);
+				}
+				
+				// Handle any SQL errors
+			} catch (SQLException se) {
+				throw new RuntimeException("A database error occured. "
+						+ se.getMessage());
+				// Clean up JDBC resources
+			} finally {
+				if (rs != null) {
+					try {
+						rs.close();
+					} catch (SQLException se) {
+						se.printStackTrace(System.err);
+					}
+				}
+				if (pstmt != null) {
+					try {
+						pstmt.close();
+					} catch (SQLException se) {
+						se.printStackTrace(System.err);
+					}
+				}
+				if (con != null) {
+					try {
+						con.close();
+					} catch (Exception e) {
+						e.printStackTrace(System.err);
+					}
+				}
+			}
+			return list;
+		}
+		
+		@Override
+		public int updateQ(QuestionVO questionVO) {
+			int updateCount = 0;
+			Connection con = null;
+			PreparedStatement pstmt = null;
+			
+			try {
+				
+
+				con = ds.getConnection();
+				pstmt = con.prepareStatement(UPDATE);
+				
+				
+				pstmt.setInt(1, questionVO.getQ_state());
+				pstmt.setString(2, questionVO.getQuestion_id());
+
+				
+				updateCount = pstmt.executeUpdate();
+
+				// Handle any SQL errors
+			} catch (SQLException se) {
+				throw new RuntimeException("A database error occured. " + se.getMessage());
+				// Clean up JDBC resources
+			}
+			finally {
+				if (pstmt != null) {
+					try {
+						pstmt.close();
+					} catch (SQLException se) {
+						se.printStackTrace(System.err);
+					}
+				}
+				if (con != null) {
+					try {
+						con.close();
+					} catch (Exception e) {
+						e.printStackTrace(System.err);
+					}
+				}
+			}
+			return updateCount;
+		}
+		
+		// 世銘打的
+		@Override
+		public List<QuestionVO> findByKeyword(String keyword) {
+			List<QuestionVO> list = new ArrayList<QuestionVO>();
+			QuestionVO question = null;
+			Connection con = null;
+			PreparedStatement pstmt = null;
+			ResultSet rs = null;
+
+			try {
+
+				con = ds.getConnection();
+				pstmt = con.prepareStatement(FIND_BY_KEYWORD_STMT);
+				pstmt.setString(1, "%"+keyword+"%");
+				rs = pstmt.executeQuery();
+				
+				while (rs.next()) {
+					question = new QuestionVO();
+					question.setQuestion_id(rs.getString("question_id"));
+					question.setMem_id(rs.getString("mem_id"));
+					question.setQuestion_content(rs.getString("question_content"));
+					question.setBuild_date(rs.getDate("build_date"));
+					question.setQ_state(rs.getInt("q_state"));
+					list.add(question);
+				}
+				
+				// Handle any SQL errors
+			} catch (SQLException se) {
+				throw new RuntimeException("A database error occured. "
+						+ se.getMessage());
+				// Clean up JDBC resources
+			} finally {
+				if (rs != null) {
+					try {
+						rs.close();
+					} catch (SQLException se) {
+						se.printStackTrace(System.err);
+					}
+				}
+				if (pstmt != null) {
+					try {
+						pstmt.close();
+					} catch (SQLException se) {
+						se.printStackTrace(System.err);
+					}
+				}
+				if (con != null) {
+					try {
+						con.close();
+					} catch (Exception e) {
+						e.printStackTrace(System.err);
+					}
+				}
+			}
+			return list;
+		}
+	}

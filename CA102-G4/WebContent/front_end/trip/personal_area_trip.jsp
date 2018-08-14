@@ -1,7 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" import="javax.servlet.http.*"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page import="com.mem.model.*" %>
-<%-- <%@ page import="com.photo.model.*" %> --%>
 <%@ page import="com.blog.model.*" %>
 <%@ page import="com.trip.model.*" %>
 <%@ page import="java.util.*" %>
@@ -25,15 +24,10 @@
 // 	MemberVO memVO=memSvc.getOneMember("M000001");
 	pageContext.setAttribute("memvo",memVO);
 	
-// 	Photo_wallJDBCDAO photoSvc = new Photo_wallJDBCDAO(); 
-// 	List<Photo_wallVO> photoList=photoSvc.getAll_ByMemID((String)memId);//動態從session取得會員ID
-// 	List<Photo_wallVO> photoList=photoSvc.getAll_ByMemID("M000001");
-// 	pageContext.setAttribute("photoList", photoList);
-	
-// 	blogService blogSvc = new blogService();
-// 	List<blogVO> blogList=blogSvc.findByMemId((String)memId);//動態從session取得會員ID
+	blogService blogSvc = new blogService();
+	List<blogVO> blogList=blogSvc.findByMemId((String)memId);//動態從session取得會員ID
 // 	List<blogVO> blogList=blogSvc.findByMemId("M000001");
-// 	pageContext.setAttribute("blogList", blogList);
+	pageContext.setAttribute("blogList", blogList);
 	
 	TripService tripSvc = new TripService();
 	List<TripVO> tripList = tripSvc.getByMem_id(memVO.getMem_Id());
@@ -99,6 +93,10 @@
     <link href='https://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css'>
     <!-- //font字體 -->
     
+    <!-- LogoIcon -->
+	<link href="<%=request.getContextPath()%>/front_end/images/all/Logo_Black_use.png" rel="icon" type="image/png">
+	<!-- //LogoIcon -->
+    
     <!-- AD_Page相關CSS及JS -->
     <link href="<%=request.getContextPath()%>/front_end/css/ad/ad_page.css" rel="stylesheet" type="text/css">
     <link href="<%=request.getContextPath()%>/front_end/css/personal/personal_area_home.css" rel="stylesheet" type="text/css">
@@ -138,10 +136,23 @@
                 </div>
                 <div class="top-banner-right">
                     <ul>
-                        <li><a class="top_banner" href="#"><i class="fa fa-user" aria-hidden="true"></i></a></li>
-                        <li><a class="top_banner" href="#"><i class="fa fa-shopping-cart" aria-hidden="true"></i></a></li>
-                        <li><a class="top_banner" href="#"><i class="fa fa-envelope" aria-hidden="true"></i></a></li>
-                    </ul>
+						<li>
+							<a href="<%=request.getContextPath()%>/front_end/member/member.do?action=logout">
+								<span class=" top_banner">
+									<i class=" fas fa-sign-out-alt" aria-hidden="true"></i>
+								</span>
+							</a>
+						</li>
+						<li>
+							<a class="top_banner" href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_home.jsp"><i class="fa fa-user" aria-hidden="true"></i></a>
+						</li>
+						<li>
+							<a class="top_banner" href="#"><i class="fa fa-shopping-cart" aria-hidden="true"></i></a>
+						</li>
+						<li>
+							<a class="top_banner" href="#"><i class="fa fa-envelope" aria-hidden="true"></i></a>
+						</li>
+					</ul>
                 </div>
                 <div class="clearfix"> </div>
             </div>
@@ -174,8 +185,6 @@
 										href="<%=request.getContextPath()%>/front_end/question/question.jsp">問答區</a></li>
 									<li><a
 										href="<%=request.getContextPath()%>/front_end/galley/galley.html">照片牆</a></li>
-									<li><a
-										href="<%=request.getContextPath()%>/front_end/chat/chat.html">聊天室</a></li>
 									<li><a
 										href="<%=request.getContextPath()%>/front_end/togetger/together.html">揪團</a></li>
 									<li><a

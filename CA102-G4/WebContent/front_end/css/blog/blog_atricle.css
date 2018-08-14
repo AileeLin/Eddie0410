@@ -330,20 +330,21 @@ a:hover img {
 #myBtn {
     display: none;
     position: fixed;
-    bottom: 50%;
+/*     bottom: 50%; */
     right: 5%;
     z-index: 99;
     font-size: 18px;
     border: none;
     outline: none;
-    background-color: rgba(0, 0, 0, 0.2);
+    background-color:#c0c0c0;
     color: white;
     cursor: pointer;
-    padding: 0 15px;
+    padding: 15px;
     border-radius: 4px;
     font-size: 30px;
     width: 55px;
     height: 55px;
+    padding-top:11px;
 }
 #myBtn:hover {
     background-color: #555;
@@ -366,4 +367,39 @@ label {
 }
 .far.fa-heart {
     background: none;
+}
+.reportReasonContent,.reportContent {
+	font-family: 'Oswald', 'Noto Sans TC', sans-serif !important;
+	width: 100% !important;
+	height: 100% !important;
+	color: black;
+}
+.ui.report.form {
+	resize: none;
+	height:100%;
+}
+.reportContentTitle {
+	padding-bottom:0.4em;
+	color:white;
+}
+.ui-dialog-title {
+	font-family: 'Oswald', 'Noto Sans TC', sans-serif !important;
+}
+.ui-button.ui-corner-all.ui-widget {
+	font-family: 'Oswald', 'Noto Sans TC', sans-serif !important;
+}
+#reportBlogDialog,
+#reportMessageDialog {
+	margin :.5em 0 1em 0;
+}
+#reportDialogConfirm,
+#collectMessage {
+	text-align : center;
+	padding-top:20px;
+}
+.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix {
+	margin-top : 0;
+}
+.tagLabel {
+	font-weight : 400 !important;
 }

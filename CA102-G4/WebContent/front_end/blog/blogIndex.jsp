@@ -4,7 +4,7 @@
 <%@ page import="com.blog.model.*"%>
 <%@ page import="com.blog_message.model.*"%>
 <%@ page import="com.mem.model.*"%>
-<%
+<% 
 	response.setHeader("Pragma","no-cache"); 
 	response.setHeader("Cache-Control","no-store"); 
 	response.setDateHeader("Expires", 0);
@@ -31,6 +31,15 @@
 	if(login_state_temp!=null){
 		login_state=(boolean)login_state_temp;
 	}
+%>
+<%
+	//取得購物車商品數量
+	Object total_items_temp = session.getAttribute("total_items");
+	int total_items = 0;
+	if(total_items_temp != null ){
+		total_items= (Integer) total_items_temp;
+	}
+	pageContext.setAttribute("total_items",total_items);
 %>
 <jsp:useBean id="memSvc" scope="page" class="com.mem.model.MemberService"></jsp:useBean>
 <!DOCTYPE html>
@@ -126,10 +135,7 @@
 					</ul>
 				</div>
                 <div class="top-banner-right">
-                		
-                		<!-- 暫時登出用的 -->
                      <ul>
-                        
                         <li>
                         	<!-- 判斷是否登入，若有登入將會出現登出按鈕 -->
                          <c:choose>
@@ -141,11 +147,8 @@
                           </c:otherwise>
                          </c:choose>
                          </li>
-                	
-                    
-                        <li style="<%= logout %>"><a class="top_banner" href="<%=request.getContextPath()%>/front_end/personal_area_home.html"><i class="fa fa-user" aria-hidden="true"></i></a></li>
-                        
-                        <li><a class="top_banner" href="#"><i class="fa fa-shopping-cart" aria-hidden="true"></i></a></li>
+                        <li style="<%= logout %>"><a class="top_banner" href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_home.jsp"><i class="fa fa-user" aria-hidden="true"></i></a></li>
+                        <li><a class="top_banner" href="<%=request.getContextPath()%>/front_end/store/store_cart.jsp"><i class="fa fa-shopping-cart shopping-cart" aria-hidden="true"></i><span class="badge">${total_items}</span></a></li>
                         <li><a class="top_banner" href="#"><i class="fa fa-envelope" aria-hidden="true"></i></a></li>
                     </ul>
                 </div>
@@ -167,18 +170,17 @@
 							data-target="#bs-example-navbar-collapse-1">Menu</button>
 						<!-- //當網頁寬度太小時，導覽列會縮成一個按鈕 -->
 						<!-- Collect the nav links, forms, and other content for toggling -->
-						<div class="collapse navbar-collapse"
-							id="bs-example-navbar-collapse-1">
+						<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 							<ul class="nav navbar-nav">
-								<li><a href="<%=request.getContextPath()%>/front_end/news.jsp">最新消息</a></li>
-								<li><a href="<%=request.getContextPath()%>/front_end/tour.jsp">景點介紹</a></li>
-								<li><a href="<%=request.getContextPath()%>/front_end/plan.jsp">行程規劃</a></li>
-								<li><a href="<%=request.getContextPath()%>/blog.index">旅遊記</a></li>
-								<li><a href="<%=request.getContextPath()%>/front_end/ask.jsp">問答區</a></li>
-								<li><a href="<%=request.getContextPath()%>/front_end/galley.jsp">照片牆</a></li>
-								<li><a href="<%=request.getContextPath()%>/front_end/together.jsp">揪團</a></li>
-								<li><a href="<%=request.getContextPath()%>/front_end/buy.jsp">交易平台</a></li>
-								<li><a href="<%=request.getContextPath()%>/front_end/advertisement.jsp">專欄</a></li>
+								<li><a href="<%=request.getContextPath()%>/front_end/news/news.jsp">最新消息</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/attractions/att.jsp">景點介紹</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/trip/trip.jsp">行程規劃</a></li>
+                                <li><a href="<%=request.getContextPath()%>/blog.index">旅遊記</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/question/question.jsp">問答區</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/photowall/photo_wall.jsp">照片牆</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/grp/grpIndex.jsp">揪團</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/store/store.jsp">交易平台</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/ad/ad.jsp">專欄</a></li>
 								<div class="clearfix"></div>
 							</ul>
 						</div>
@@ -311,10 +313,10 @@
 					</div>
 					<div class="footer-grid-info">
 						<ul>
-							<li><a href="about.jsp">關於Travel Maker</a></li>
-							<li><a href="about.jsp">聯絡我們</a></li>
-							<li><a href="about.jsp">常見問題</a></li>
-						</ul>
+							<li><a href="<%=request.getContextPath()%>/front_end/about_us/about_us.jsp">關於Travel Maker</a></li>
+                            <li><a href="<%=request.getContextPath()%>/front_end/content/content.jsp">聯絡我們</a></li>
+                            <li><a href="<%=request.getContextPath()%>/front_end/faq/faq.jsp">常見問題</a></li>
+                        </ul>
 					</div>
 				</div>
 				<div class="col-md-3 footer-grid">
@@ -357,9 +359,9 @@
 				<div class="clearfix"></div>
 			</div>
 			<div class="copyright">
-				<p>
-					Copyright &copy; 2018 All rights reserved <a href="<%=request.getContextPath()%>/front_end/index.jsp">TravelMaker</a>
-				</p>
+                <p>Copyright &copy; 2018 All rights reserved
+                    <a href="<%=request.getContextPath()%>/front_end/index.jsp" target="_blank" title="TravelMaker">TravelMaker</a>
+                </p>
 			</div>
 		</div>
 	</div>

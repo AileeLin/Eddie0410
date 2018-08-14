@@ -24,7 +24,7 @@
 
 	if (login_state != true) {
 		session.setAttribute("location", "/CA102G4/back_end/back_index.jsp");
-		response.sendRedirect("/CA102G4/back_end/admin/back_login.jsp");
+		 response.sendRedirect(request.getContextPath()+"/back_end/admin/back_login.jsp");
 	}
 	
 	String photo_No = request.getParameter("photo_No");

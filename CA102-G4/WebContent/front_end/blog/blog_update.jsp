@@ -14,13 +14,12 @@
 	blogTagNameService blogTagNameSvc = new blogTagNameService();
 	List<blog_tag_nameVO> list = blogTagNameSvc.getAll();
 	request.setAttribute("list", list);
-	
+	 
 	MemberVO memberVO = (MemberVO) request.getAttribute("memberVO"); 
 	if(memberVO == null){
 		memberVO = (MemberVO)session.getAttribute("memberVO");
 	}
 	
-
 	boolean login_state = false;   
 		Object login_state_temp = session.getAttribute("login_state");
 		if(login_state_temp!=null){
@@ -32,6 +31,15 @@
 	 	response.sendRedirect("/CA102G4/front_end/member/mem_login.jsp");
 	 	return;
 	 	}
+%>
+<%
+	//取得購物車商品數量
+	Object total_items_temp = session.getAttribute("total_items");
+	int total_items = 0;
+	if(total_items_temp != null ){
+		total_items= (Integer) total_items_temp;
+	}
+	pageContext.setAttribute("total_items",total_items);
 %>
 <jsp:useBean id="Mytag" scope="page" class="com.blog_tag.model.blogTagService"></jsp:useBean>
 <!DOCTYPE html>
@@ -129,11 +137,11 @@
                 </div>
                 <div class="top-banner-right">
                      <ul>
-                          <li> <a href="<%= request.getContextPath()%>/front_end/member/member.do?action=logout"><span class=" top_banner"><i class=" fas fa-sign-out-alt" aria-hidden="true"></i></span></a></li>
-                          <li> <a href="<%= request.getContextPath()%>/front_end/member/mem_login.jsp"><span class="top_banner"><i class=" fa fa-user" aria-hidden="true"></i></span></a></li>
-						  <li><a class="top_banner" href="#"><i class="fa fa-shopping-cart" aria-hidden="true"></i></a></li>
-                       	  <li><a class="top_banner" href="#"><i class="fa fa-envelope" aria-hidden="true"></i></a></li>
-                    </ul>
+                          <li><a href="<%= request.getContextPath()%>/front_end/member/member.do?action=logout"><span class=" top_banner"><i class=" fas fa-sign-out-alt" aria-hidden="true"></i></span></a></li>
+						  <li><a class="top_banner" href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_home.jsp"><i class="fa fa-user" aria-hidden="true"></i></a></li>
+						  <li><a class="top_banner" href="<%=request.getContextPath()%>/front_end/store/store_cart.jsp"><i class="fa fa-shopping-cart shopping-cart" aria-hidden="true"></i><span class="badge">${total_items}</span></a></li>
+                          <li><a class="top_banner" href="#"><i class="fa fa-envelope" aria-hidden="true"></i></a></li>
+                     </ul>
                 </div>
                 <div class="clearfix"> </div>
             </div>
@@ -145,17 +153,28 @@
                         <a href="<%=request.getContextPath()%>/front_end/index.jsp">Travel Maker</a>
                     </h1>
                 </div>
-                <input type="hidden" name="action" value="updating">
-                <input type="hidden" name="blog_id" value="${blogVO.blog_id}">
-                <button class="circular ui icon basic button submit" data-content="修改文章" data-variation="inverted">
-                    <i class="send icon"></i>
-                </button>
+
                 <div class="top-nav">
                     <!-- 當網頁寬度太小時，導覽列會縮成一個按鈕 -->
                     <nav class="navbar navbar-default">
                         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">Menu
                         </button>
                         <!-- //當網頁寬度太小時，導覽列會縮成一個按鈕 -->
+                        <!-- Collect the nav links, forms, and other content for toggling -->
+						<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+							<ul class="nav navbar-nav">
+								<li><a href="<%=request.getContextPath()%>/front_end/news/news.jsp">最新消息</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/attractions/att.jsp">景點介紹</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/trip/trip.jsp">行程規劃</a></li>
+                                <li><a href="<%=request.getContextPath()%>/blog.index">旅遊記</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/question/question.jsp">問答區</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/photowall/photo_wall.jsp">照片牆</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/grp/grpIndex.jsp">揪團</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/store/store.jsp">交易平台</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/ad/ad.jsp">專欄</a></li>
+							<div class="clearfix"></div>
+							</ul>
+						</div>
                     </nav>
                 </div>
                 <div class="clearfix"> </div>
@@ -178,80 +197,9 @@
 			</ul>
 			</font>
 		</c:if>
-        <!-- 行程單區塊 -->
-        <div class="Travel">
-            <div class="itinerary_title">
-                <span class="itinerary">行程單</span>
-                <span class="fas fa-angle-up" title="展開"></span>
-                <span class="fas fa-angle-down" title="收起" style="display: none"></span>
-            </div>
-            <!-- 載入的行程單區塊 -->
-            <div class="contentTableDiv" style="display: none">
-                <table class="contentTable">
-                    <!-- 暫無行程單、+載入行程區塊 -->
-                    <tr>
-                        <td colspan="6">
-                            <div class="addItinerary">
-                                <span><i class="far fa-calendar-alt"></i> 暫無行程單</span>
-                                <div class="ui labeled icon button" id="loadItinerary">
-                                    <i class="fas fa-plus"></i> 載入行程
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-                    <!-- //暫無行程單、+載入行程區塊 -->
-                    <!-- 載入的行程 -->
-                    <tr class="loadItineraryTitle">
-                        <th><span class="far fa-calendar-plus"></span> 日期</th>
-                        <th><span class="fas fa-map-marker-alt"></span> 城市</th>
-                        <th><span class="fas fa-eye"></span> 景點</th>
-                        <th><span class="fas fa-building"></span> 酒店</th>
-                    </tr>
-                    <tr class="loadItineraryContent">
-                        <td>
-                            <p>2018/06/30</p>
-                        </td>
-                        <td>
-                            <p>台北</p>
-                            <p>新竹</p>
-                        </td>
-                        <td>
-                            <p>1. 士林夜市</p>
-                            <p>2. 淡水老街</p>
-                            <p>3. 北投溫泉</p>
-                            <p>4. 象山</p>
-                            <p>5. 內灣</p>
-                        </td>
-                        <td>
-                            <p>施泰根博閣甘達塢伊灣酒店</p>
-                        </td>
-                    </tr>
-                    <tr class="loadItineraryContent">
-                        <td>
-                            <p>2018/07/01</p>
-                        </td>
-                        <td>
-                            <p>高雄</p>
-                            <p>屏東</p>
-                        </td>
-                        <td>
-                            <p>1. 愛河</p>
-                            <p>2. 高雄捷運</p>
-                            <p>3. 夜市</p>
-                            <p>4. 墾丁海邊</p>
-                            <p>5. 墾丁大街</p>
-                        </td>
-                        <td>
-                            <p>公園</p>
-                        </td>
-                    </tr>
-                    <!-- 載入的行程 -->
-                </table>
-                <!-- //載入的行程單區塊 -->
-            </div>
-        </div>
-        <!-- //行程單區塊 -->
         
+        <input type="hidden" name="action" value="updating">
+        <input type="hidden" name="blog_id" value="${blogVO.blog_id}">
         <form METHOD="post" ACTION="<%=request.getContextPath()%>/blog.do" name="form1">
             <!-- 文章標題區塊 -->
             <input type="text" placeholder="請輸入文章標題" name="title" maxlength="33" value="<%= (blogVO==null)? "" : blogVO.getBlog_title()%>"/>
@@ -284,9 +232,14 @@
     </div>
     </FORM>
             <!-- 右邊的Go to top Button -->
-        <button id="myBtn" title="Go to top">
-            <i class="fas fa-chevron-up"></i>
-        </button>
+        <div class="ui vertical basic buttons">
+        	<button id="submitButton" data-tooltip="發佈文章" data-position="top center">
+	            <i class="fas fa-paper-plane"></i>
+        	</button>
+	        <button id="myBtn" data-tooltip="Go to top" data-position="bottom center">
+	            <i class="fas fa-chevron-up"></i>
+	        </button>
+        </div>
         <!-- //右邊的Go to top Button -->
     <!-- footer -->
     <div class="footer">
@@ -298,9 +251,9 @@
                     </div>
                     <div class="footer-grid-info">
                         <ul>
-                            <li><a href="about.html">關於Travel Maker</a></li>
-                            <li><a href="about.html">聯絡我們</a></li>
-                            <li><a href="about.html">常見問題</a></li>
+							<li><a href="<%=request.getContextPath()%>/front_end/about_us/about_us.jsp">關於Travel Maker</a></li>
+                            <li><a href="<%=request.getContextPath()%>/front_end/content/content.jsp">聯絡我們</a></li>
+                            <li><a href="<%=request.getContextPath()%>/front_end/faq/faq.jsp">常見問題</a></li>
                         </ul>
                     </div>
                 </div>
@@ -362,25 +315,6 @@
 
     </script>
     <!-- //editorJS -->
-            <!-- 載入行程Dialog -->
-        <div id="loadItineraryList">
-
-            <div class="ItineraryListModalContent">
-                <div class="ui selection dropdown">
-                    <input type="hidden" name="ItineraryList" class="ItineraryInput" name="trip">
-                    <i class="dropdown icon"></i>
-                    <div class="default text">選擇您的行程</div>
-                    <div class="menu">
-                        <div class="item">黃世銘的韓國行程(5天)</div>
-                        <div class="item">黃世銘的日本行程(7天)</div>
-                        <div class="item">黃世銘的紐約行程(20天)</div>
-                        <div class="item">黃世銘的宿霧行程(7天)</div>
-                        <div class="item">黃世銘的泰國行程(6天)</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- //載入行程Diglog -->  
         
        <%-- 錯誤表列 --%>
 		<c:if test="${not empty errorMsgs}">

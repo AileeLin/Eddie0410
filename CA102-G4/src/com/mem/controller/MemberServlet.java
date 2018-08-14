@@ -1,70 +1,66 @@
 package com.mem.controller;
 
-import java.awt.image.BufferedImage;
 import java.io.*;
 import java.sql.Date;
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import javax.imageio.ImageIO;
 import javax.servlet.*;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.*;
 
-import com.admin.model.AdminService;
-import com.admin.model.AdminVO;
-import com.blog.model.blogService;
+import org.json.JSONObject;
+
+import com.google.gson.Gson;
+//import com.admin.model.AdminService;
+//import com.admin.model.AdminVO;
 import com.mem.model.MemberDAO;
 import com.mem.model.MemberService;
 import com.mem.model.MemberVO;
 import com.mem_report.model.Member_reportService;
 import com.mem_report.model.Member_reportVO;
-import com.photo_report.model.Photo_reportVO;
-import com.photo_report.model.photo_reportService;
-import com.tools.JavaMailSender;
-
+import com.store711.model.Store711Service;
+import com.store711.model.Store711VO;
 
 @MultipartConfig()
 public class MemberServlet extends HttpServlet {
-	
-private static final long serialVersionUID = 1L;
-	
-	//【檢查使用者輸入的帳號(account) 密碼(password)是否有效】
-	//【實際上應至資料庫搜尋比對】
-	private MemberVO allowUser(String mem_Account, String mem_Password) {
-		  
-		  MemberDAO memberdao = new MemberDAO(); 
-		  MemberVO memberVO = memberdao.login_Member(mem_Account,mem_Password);
-	    if (memberVO != null) {
-	        return memberVO;
-	      }else {
-	    	  return null;
-	      }
-	  }
-	//結束
 
-	public void doGet(HttpServletRequest req, HttpServletResponse res)
-			throws ServletException, IOException {
+	private static final long serialVersionUID = 1L;
+
+	// 【檢查使用者輸入的帳號(account) 密碼(password)是否有效】
+	// 【實際上應至資料庫搜尋比對】
+	private MemberVO allowUser(String mem_Account, String mem_Password) {
+
+		MemberDAO memberdao = new MemberDAO();
+		MemberVO memberVO = memberdao.login_Member(mem_Account, mem_Password);
+		if (memberVO != null) {
+			return memberVO;
+		} else {
+			return null;
+		}
+	}
+	// 結束
+
+	public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		doPost(req, res);
 		String action = req.getParameter("action");
 		req.setCharacterEncoding("UTF-8");
-	    res.setContentType("text/html; charset=UTF-8");
-		
-			//登出開始
-			HttpSession session = req.getSession();
-				
-			if("logout".equals(action)) {
-//				session.invalidate();
-				session.removeAttribute("login_state");
-				session.removeAttribute("memberVO");
-				res.sendRedirect(req.getContextPath()+"/front_end/index.jsp");
-			}
-			//登出結束
+		res.setContentType("text/html; charset=UTF-8");
+
+		// 登出開始
+		HttpSession session = req.getSession();
+
+		if ("logout".equals(action)) {
+			// session.invalidate();
+			session.removeAttribute("login_state");
+			session.removeAttribute("memberVO");
+			session.removeAttribute("token");
+			res.sendRedirect(req.getContextPath() + "/front_end/index.jsp");
+		}
+		// 登出結束
 	}
 
-	public void doPost(HttpServletRequest req, HttpServletResponse res)
-			throws ServletException, IOException {
+	public void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		req.setCharacterEncoding("UTF-8");
 	    res.setContentType("text/html; charset=UTF-8");
 		String mem_PhotoReg = "^(jpeg|jpg|bmp|png|gif)$";
@@ -159,7 +155,8 @@ private static final long serialVersionUID = 1L;
 				
 				
 				String mem_Account = req.getParameter("mem_Account");
-				String mem_AccountReg = "[a-zA-Z0-9._%-]+@[a-zA-Z0-9._%-]+.[a-zA-Z]{2,4}";				MemberDAO dao = new MemberDAO();
+				String mem_AccountReg = "[\\w-.]+@[\\w-]+(.[\\w_-]+)+";
+				MemberDAO dao = new MemberDAO();
 				MemberVO checkAccount = dao.checkAccount(mem_Account);
 				if (mem_Account == null || mem_Account.trim().length() == 0) {
 					errorMsgs.put("mem_Account","帳號: 請勿空白");
@@ -170,52 +167,18 @@ private static final long serialVersionUID = 1L;
 				}
 
 				
-//				String mem_Password = req.getParameter("mem_Password");
-//				String mem_PasswordReg = "^(?=.*\\d)(?=.*[a-z]).{6,10}$";
-//				if (mem_Password == null || mem_Password.trim().length() == 0) {
-//					errorMsgs.put("mem_Password","密碼: 請勿空白");
-//				} else if(!mem_Password.trim().matches(mem_PasswordReg)) { //以下練習正則(規)表示式(regular-expression)
-//					errorMsgs.put("mem_Password","密碼: 只能是英文字母、數字 , 且長度必需在6到10之間");
-//	            }
-				
-				String mem_Password = null; // 自動產生亂數密碼寄到信箱
-				int count = 0;
-				do
-				{
-					int random = (int)(Math.random()*75 + 48);
-					if(random<58 || (random>=65&&random<91) || random>96)
-					{
-						if(count == 0) {
-							mem_Password = String.valueOf((char)random);
-							count++;
-						}
-						else {
-							String psw = mem_Password;
-							mem_Password = psw + String.valueOf((char)random);
-							count++;
-						}
-					}
-				}while(count<8);
-			
-				
-				String mem_activecode = UUID.randomUUID().toString().replace( "-" , "" ) +
-										UUID.randomUUID( ).toString().replace( "-" , "" );
-
+				String mem_Password = req.getParameter("mem_Password");
+				String mem_PasswordReg = "^(?=.*\\d)(?=.*[a-z]).{6,10}$";
+				if (mem_Password == null || mem_Password.trim().length() == 0) {
+					errorMsgs.put("mem_Password","密碼: 請勿空白");
+				} else if(!mem_Password.trim().matches(mem_PasswordReg)) { //以下練習正則(規)表示式(regular-expression)
+					errorMsgs.put("mem_Password","密碼: 只能是英文字母、數字 , 且長度必需在6到10之間");
+	            }
 				
 				Integer mem_State = 3;
 				
 				Date mem_Reg_Date = new Date(System.currentTimeMillis());
-				
-				
-				File memPhoto = new File(req.getRealPath("/front_end/images/all/puppuy.jpg"));
-			    BufferedImage profilepicImage = ImageIO.read(memPhoto);
-			    ByteArrayOutputStream profilepicBaos = new ByteArrayOutputStream();
-			    ImageIO.write(profilepicImage, "png", profilepicBaos);
-			    profilepicBaos.flush();
-			    byte[] mem_Photo = profilepicBaos.toByteArray();
-			    System.out.println(mem_Photo);
-			    profilepicBaos.close();
-				
+								
 				System.out.println("test2");
 				// Send the use back to the form, if there were errors
 				if (!errorMsgs.isEmpty()) {
@@ -226,18 +189,8 @@ private static final long serialVersionUID = 1L;
 				}
 				
 				/***************************2.開始新增資料***************************************/
-				String subject = "Travel Maker註冊成功通知信"; //系統自動生成信件(MailService.java)
-				String messageText =
-						"親愛的" + mem_Name + "您好，感謝您加入Travel Maker<br>" + 
-						"以下為您的EMAIL驗證碼: " + mem_Password + "<br>" + 
-						"<a href='http://localhost:8081/CA102G4/front_end/member/active.do?mem_activecode=" + mem_activecode + "\'>點我啟動Travel Maker帳號</a><br>" + 
-						"請小心保管個人資料！";						
-				JavaMailSender mailSvc = new JavaMailSender(); //系統寄信
-				mailSvc.sendMail(mem_Account, subject, messageText);
-				System.out.println("寄信成功");
-
 				MemberService memberSvc = new MemberService();
-				memberSvc.addMember(mem_Account, mem_Password, mem_Name, mem_State,mem_Reg_Date,mem_activecode,mem_Photo);
+				memberSvc.addMember(mem_Account, mem_Password, mem_Name, mem_State,mem_Reg_Date);
 				System.out.println("新增成功");
 				/***************************3.新增完成,準備轉交(Send the Success view)***********/
 				String url = "/front_end/member/mem_login.jsp";
@@ -433,7 +386,7 @@ private static final long serialVersionUID = 1L;
 		}
        
 	
-        if ("update_State".equals(action)) { 
+        if ("update_State".equals(action)) { // 來自update_mem_password.jsp的請求
         	System.out.println("修改狀態有進來耶");
 			List<String> errorMsgs = new LinkedList<String>();
 			// Store this set in the request scope, in case we need to
@@ -472,7 +425,7 @@ private static final long serialVersionUID = 1L;
 				
 				/***************************3.修改完成,準備轉交(Send the Success view)*************/
 				req.setAttribute("MemberVO", memberVO); // 資料庫update成功後,正確的的memberVO物件,存入req
-				String url = "/back_end/admin/get_all_member.jsp";
+				String url = "/back_end/admin/manager_member.jsp";
 				RequestDispatcher successView = req.getRequestDispatcher(url); // 修改成功後,轉交listOneEmp.jsp
 				successView.forward(req, res);
 				System.out.println("大師兄的密碼回來了");
@@ -533,6 +486,9 @@ private static final long serialVersionUID = 1L;
 				failureView.forward(req, res);
 			}
 		}
+
+        
+        
         
         ////////////////////////////////////////新增會員檢舉資料以及審核會員資格////////////////////////////////////
         if("reportMember".equals(action)) {
@@ -645,24 +601,313 @@ private static final long serialVersionUID = 1L;
 				failureView.forward(req, res);
 			}
 		}
+
+
         
-        
-        
-		}
-		//為了判別是否有上傳圖片，故取出檔案名稱
-		
-		public String getFileNameFromPart(Part part) {
-			String header = part.getHeader("content-disposition");
-			System.out.println("header=" + header); // 測試用
-			String filename = new File(header.substring(header.lastIndexOf("=") + 2, header.length() - 1)).getName();
-			System.out.println("filename=" + filename);  //測試用
-			//取出副檔名
-			String fnameExt = filename.substring(filename.lastIndexOf(".")+1,filename.length()).toLowerCase();
-			System.out.println("fnameExt=" + fnameExt);  //測試用
-			if (filename.length() == 0) {
-				return null;
+		// 修改711地址資料
+		if ("update_store_addr".equals(action)) { // 來自update_mem_password.jsp的請求
+			System.out.println("進入修改711");
+			List<String> errorMsgs = new LinkedList<String>();
+			// Store this set in the request scope, in case we need to
+			// send the ErrorPage view.
+			req.setAttribute("errorMsgs", errorMsgs);
+			session.getAttribute("");
+			try {
+				/*************************** 1.接收請求參數 - 輸入格式的錯誤處理 **********************/
+				String memId = req.getParameter("memId");
+				Integer storeNo = new Integer(req.getParameter("storeNo"));
+
+				Store711Service store711Svc = new Store711Service();
+				Store711VO store711VO = store711Svc.getOneStore711(storeNo);
+				String storeAddr = store711VO.getStore_711_addr();
+				String storeName = store711VO.getStore_711_name();
+				System.out.println(storeAddr);
+				System.out.println(storeName);
+				System.out.println(memId);
+				/*************************** 2.開始修改資料 *****************************************/
+
+				MemberService memberSvc = new MemberService();
+				MemberVO memberVO = memberSvc.getOneMember(memId);
+				System.out.println("1:" + memberVO.getSTORE_NO_1().equals(0));
+				System.out.println("2:" + memberVO.getSTORE_NO_2().equals(0));
+				System.out.println("3:" + memberVO.getSTORE_NO_3().equals(0));
+
+				if (memberVO.getSTORE_NO_1().equals(0)) {
+					System.out.println("進入711 修改 1");
+					memberSvc.mem_Update_Store1(memId, storeNo, storeName, storeAddr);
+					// 把更新的資料，set到session裡的memberVO
+					MemberVO memberVO1 = (MemberVO) session.getAttribute("memberVO");
+					memberVO1.setSTORE_NO_1(storeNo);
+					memberVO1.setSTORE_ADDR_1(storeAddr);
+					memberVO1.setSTORE_NAME_1(storeName);
+					session.setAttribute("memberVO", memberVO1);
+
+					// 回傳711店鋪名稱和地址回前端
+					res.setContentType("application/json;charset=utf-8");
+					PrintWriter pw = res.getWriter();
+					JSONObject jsonObj = new JSONObject("{\"col\":\"1\",\"storeName\":\"" + storeName + "\",\"storeAddr\":\"" + storeAddr + "\"}");
+					pw.print(jsonObj);
+					pw.flush();
+				} else if (!memberVO.getSTORE_NO_1().equals(0) && memberVO.getSTORE_NO_2().equals(0)) {
+					System.out.println("進入711 修改 2");
+					memberSvc.mem_Update_Store2(memId, storeNo, storeName, storeAddr);
+					// 把更新的資料，set到session裡的memberVO
+					MemberVO memberVO2 = (MemberVO) session.getAttribute("memberVO");
+					memberVO2.setSTORE_NO_2(storeNo);
+					memberVO2.setSTORE_ADDR_2(storeAddr);
+					memberVO2.setSTORE_NAME_2(storeName);
+					session.setAttribute("memberVO", memberVO2);
+					// 回傳711店鋪名稱和地址回前端
+					res.setContentType("application/json;charset=utf-8");
+					PrintWriter pw = res.getWriter();
+					JSONObject jsonObj = new JSONObject("{\"col\":\"2\",\"storeName\":\"" + storeName + "\",\"storeAddr\":\"" + storeAddr + "\"}");
+					pw.print(jsonObj);
+					pw.flush();
+				} else if (!memberVO.getSTORE_NO_2().equals(0) && memberVO.getSTORE_NO_3().equals(0)) {
+					System.out.println("進入711 修改 3");
+					memberSvc.mem_Update_Store3(memId, storeNo, storeName, storeAddr);
+
+					// 把更新的資料，set到session裡的memberVO
+					MemberVO memberVO3 = (MemberVO) session.getAttribute("memberVO");
+					memberVO3.setSTORE_NO_3(storeNo);
+					memberVO3.setSTORE_ADDR_3(storeAddr);
+					memberVO3.setSTORE_NAME_3(storeName);
+					session.setAttribute("memberVO", memberVO3);
+
+					res.setContentType("application/json;charset=utf-8");
+					PrintWriter pw = res.getWriter();
+					JSONObject jsonObj = new JSONObject("{\"col\":\"3\",\"storeName\":\"" + storeName + "\",\"storeAddr\":\"" + storeAddr + "\"}");
+					pw.print(jsonObj);
+					pw.flush();
+				}
+
+				/*************************** 其他可能的錯誤處理 *************************************/
+			} catch (Exception e) {
+				errorMsgs.add("修改資料失敗:" + e.getMessage());
 			}
-			return fnameExt;
-		}
 		}
 
+		// 刪除 711地址資料
+		if ("delete_store_addr".equals(action)) { // 來自update_mem_password.jsp的請求
+			System.out.println("進入刪除711");
+			List<String> errorMsgs = new LinkedList<String>();
+			// Store this set in the request scope, in case we need to
+			// send the ErrorPage view.
+			req.setAttribute("errorMsgs", errorMsgs);
+
+			try {
+				/*************************** 1.接收請求參數 - 輸入格式的錯誤處理 **********************/
+				String memId = req.getParameter("memId");
+				Integer storeCol = new Integer(req.getParameter("col"));
+
+				/*************************** 2.開始修改資料 *****************************************/
+
+				MemberService memberSvc = new MemberService();
+				System.out.println(memId);
+
+				if (storeCol == 1) {
+					System.out.println("進入711 刪除 1");
+					memberSvc.mem_Delete_Store1(memId);
+
+					// 把更新的資料，set到session裡的memberVO
+					MemberVO memberVO = (MemberVO) session.getAttribute("memberVO");
+					memberVO.setSTORE_NO_1(null);
+					memberVO.setSTORE_ADDR_1(null);
+					memberVO.setSTORE_NAME_1(null);
+					session.setAttribute("memberVO", memberVO);
+
+					// 把刪除欄位回傳給前端
+					PrintWriter pw = res.getWriter();
+					pw.print("1");
+					pw.flush();
+				} else if (storeCol == 2) {
+					System.out.println("進入711 刪除 2");
+					memberSvc.mem_Delete_Store2(memId);
+
+					// 把更新的資料，set到session裡的memberVO
+					MemberVO memberVO = (MemberVO) session.getAttribute("memberVO");
+					memberVO.setSTORE_NO_2(null);
+					memberVO.setSTORE_ADDR_2(null);
+					memberVO.setSTORE_NAME_2(null);
+					session.setAttribute("memberVO", memberVO);
+
+					PrintWriter pw = res.getWriter();
+					pw.print("2");
+					pw.flush();
+				} else if (storeCol == 3) {
+					System.out.println("進入711 刪除 3");
+					memberSvc.mem_Delete_Store3(memId);
+
+					// 把更新的資料，set到session裡的memberVO
+					MemberVO memberVO = (MemberVO) session.getAttribute("memberVO");
+					memberVO.setSTORE_NO_3(null);
+					memberVO.setSTORE_ADDR_3(null);
+					memberVO.setSTORE_NAME_3(null);
+					session.setAttribute("memberVO", memberVO);
+
+					PrintWriter pw = res.getWriter();
+					pw.print("3");
+					pw.flush();
+				}
+
+				/*************************** 其他可能的錯誤處理 *************************************/
+			} catch (Exception e) {
+				errorMsgs.add("修改資料失敗:" + e.getMessage());
+			}
+		}
+
+		// 修改宅配地址資料
+		if ("update_home_addr".equals(action)) { // 來自update_mem_password.jsp的請求
+			System.out.println("進入宅配地址新增");
+			List<String> errorMsgs = new LinkedList<String>();
+			// Store this set in the request scope, in case we need to
+			// send the ErrorPage view.
+			req.setAttribute("errorMsgs", errorMsgs);
+
+			try {
+				/*************************** 1.接收請求參數 - 輸入格式的錯誤處理 **********************/
+				String memId = req.getParameter("memId");
+				String addr = req.getParameter("addr");
+
+				System.out.println(addr);
+				System.out.println(memId);
+				/*************************** 2.開始修改資料 *****************************************/
+
+				MemberService memberSvc = new MemberService();
+				MemberVO memberVO = memberSvc.getOneMember(memId);
+
+				String addr1 = memberVO.getDelivery_Address_1();
+				String addr2 = memberVO.getDelivery_Address_2();
+				String addr3 = memberVO.getDelivery_Address_3();
+
+
+				if (addr1 == null) {
+					System.out.println("進入宅配修改1");
+					memberSvc.mem_Update_Home1(memId, addr);
+					
+					// 把更新的資料，set到session裡的memberVO
+					MemberVO memberVO1 = (MemberVO) session.getAttribute("memberVO");
+					memberVO1.setDelivery_Address_1(addr);;
+					session.setAttribute("memberVO", memberVO1);
+					
+					// 把新增欄位回傳給前端
+					PrintWriter pw = res.getWriter();
+					pw.print("1");
+					pw.flush();
+				} else if (addr1 != null && addr2 == null) {
+					System.out.println("進入宅配修改2");
+					memberSvc.mem_Update_Home2(memId, addr);
+					
+					// 把更新的資料，set到session裡的memberVO
+					MemberVO memberVO2 = (MemberVO) session.getAttribute("memberVO");
+					memberVO2.setDelivery_Address_2(addr);;
+					session.setAttribute("memberVO", memberVO2);
+					
+					PrintWriter pw = res.getWriter();
+					pw.print("2");
+					pw.flush();
+				} else if (addr2 != null && addr3 == null) {
+					System.out.println("進入宅配修改3");
+					memberSvc.mem_Update_Home3(memId, addr);
+					
+					// 把更新的資料，set到session裡的memberVO
+					MemberVO memberVO3 = (MemberVO) session.getAttribute("memberVO");
+					memberVO3.setDelivery_Address_3(addr);;
+					session.setAttribute("memberVO", memberVO3);
+					
+					PrintWriter pw = res.getWriter();
+					pw.print("3");
+					pw.flush();
+				}
+
+				/*************************** 3.修改完成,準備轉交(Send the Success view) *************/
+
+				/*************************** 其他可能的錯誤處理 *************************************/
+			} catch (Exception e) {
+				e.printStackTrace();
+				errorMsgs.add("修改資料失敗:" + e.getMessage());
+			}
+		}
+		
+		
+		
+		// 刪除宅配地址資料
+		if ("delete_home_addr".equals(action)) { // 來自update_mem_password.jsp的請求
+			System.out.println("進入刪除宅配地址");
+			List<String> errorMsgs = new LinkedList<String>();
+			// Store this set in the request scope, in case we need to
+			// send the ErrorPage view.
+			req.setAttribute("errorMsgs", errorMsgs);
+
+			try {
+				/*************************** 1.接收請求參數 - 輸入格式的錯誤處理 **********************/
+				String memId = req.getParameter("memId");
+				Integer homeCol = new Integer(req.getParameter("col"));
+
+				/*************************** 2.開始修改資料 *****************************************/
+
+				MemberService memberSvc = new MemberService();
+				System.out.println(memId);
+
+				if (homeCol == 1) {
+					System.out.println("進入宅配刪除 1");
+					memberSvc.mem_Delete_Home1(memId);
+
+					// 把更新的資料，set到session裡的memberVO
+					MemberVO memberVO = (MemberVO) session.getAttribute("memberVO");
+					memberVO.setDelivery_Address_1(null);;
+					session.setAttribute("memberVO", memberVO);
+
+					// 把刪除欄位回傳給前端
+					PrintWriter pw = res.getWriter();
+					pw.print("1");
+					pw.flush();
+				} else if (homeCol == 2) {
+					System.out.println("進入宅配刪除 2");
+					memberSvc.mem_Delete_Home2(memId);
+
+					// 把更新的資料，set到session裡的memberVO
+					MemberVO memberVO = (MemberVO) session.getAttribute("memberVO");
+					memberVO.setDelivery_Address_2(null);;
+					session.setAttribute("memberVO", memberVO);
+
+					PrintWriter pw = res.getWriter();
+					pw.print("2");
+					pw.flush();
+				} else if (homeCol == 3) {
+					System.out.println("進入宅配刪除 3");
+					memberSvc.mem_Delete_Home3(memId);
+
+					// 把更新的資料，set到session裡的memberVO
+					MemberVO memberVO = (MemberVO) session.getAttribute("memberVO");
+					memberVO.setDelivery_Address_3(null);;
+					session.setAttribute("memberVO", memberVO);
+
+					PrintWriter pw = res.getWriter();
+					pw.print("3");
+					pw.flush();
+				}
+
+				/*************************** 其他可能的錯誤處理 *************************************/
+			} catch (Exception e) {
+				errorMsgs.add("修改資料失敗:" + e.getMessage());
+			}
+		}
+
+	}
+	// 為了判別是否有上傳圖片，故取出檔案名稱
+
+	public String getFileNameFromPart(Part part) {
+		String header = part.getHeader("content-disposition");
+		System.out.println("header=" + header); // 測試用
+		String filename = new File(header.substring(header.lastIndexOf("=") + 2, header.length() - 1)).getName();
+		System.out.println("filename=" + filename); // 測試用
+		// 取出副檔名
+		String fnameExt = filename.substring(filename.lastIndexOf(".") + 1, filename.length()).toLowerCase();
+		System.out.println("fnameExt=" + fnameExt); // 測試用
+		if (filename.length() == 0) {
+			return null;
+		}
+		return fnameExt;
+	}
+}

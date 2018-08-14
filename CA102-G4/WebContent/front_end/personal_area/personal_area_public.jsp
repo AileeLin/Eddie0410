@@ -9,11 +9,15 @@
 <%@ page import="com.trip.model.*" %>
 <%@ page import="com.grp.model.*" %>
 <%@ page import="com.question.model.*" %>
+<%@ page import="com.chat.model.*" %>
 <jsp:useBean id="friSvc" scope="page" class="com.fri.model.FriendService"></jsp:useBean>
 <jsp:useBean id="tripSvc" scope="page" class="com.trip.model.TripService"></jsp:useBean>
 <jsp:useBean id="grpSvc" scope="page" class="com.grp.model.GrpService"></jsp:useBean>
 <jsp:useBean id="qaSvc" scope="page" class="com.question.model.QuestionService"></jsp:useBean>
-<%	
+<jsp:useBean id="memberSvc" scope="page" class="com.mem.model.MemberService"></jsp:useBean>
+<jsp:useBean id="chatRoomSvc" scope="page" class="com.chat.model.ChatRoomService"></jsp:useBean>
+<jsp:useBean id="chatRoomJoinSvc" scope="page" class="com.chat.model.ChatRoom_JoinService"></jsp:useBean>
+<%	 
 	//因為沒有登入也可以查看他人的個人頁面，但無法顯示加入好友的按鈕
 	MemberVO memberVO = (MemberVO)session.getAttribute("memberVO");
 	String memId = null;
@@ -71,8 +75,14 @@
 	List<blogVO> blogList=blogSvc.findByMemId(uId);//動態從session取得會員ID
 	pageContext.setAttribute("blogList", blogList);
 	
-	//取出uId的行程且狀態不為0的
-	List<TripVO> uTripList =tripSvc.getByMem_id(uId);
+	//取出uId的行程且狀態不為0的 -----  又分1未發表 2已發表(0814在改)
+	List<TripVO> alluTripList =tripSvc.getByMem_id(uId);
+	List<TripVO> uTripList = new ArrayList<>();
+	for(TripVO tripVO : alluTripList){
+		if(tripVO.getTrip_status() == 2){
+			uTripList.add(tripVO);		
+		}
+	}
 	pageContext.setAttribute("uTripList",uTripList);
 	
 	/***************取出uId的發起的揪團(僅撈出1成團中的)******************/
@@ -103,6 +113,28 @@
 		total_items= (Integer) total_items_temp;
 	}
 	pageContext.setAttribute("total_items",total_items);
+%>
+<%
+	if(memberVO != null){
+		//*****************聊天用：取得登錄者所參與的群組聊天*************/
+		List<ChatRoom_JoinVO> myCRList =chatRoomJoinSvc.getMyChatRoom(memberVO.getMem_Id());
+		Set<ChatRoom_JoinVO> myCRGroup = new HashSet<>(); //裝著我參與的聊天對話為群組聊天時
+		
+		for(ChatRoom_JoinVO myRoom : myCRList){
+			//查詢我參與的那間聊天對話，初始人數是否大於2?? 因為這樣一定就是群組聊天
+			int initJoinCount = chatRoomSvc.getOne_ByChatRoomID(myRoom.getChatRoom_ID()).getChatRoom_InitCNT();
+			if(initJoinCount > 2){
+				myCRGroup.add(myRoom);
+			}
+		}
+		pageContext.setAttribute("myCRList", myCRGroup);
+		
+		/***************聊天用：取出會員的好友******************/
+		List<Friend> myFri = friSvc.findMyFri(memberVO.getMem_Id(),2); //互相為好友的狀態
+		pageContext.setAttribute("myFri",myFri);
+		
+	}
+
 %>
 
 <!DOCTYPE html>
@@ -137,7 +169,7 @@
     <!-- JQUERY -->
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <!-- //JQUERY -->
-    
+
     <!-- bootstrap css及JS檔案 -->
     <link href="<%=request.getContextPath()%>/front_end/css/all/index_bootstrap.css" rel="stylesheet" type="text/css" media="all" />
     <script src="<%=request.getContextPath()%>/front_end/js/all/index_bootstrap.js"></script>
@@ -159,7 +191,7 @@
     <link href='https://fonts.googleapis.com/css?family=Oswald:400,700,300' rel='stylesheet' type='text/css'>
     <link href='https://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css'>
     <!-- //font字體 -->
-    
+        
     <!-- AD_Page/personal_area_public相關CSS及JS -->
     <link href="<%=request.getContextPath()%>/front_end/css/ad/ad_page.css" rel="stylesheet" type="text/css"><!--共用頁籤及頁尾style-->
     <link href="<%=request.getContextPath()%>/front_end/css/personal/personal_area_home.css" rel="stylesheet" type="text/css"><!--共用個人首頁上方會員資訊塊style-->
@@ -167,25 +199,23 @@
     <script type="text/javascript" src="<%=request.getContextPath()%>/front_end/js/personal/personal_area_public.js"></script>
     <!-- //AD_Page相關CSS及JS -->
     
-    <!-- 會員檢舉使用到的jQuery Dialog -->
+	<!-- 會員檢舉使用到的jQuery Dialog -->
     <link href="<%=request.getContextPath()%>/front_end/jquery-ui-1.12.1/jquery-ui.css" rel="stylesheet">
-    <script src="<%=request.getContextPath()%>/front_end/jquery-ui-1.12.1/jquery-ui.js"></script>
+    <script src="<%=request.getContextPath()%>/front_end/js/personal/jquery-ui.js"></script>
     <!-- //會員檢舉使用到的jQuery Dialog -->
-    
     
     <!-- 聊天相關CSS及JS -->
     <link href="<%=request.getContextPath()%>/front_end/css/chat/chat_style.css" rel="stylesheet" type="text/css">
+    <script src="<%=request.getContextPath()%>/front_end/js/chat/vjUI_fileUpload.js"></script>
     <script src="<%=request.getContextPath()%>/front_end/js/chat/chat.js"></script>
     <!-- //聊天相關CSS及JS -->
-    
-	
-    
+
 </head>
 
     <body>
     
     	<script>
-    	
+
     	$(document).ready(function(){
     		/*若沒登錄，根本不用去確認與該會員是否為好友?*/
     		if(<%=memId != null%>){
@@ -198,7 +228,7 @@
 	    				
 	    				if(data == 0){
 	    					$("#mem_ind_name_friBtn").html(
-		    						"<a class='ui inverted green button mini' href='<%=request.getContextPath()%>/fri.do?action=insertFri&meId=<%=(String)memId%>&friId=<%=uId%>&local=public_area'>"+
+		    						"<a class='ui inverted green button mini' onclick='return checkSendFriendMessage(\"<%=(String)memId%>\",\"<%=uId%>\");' href='<%=request.getContextPath()%>/fri.do?action=insertFri&meId=<%=(String)memId%>&friId=<%=uId%>&local=public_area'>"+
 		    							"<i class='icon plus'></i>加入好友"+
 		    						"</a>");	
 	    				}else if(data == 1){
@@ -222,7 +252,7 @@
 	    					//對方有送給我好友邀請，要顯示確認或刪除邀請
 	    					$("#mem_ind_name_friBtn").html(
 		    						"&nbsp;&nbsp;<div class='ui buttons mini'>"+
-			    						"<a class='ui green button mini' href='<%=request.getContextPath()%>/fri.do?action=becomeFri&meId=<%=(String)memId%>&friId=<%=uId%>&local=public_area' onclick=''>"+
+			    						"<a class='ui green button mini' href='<%=request.getContextPath()%>/fri.do?action=becomeFri&meId=<%=(String)memId%>&friId=<%=uId%>&local=public_area' onclick='return comfirmBeFriMessage(\"<%=(String)memId%>\",\"<%=uId%>\");'>"+
 			    						"<i class='fas fa-check-circle'></i>&nbsp確認</a>"+
 		    						  "<div class='or'></div>"+
 			    						"<a class='ui button mini' href='<%=request.getContextPath()%>/fri.do?action=reject&meId=<%=(String)memId%>&friId=<%=uId%>&local=public_area' onclick=''>"+
@@ -828,7 +858,7 @@
                 </div>
                 <div class="copyright">
                     <p>Copyright &copy; 2018 All rights reserved
-                        <a href="index.html" target="_blank" title="TravelMaker">TravelMaker</a>
+                        <a href="<%=request.getContextPath()%>/front_end/index.jsp" target="_blank" title="TravelMaker">TravelMaker</a>
                     </p>
                 </div>
             </div>
@@ -847,6 +877,52 @@
     			</form>
     		</div>
     	</div>
+		
+		
+		<!-- 登入才會有的功能(檢舉、送出或接受交友邀請通知)-->
+		<c:if test="${memberVO != null}">
+			<script>
+				/**再送出好友邀請時，先比對是否傳遞的參數都有出去**/
+				function checkSendFriendMessage(me_id,fri_id){
+					if(me_id.trim() == "" || fri_id.trim() == ""){
+						alert("未取到登入者或對方的會員ID");
+						return false;
+					}
+					var jsonObj = {
+						"title"		:"好友邀請",
+					  	"sender"	: me_id,
+					 	"receiver"	: fri_id,
+					 	"message"	:"您有一筆好友邀請待確認"
+					};
+					webSocket.send(JSON.stringify(jsonObj));
+					
+					return true;
+				}
+				
+				/**再送出好友邀請時，先比對是否傳遞的參數都有出去**/
+				function comfirmBeFriMessage(me_id,fri_id){
+					if(me_id.trim() == "" || fri_id.trim() == ""){
+						alert("未取到登入者或對方的會員ID");
+						return false;
+					}
+					
+					var jsonObj = {
+						"title"		:"好友關係確認",
+					  	"sender"	: me_id,
+					 	"receiver"	: fri_id,
+					 	"message"	:"您與${memberVO.mem_Name}已成為好友"
+					};
+					webSocket.send(JSON.stringify(jsonObj));
+					
+					return true;
+				}
+			</script>
+			
+			<%@ include file="chatModal_JS.file" %>
+			
+		</c:if>
+		
+		
 		
     </body>
 

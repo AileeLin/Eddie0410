@@ -4,7 +4,7 @@
 <%@ page import="com.attractions.model.*"%>
 <%@ page import="com.admin.model.*"%>
 <%@ page import="java.util.*"%>
-<%
+<% 
 	AdminVO adminVO = (AdminVO) session.getAttribute("adminVO");
 	if (adminVO == null) {
 		adminVO = (AdminVO) session.getAttribute("adminVO");
@@ -18,7 +18,7 @@
 
 	if (login_state != true) {
 		session.setAttribute("location", request.getRequestURI());
-		response.sendRedirect("/CA102G4/back_end/admin/back_login.jsp");
+		 response.sendRedirect(request.getContextPath()+"/back_end/admin/back_login.jsp");
 		return;
 	}
 %>

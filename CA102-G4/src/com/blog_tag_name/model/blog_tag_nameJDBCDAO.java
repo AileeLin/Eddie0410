@@ -25,7 +25,9 @@ public class blog_tag_nameJDBCDAO implements blog_tag_nameDAO_interface {
 	private static final String GET_ALL_BY_KEYWORD = "SELECT BTN_ID,BTN_CLASS,BTN_NAME FROM BLOG_TAG_NAME WHERE (UPPER(BLOG_TAG_NAME.BTN_CLASS) LIKE UPPER(?)) OR (UPPER(BLOG_TAG_NAME.BTN_NAME) LIKE UPPER(?))";
 	// 取得全部
 	private static final String GET_ALL_STMT = "SELECT * FROM BLOG_TAG_NAME ORDER BY BTN_ID";
-	
+	// getOne
+	private static final String GET_ONE_STMT = "SELECT * FROM BLOG_TAG_NAME WHERE BTN_ID = ?";
+
 	@Override
 	public int insert(blog_tag_nameVO blog_tag_nameVO) {
 		int updateCount = 0;
@@ -249,6 +251,60 @@ public class blog_tag_nameJDBCDAO implements blog_tag_nameDAO_interface {
 			}
 		}
 		return list;
+	}
+	
+	@Override
+	public blog_tag_nameVO findByBtn_id(String btn_id) {
+		blog_tag_nameVO blog_tag_nameVO = null;
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+
+		try {
+			Class.forName(DRIVER);
+			con = DriverManager.getConnection(URL, USER, PASSWORD);
+			pstmt = con.prepareStatement(GET_ONE_STMT);
+
+			pstmt.setString(1, btn_id);
+
+			rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				blog_tag_nameVO = new blog_tag_nameVO();
+				blog_tag_nameVO.setBtn_id(rs.getString("BTN_ID"));
+				blog_tag_nameVO.setBtn_class(rs.getString("BTN_CLASS"));
+				blog_tag_nameVO.setBtn_name(rs.getString("BTN_NAME"));			
+			}
+			
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException("Couldn't load database driver. " + e.getMessage());
+			// Handle any SQL errors
+		} catch (SQLException se) {
+			throw new RuntimeException("A database error occured. " + se.getMessage());
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (con != null) {
+				try {
+					con.close();
+				} catch (Exception e) {
+					e.printStackTrace(System.err);
+				}
+			}
+		}
+		return blog_tag_nameVO;
 	}
 	
 	public static void main(String args[]) {

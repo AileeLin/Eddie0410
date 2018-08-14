@@ -2,17 +2,13 @@ package com.mem.model;
 
 import java.util.*;
 import java.sql.*;
-import java.sql.Date;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
-
-
 public class MemberDAO implements MemberDAO_interface {
-	
 	// 一個應用程式中,針對一個資料庫 ,共用一個DataSource即可
 	private static DataSource ds = null;
 	static {
@@ -30,8 +26,8 @@ public class MemberDAO implements MemberDAO_interface {
 //	+ "VALUES ('M'||LPAD(to_char(MEMBER_seq.NEXTVAL), 6, '0'),?,?,?)";
 
 private static final String INSERT_STMT = 
-"Insert into MEMBER (MEM_ID,MEM_ACCOUNT,MEM_PASSWORD,MEM_NAME,MEM_STATE,MEM_REG_DATE,MEM_PHOTO) "
-+ "VALUES ('M'||LPAD(to_char(MEMBER_seq.NEXTVAL), 6, '0'),?,?,?,?,?,?)";
+"Insert into MEMBER (MEM_ID,MEM_ACCOUNT,MEM_PASSWORD,MEM_NAME,MEM_STATE,MEM_REG_DATE) "
++ "VALUES ('M'||LPAD(to_char(MEMBER_seq.NEXTVAL), 6, '0'),?,?,?,?,?)";
 private static final String UPDATE = 
 	"UPDATE MEMBER SET MEM_ACCOUNT=?,MEM_PASSWORD= ?, MEM_NAME= ? ,MEM_SEX= ?,MEM_ADDRESS= ?,MEM_BIRTHDAY= ?,MEM_PHONE= ?,MEM_PROFILE= ?,MEM_PHOTO= ?,MEM_STATE= ?,DELIVERY_ADDRESS_1= ?,DELIVERY_ADDRESS_2=?,DELIVERY_ADDRESS_3=?,STORE_ADDR_1=?,STORE_ADDR_2=?,STORE_ADDR_3=?,STORE_NAME_1=?,STORE_NAME_2=?,STORE_NAME_3=?,STORE_NO_1=?,STORE_NO_2=?,STORE_NO_3=? WHERE MEM_ID = ?";
 private static final String GET_ALL_STMT = 
@@ -64,663 +60,1193 @@ private static final String UPDATE_OFF_STATE_STMT=
 private static final String getAll_member =
 	"SELECT * FROM MEMBER WHERE UPPER(MEM_NAME) LIKE UPPER(?) OR UPPER(MEM_NAME) LIKE UPPER(?) ORDER BY MEM_ID ";
 
+	// 更改 711 地址 第一個
+	private static final String MEM_Update_STORE1 = "UPDATE MEMBER SET STORE_NO_1=?,STORE_NAME_1=?,STORE_ADDR_1=? WHERE MEM_ID=?";
 
+	// 更改 711 地址 第二個
+	private static final String MEM_Update_STORE2 = "UPDATE MEMBER SET STORE_NO_2=?,STORE_NAME_2=?,STORE_ADDR_2=? WHERE MEM_ID=?";
 
-@Override
-public void insert(MemberVO memberVO) {
+	// 更改 711 地址 第三個
+	private static final String MEM_Update_STORE3 = "UPDATE MEMBER SET STORE_NO_3=?,STORE_NAME_3=?,STORE_ADDR_3=? WHERE MEM_ID=?";
+
+	// 刪除 711 地址 第一個
+	private static final String MEM_Delete_STORE1 = "UPDATE MEMBER SET STORE_NO_1=null,STORE_NAME_1=null,STORE_ADDR_1=null WHERE MEM_ID=?";
+
+	// 刪除 711 地址 第二個
+	private static final String MEM_Delete_STORE2 = "UPDATE MEMBER SET STORE_NO_2=null,STORE_NAME_2=null,STORE_ADDR_2=null WHERE MEM_ID=?";
+
+	// 刪除 711 地址 第三個
+	private static final String MEM_Delete_STORE3 = "UPDATE MEMBER SET STORE_NO_3=null,STORE_NAME_3=null,STORE_ADDR_3=null WHERE MEM_ID=?";
+
+	// 更改宅配地址 第一個
+	private static final String MEM_Update_HOME1 = "UPDATE MEMBER SET DELIVERY_ADDRESS_1=? WHERE MEM_ID=?";
+
+	// 更改宅配地址 第二個
+	private static final String MEM_Update_HOME2 = "UPDATE MEMBER SET DELIVERY_ADDRESS_2=? WHERE MEM_ID=?";
+
+	// 更改宅配地址 第三個
+	private static final String MEM_Update_HOME3 = "UPDATE MEMBER SET DELIVERY_ADDRESS_3=? WHERE MEM_ID=?";
 	
-	Connection con = null;
-	PreparedStatement pstmt = null;
+	// 刪除宅配地址 第一個
+	private static final String MEM_Delete_HOME1 = "UPDATE MEMBER SET DELIVERY_ADDRESS_1=null WHERE MEM_ID=?";
+	
+	// 刪除宅配地址 第二個
+	private static final String MEM_Delete_HOME2 = "UPDATE MEMBER SET DELIVERY_ADDRESS_2=null WHERE MEM_ID=?";
+	
+	// 刪除宅配地址 第三個
+	private static final String MEM_Delete_HOME3 = "UPDATE MEMBER SET DELIVERY_ADDRESS_3=null WHERE MEM_ID=?";
+	
+	@Override
+	public void insert(MemberVO memberVO) {
+		
+		Connection con = null;
+		PreparedStatement pstmt = null;
 
-	try {
-		
-		con = ds.getConnection();
-		pstmt = con.prepareStatement(INSERT_STMT);
-		
-		pstmt.setString(1, memberVO.getMem_Account());
-		pstmt.setString(2, memberVO.getMem_Password());
-		pstmt.setString(3, memberVO.getMem_Name());
-		pstmt.setInt(4,3);
-		pstmt.setDate(5, memberVO.getMem_Reg_Date());
-		pstmt.setBytes(6, memberVO.getMem_Photo());
+		try {
+			
+			con = ds.getConnection();
+			pstmt = con.prepareStatement(INSERT_STMT);
+			
+			pstmt.setString(1, memberVO.getMem_Account());
+			pstmt.setString(2, memberVO.getMem_Password());
+			pstmt.setString(3, memberVO.getMem_Name());
+			pstmt.setInt(4,3);
+			pstmt.setDate(5, memberVO.getMem_Reg_Date());
 
-		pstmt.executeUpdate();
-		
-		
-		// Handle any SQL errors
-	} catch (SQLException se) {
-		throw new RuntimeException("A database error occured. "
-				+ se.getMessage());
-		// Clean up JDBC resources
-	} finally {
-		if (pstmt != null) {
-			try {
-				pstmt.close();
-			} catch (SQLException se) {
-				se.printStackTrace(System.err);
+			pstmt.executeUpdate();
+			
+			
+			// Handle any SQL errors
+		} catch (SQLException se) {
+			throw new RuntimeException("A database error occured. "
+					+ se.getMessage());
+			// Clean up JDBC resources
+		} finally {
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
 			}
-		}
-		if (con != null) {
-			try {
-				con.close();
-			} catch (Exception e) {
-				e.printStackTrace(System.err);
+			if (con != null) {
+				try {
+					con.close();
+				} catch (Exception e) {
+					e.printStackTrace(System.err);
+				}
 			}
 		}
 	}
-}
 
-@Override
-public void update(MemberVO memberVO) {
-	
-	Connection con = null;
-	PreparedStatement pstmt = null;
-
-	try {
-		con = ds.getConnection();
-		pstmt = con.prepareStatement(UPDATE);
-
-		pstmt.setString(1, memberVO.getMem_Account());
-		pstmt.setString(2, memberVO.getMem_Password());
-		pstmt.setString(3, memberVO.getMem_Name());
-		pstmt.setInt(4, memberVO.getMem_Sex());
-		pstmt.setString(5, memberVO.getMem_Address());
-		pstmt.setDate(6, memberVO.getMem_Birthday());
-		pstmt.setString(7, memberVO.getMem_Phone());
-		pstmt.setString(8, memberVO.getMem_Profile());
-		pstmt.setBytes(9, memberVO.getMem_Photo());
-		pstmt.setInt(10, memberVO.getMem_State());
-		pstmt.setString(11, memberVO.getDelivery_Address_1());
-		pstmt.setString(12, memberVO.getDelivery_Address_2());
-		pstmt.setString(13, memberVO.getDelivery_Address_3());
-		pstmt.setString(14, memberVO.getSTORE_ADDR_1());
-		pstmt.setString(15, memberVO.getSTORE_ADDR_2());
-		pstmt.setString(16, memberVO.getSTORE_ADDR_3());
-		pstmt.setString(17, memberVO.getSTORE_NAME_1());
-		pstmt.setString(18, memberVO.getSTORE_NAME_2());
-		pstmt.setString(19, memberVO.getSTORE_NAME_3());
-		pstmt.setInt(20, memberVO.getSTORE_NO_1());
-		pstmt.setInt(21, memberVO.getSTORE_NO_2());
-		pstmt.setInt(22, memberVO.getSTORE_NO_3());
-		pstmt.setString(23, memberVO.getMem_Id());
-		pstmt.executeUpdate();
-
-	} catch (SQLException se) {
-		throw new RuntimeException("A database error occured. " + se.getMessage());
-		// Clean up JDBC resources
-	} finally {
-		if (pstmt != null) {
-			try {
-				pstmt.close();
-			} catch (SQLException se) {
-				se.printStackTrace(System.err);
-			}
-		}
-		if (con != null) {
-			try {
-				con.close();
-			} catch (Exception e) {
-				e.printStackTrace(System.err);
-			}
-		}
-	}
-}
-	
-
-
-
-@Override
-public void delete(String mem_Id) {
-	
-	Connection con = null;
-	PreparedStatement pstmt = null;
-	
-	try {
+	@Override
+	public void update(MemberVO memberVO) {
 		
-		con = ds.getConnection();
-		
-		con.setAutoCommit(false);
-		
-		pstmt = con.prepareStatement(DELETE_MEMBER);
+		Connection con = null;
+		PreparedStatement pstmt = null;
 
-		pstmt.setString(1, mem_Id);
+		try {
+			con = ds.getConnection();
+			pstmt = con.prepareStatement(UPDATE);
 
-		pstmt.executeUpdate();
-
-		con.commit();
-		con.setAutoCommit(true);
-		
-		// Handle any SQL errors
-
-	} catch (SQLException se) {
-		if (con != null) {
-			try {
-				con.rollback();
-			} catch (SQLException excep) {
-				throw new RuntimeException("rollback error occured. " + excep.getMessage());
-			}
-		}
-		throw new RuntimeException("A database error occured. " + se.getMessage());
-		// Clean up JDBC resources
-	} finally {
-		if (pstmt != null) {
-			try {
-				pstmt.close();
-			} catch (SQLException se) {
-				se.printStackTrace(System.err);
-			}
-		}
-		if (con != null) {
-			try {
-				con.close();
-			} catch (Exception e) {
-				e.printStackTrace(System.err);
-			}
-		}
-	}
-}
-
-
-@Override
-public MemberVO findByPrimaryKey(String mem_Id) {
-	
-	MemberVO memberVO = null;
-	Connection con = null;
-	PreparedStatement pstmt = null;
-	ResultSet rs = null;
-	
-	try {
-		
-		con = ds.getConnection();
-		pstmt = con.prepareStatement(GET_ONE_STMT);
-
-		pstmt.setString(1, mem_Id);
-
-		rs = pstmt.executeQuery();
-
-		while (rs.next()) {
-			memberVO = new MemberVO();
-			memberVO.setMem_Id(rs.getString("MEM_ID"));
-			memberVO.setMem_Account(rs.getString("MEM_ACCOUNT"));
-			memberVO.setMem_Password(rs.getString("MEM_PASSWORD"));
-			memberVO.setMem_Name(rs.getString("MEM_NAME"));
-			memberVO.setMem_Sex(rs.getInt("MEM_SEX"));
-			memberVO.setMem_Address(rs.getString("MEM_ADDRESS"));
-			memberVO.setMem_Birthday(rs.getDate("MEM_BIRTHDAY"));
-			memberVO.setMem_Phone(rs.getString("MEM_PHONE"));
-			memberVO.setMem_Profile(rs.getString("MEM_PROFILE"));
-			memberVO.setMem_Photo(rs.getBytes("MEM_PHOTO"));
-			memberVO.setMem_State(rs.getInt("MEM_STATE"));
-			
-			memberVO.setDelivery_Address_1(rs.getString("DELIVERY_ADDRESS_1"));
-			memberVO.setDelivery_Address_2(rs.getString("DELIVERY_ADDRESS_2"));
-			memberVO.setDelivery_Address_3(rs.getString("DELIVERY_ADDRESS_3"));
-			
-			memberVO.setSTORE_ADDR_1(rs.getString("STORE_ADDR_1"));
-			memberVO.setSTORE_ADDR_2(rs.getString("STORE_ADDR_2"));
-			memberVO.setSTORE_ADDR_3(rs.getString("STORE_ADDR_3"));
-			
-			memberVO.setSTORE_NAME_1(rs.getString("STORE_NAME_1"));
-			memberVO.setSTORE_NAME_2(rs.getString("STORE_NAME_2"));
-			memberVO.setSTORE_NAME_3(rs.getString("STORE_NAME_3"));
-
-			memberVO.setSTORE_NO_1(rs.getInt("STORE_NO_1"));
-			memberVO.setSTORE_NO_2(rs.getInt("STORE_NO_2"));
-			memberVO.setSTORE_NO_3(rs.getInt("STORE_NO_3"));
-			memberVO.setMem_Reg_Date(rs.getDate("MEM_REG_DATE"));
-
-			String photoEncoded = Base64.getEncoder().encodeToString(rs.getBytes("MEM_PHOTO"));
-			memberVO.setEncoded(photoEncoded);
-			
-//			pstmt.executeUpdate();
-
-
-		}
-		
-		// Handle any SQL errors
-	} catch (SQLException se) {
-		throw new RuntimeException("A database error occured. " + se.getMessage());
-		// Clean up JDBC resources
-	} finally {
-		if (rs != null) {
-			try {
-				rs.close();
-			} catch (SQLException se) {
-				se.printStackTrace(System.err);
-			}
-		}
-		if (pstmt != null) {
-			try {
-				pstmt.close();
-			} catch (SQLException se) {
-				se.printStackTrace(System.err);
-			}
-		}
-		if (con != null) {
-			try {
-				con.close();
-			} catch (Exception e) {
-				e.printStackTrace(System.err);
-			}
-		}
-	}
-	return memberVO;
-}
-@Override
-public List<MemberVO> getAll() {
-	List<MemberVO> list = new ArrayList<MemberVO>();
-	MemberVO memberVO = null;
-	Connection con = null;
-	PreparedStatement pstmt = null;
-	ResultSet rs = null;
-
-	try {
-		con = ds.getConnection();
-		pstmt = con.prepareStatement(GET_ALL_STMT);
-		rs = pstmt.executeQuery();
-
-		while (rs.next()) {
-			memberVO = new MemberVO();
-			memberVO.setMem_Id(rs.getString("MEM_ID"));
-			memberVO.setMem_Account(rs.getString("MEM_ACCOUNT"));
-			memberVO.setMem_Password(rs.getString("MEM_PASSWORD"));
-			memberVO.setMem_Name(rs.getString("MEM_NAME"));
-			memberVO.setMem_Sex(rs.getInt("MEM_SEX"));
-			memberVO.setMem_Address(rs.getString("MEM_ADDRESS"));
-			memberVO.setMem_Birthday(rs.getDate("MEM_BIRTHDAY"));
-			memberVO.setMem_Phone(rs.getString("MEM_PHONE"));
-			memberVO.setMem_Profile(rs.getString("MEM_PROFILE"));
-			memberVO.setMem_Photo(rs.getBytes("MEM_PHOTO"));
-			memberVO.setMem_State(rs.getInt("MEM_STATE"));
-			
-			memberVO.setDelivery_Address_1(rs.getString("DELIVERY_ADDRESS_1"));
-			memberVO.setDelivery_Address_2(rs.getString("DELIVERY_ADDRESS_2"));
-			memberVO.setDelivery_Address_3(rs.getString("DELIVERY_ADDRESS_3"));
-			
-			memberVO.setSTORE_ADDR_1(rs.getString("STORE_ADDR_1"));
-			memberVO.setSTORE_ADDR_2(rs.getString("STORE_ADDR_2"));
-			memberVO.setSTORE_ADDR_3(rs.getString("STORE_ADDR_3"));
-			
-			memberVO.setSTORE_NAME_1(rs.getString("STORE_NAME_1"));
-			memberVO.setSTORE_NAME_2(rs.getString("STORE_NAME_2"));
-			memberVO.setSTORE_NAME_3(rs.getString("STORE_NAME_3"));
-
-			memberVO.setSTORE_NO_1(rs.getInt("STORE_NO_1"));
-			memberVO.setSTORE_NO_2(rs.getInt("STORE_NO_2"));
-			memberVO.setSTORE_NO_3(rs.getInt("STORE_NO_3"));
-
-			memberVO.setMem_Reg_Date(rs.getDate("MEM_REG_DATE"));
-			
-			list.add(memberVO); // Store the row in the list
-		}
-
-		// Handle any SQL errors
-	} catch (SQLException se) {
-		throw new RuntimeException("A database error occured. " + se.getMessage());
-		// Clean up JDBC resources
-	} finally {
-		if (rs != null) {
-			try {
-				rs.close();
-			} catch (SQLException se) {
-				se.printStackTrace(System.err);
-			}
-		}
-		if (pstmt != null) {
-			try {
-				pstmt.close();
-			} catch (SQLException se) {
-				se.printStackTrace(System.err);
-			}
-		}
-		if (con != null) {
-			try {
-				con.close();
-			} catch (Exception e) {
-				e.printStackTrace(System.err);
-			}
-		}
-	}
-	return list;
-}
-
-@Override
-public MemberVO login_Member(String mem_Account, String mem_Password) {
-	MemberVO memberVO_login = null;
-	Connection con = null;
-	PreparedStatement pstmt = null;
-	ResultSet rs = null;
-
-	try {
-		
-		con = ds.getConnection();
-		pstmt = con.prepareStatement(login_Member);
-		pstmt.setString(1, mem_Account);
-		pstmt.setString(2, mem_Password);
-		
-		rs = pstmt.executeQuery();
-
-		while (rs.next()) {
-			memberVO_login = new MemberVO();
-			memberVO_login.setMem_Id(rs.getString("MEM_ID"));
-			memberVO_login.setMem_Account(rs.getString("MEM_ACCOUNT"));
-			memberVO_login.setMem_Password(rs.getString("MEM_PASSWORD"));
-			memberVO_login.setMem_Name(rs.getString("MEM_NAME"));
-			memberVO_login.setMem_Sex(rs.getInt("MEM_SEX"));
-			memberVO_login.setMem_Address(rs.getString("MEM_ADDRESS"));
-			memberVO_login.setMem_Birthday(rs.getDate("MEM_BIRTHDAY"));
-			memberVO_login.setMem_Phone(rs.getString("MEM_PHONE"));
-			memberVO_login.setMem_Profile(rs.getString("MEM_PROFILE"));
-			memberVO_login.setMem_Photo(rs.getBytes("MEM_PHOTO"));
-			memberVO_login.setMem_State(rs.getInt("MEM_STATE"));
-
-			memberVO_login.setDelivery_Address_1(rs.getString("DELIVERY_ADDRESS_1"));
-			memberVO_login.setDelivery_Address_2(rs.getString("DELIVERY_ADDRESS_2"));
-			memberVO_login.setDelivery_Address_3(rs.getString("DELIVERY_ADDRESS_3"));
-			
-			memberVO_login.setSTORE_ADDR_1(rs.getString("STORE_ADDR_1"));
-			memberVO_login.setSTORE_ADDR_2(rs.getString("STORE_ADDR_2"));
-			memberVO_login.setSTORE_ADDR_3(rs.getString("STORE_ADDR_3"));
-			
-			memberVO_login.setSTORE_NAME_1(rs.getString("STORE_NAME_1"));
-			memberVO_login.setSTORE_NAME_2(rs.getString("STORE_NAME_2"));
-			memberVO_login.setSTORE_NAME_3(rs.getString("STORE_NAME_3"));
-
-			memberVO_login.setSTORE_NO_1(rs.getInt("STORE_NO_1"));
-			memberVO_login.setSTORE_NO_2(rs.getInt("STORE_NO_2"));
-			memberVO_login.setSTORE_NO_3(rs.getInt("STORE_NO_3"));
+			pstmt.setString(1, memberVO.getMem_Account());
+			pstmt.setString(2, memberVO.getMem_Password());
+			pstmt.setString(3, memberVO.getMem_Name());
+			pstmt.setInt(4, memberVO.getMem_Sex());
+			pstmt.setString(5, memberVO.getMem_Address());
+			pstmt.setDate(6, memberVO.getMem_Birthday());
+			pstmt.setString(7, memberVO.getMem_Phone());
+			pstmt.setString(8, memberVO.getMem_Profile());
+			pstmt.setBytes(9, memberVO.getMem_Photo());
+			pstmt.setInt(10, memberVO.getMem_State());
+			pstmt.setString(11, memberVO.getDelivery_Address_1());
+			pstmt.setString(12, memberVO.getDelivery_Address_2());
+			pstmt.setString(13, memberVO.getDelivery_Address_3());
+			pstmt.setString(14, memberVO.getSTORE_ADDR_1());
+			pstmt.setString(15, memberVO.getSTORE_ADDR_2());
+			pstmt.setString(16, memberVO.getSTORE_ADDR_3());
+			pstmt.setString(17, memberVO.getSTORE_NAME_1());
+			pstmt.setString(18, memberVO.getSTORE_NAME_2());
+			pstmt.setString(19, memberVO.getSTORE_NAME_3());
+			pstmt.setInt(20, memberVO.getSTORE_NO_1());
+			pstmt.setInt(21, memberVO.getSTORE_NO_2());
+			pstmt.setInt(22, memberVO.getSTORE_NO_3());
+			pstmt.setString(23, memberVO.getMem_Id());
 			pstmt.executeUpdate();
 
-		}
-		
-		// Handle any driver errors
-	} 
-	catch (SQLException se) {
-		throw new RuntimeException("A database error occured. " + se.getMessage());
-		// Clean up JDBC resources
-	} 
-	finally {
-		if (rs != null) {
-			try {
-				rs.close();
-			} catch (SQLException se) {
-				se.printStackTrace(System.err);
-			}
-		}
-		if (pstmt != null) {
-			try {
-				pstmt.close();
-			} catch (SQLException se) {
-				se.printStackTrace(System.err);
-			}
-		}
-		if (con != null) {
-			try {
-				con.close();
-			} catch (Exception e) {
-				e.printStackTrace(System.err);
-			}
-		}
-	}
-	return memberVO_login;
-	}
-
-@Override
-public void update_Member(MemberVO memberVO) {
-	Connection con = null;
-	PreparedStatement pstmt = null;
-	try {
-		con = ds.getConnection();
-		pstmt = con.prepareStatement(update_Member);
-		
-		pstmt.setString(1, memberVO.getMem_Name());
-		pstmt.setString(2, memberVO.getMem_Phone());
-		pstmt.setInt(3, memberVO.getMem_Sex());
-		pstmt.setDate(4, memberVO.getMem_Birthday());
-		pstmt.setBytes(5, memberVO.getMem_Photo());
-		pstmt.setString(6, memberVO.getMem_Profile());
-		pstmt.setString(7, memberVO.getMem_Id());
-		System.out.println("memberVO.getMem_Id()="+memberVO.getMem_Id()+memberVO.getMem_Phone()+memberVO.getMem_Sex()+
-				memberVO.getMem_Birthday()+memberVO.getMem_Photo()+memberVO.getMem_Profile());
-		
-		pstmt.executeUpdate();
-		System.out.println("進來dao/update_member");
-
-	} catch (SQLException se) {
-		throw new RuntimeException("A database error occured. " + se.getMessage());
-		// Clean up JDBC resources
-	} finally {
-		if (pstmt != null) {
-			try {
-				pstmt.close();
-			} catch (SQLException se) {
-				se.printStackTrace(System.err);
-			}
-		}
-		if (con != null) {
-			try {
-				con.close();
-			} catch (Exception e) {
-				e.printStackTrace(System.err);
-			}
-		}
-	}
-}
-
-@Override
-public void Mem_Update_Password(MemberVO memberVO) {
-	Connection con = null;
-	PreparedStatement pstmt = null;
-	try {
-		con = ds.getConnection();
-		pstmt = con.prepareStatement(MEM_Update_PASSWORD);
-		pstmt.setString(1, memberVO.getMem_Password());
-		pstmt.setString(2, memberVO.getMem_Account());
-		pstmt.executeUpdate();
-		
-	} catch (SQLException se) {
-		throw new RuntimeException("A database error occured. " + se.getMessage());
-		// Clean up JDBC resources
-	} finally {
-		if (pstmt != null) {
-			try {
-				pstmt.close();
-			} catch (SQLException se) {
-				se.printStackTrace(System.err);
-			}
-		}
-		if (con != null) {
-			try {
-				con.close();
-			} catch (Exception e) {
-				e.printStackTrace(System.err);
-			}
-		}
-	}
-}
-//管理員更改會員的狀態
-@Override
-public int update_State(String mem_Id, Integer mem_State) {
-	Connection con = null ;
-	PreparedStatement pstmt= null;
-	int count=0;
-	if(mem_State == 1) {
-		try {
-			con=ds.getConnection();
-			pstmt=con.prepareStatement(UPDATE_ON_STATE_STMT);
-			
-			pstmt.setString(1,mem_Id);
-			
-			count=pstmt.executeUpdate();
-			
-		}catch(SQLException se) {
-			throw new RuntimeException("資料庫發生錯誤"+se.getMessage());
-		}finally {
-			if(pstmt != null) {
+		} catch (SQLException se) {
+			throw new RuntimeException("A database error occured. " + se.getMessage());
+			// Clean up JDBC resources
+		} finally {
+			if (pstmt != null) {
 				try {
 					pstmt.close();
-				}catch(SQLException se) {
+				} catch (SQLException se) {
 					se.printStackTrace(System.err);
 				}
 			}
-			
-			if(con != null) {
+			if (con != null) {
 				try {
-				  con.close();
-				}catch(Exception e) {
-				  e.printStackTrace(System.err);
+					con.close();
+				} catch (Exception e) {
+					e.printStackTrace(System.err);
 				}
 			}
 		}
+	}
 		
-	}else if(mem_State == 2) {		
-		try {
 
-			con=ds.getConnection();
-			pstmt=con.prepareStatement(UPDATE_OFF_STATE_STMT);
+
+
+	@Override
+	public void delete(String mem_Id) {
+		
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		
+		try {
 			
-			pstmt.setString(1,mem_Id);
+			con = ds.getConnection();
 			
-			count=pstmt.executeUpdate();
+			con.setAutoCommit(false);
 			
-		}catch(SQLException se) {
-			throw new RuntimeException("資料庫發生錯誤"+se.getMessage());
-		}finally {
-			if(pstmt != null) {
+			pstmt = con.prepareStatement(DELETE_MEMBER);
+
+			pstmt.setString(1, mem_Id);
+
+			pstmt.executeUpdate();
+
+			con.commit();
+			con.setAutoCommit(true);
+			
+			// Handle any SQL errors
+
+		} catch (SQLException se) {
+			if (con != null) {
+				try {
+					con.rollback();
+				} catch (SQLException excep) {
+					throw new RuntimeException("rollback error occured. " + excep.getMessage());
+				}
+			}
+			throw new RuntimeException("A database error occured. " + se.getMessage());
+			// Clean up JDBC resources
+		} finally {
+			if (pstmt != null) {
 				try {
 					pstmt.close();
-				}catch(SQLException se) {
+				} catch (SQLException se) {
 					se.printStackTrace(System.err);
 				}
 			}
-			
-			if(con != null) {
+			if (con != null) {
 				try {
-				  con.close();
-				}catch(Exception e) {
-				  e.printStackTrace(System.err);
+					con.close();
+				} catch (Exception e) {
+					e.printStackTrace(System.err);
 				}
 			}
 		}
-		
-		
 	}
-	return count;
-}
 
-@Override
-public List<MemberVO> getAll_member(String mem_Name){
-	
-	List<MemberVO> list = new ArrayList<MemberVO>();
-	MemberVO memberVO = null;
-	Connection con = null;
-	PreparedStatement pstmt = null;
-	ResultSet rs = null;
-	
-	try {
-		con = ds.getConnection();
-		pstmt = con.prepareStatement(getAll_member);
-		pstmt.setString(1, "%" + mem_Name + "%");
-		pstmt.setString(2, "%" + mem_Name + "%");
 
-		rs = pstmt.executeQuery();
-
-		while (rs.next()) {
-			
-		memberVO = new MemberVO();
-		memberVO.setMem_Id(rs.getString("MEM_ID"));
-		memberVO.setMem_Account(rs.getString("MEM_ACCOUNT"));
-		memberVO.setMem_Name(rs.getString("MEM_NAME"));
-		memberVO.setMem_Birthday(rs.getDate("MEM_BIRTHDAY"));
-		memberVO.setMem_Phone(rs.getString("MEM_PHONE"));
-		memberVO.setMem_Profile(rs.getString("MEM_PROFILE"));
-		memberVO.setMem_Photo(rs.getBytes("MEM_PHOTO"));
-		memberVO.setMem_State(rs.getInt("MEM_STATE"));
-		memberVO.setMem_Reg_Date(rs.getDate("MEM_REG_DATE"));
-
-		list.add(memberVO);
-		}
+	@Override
+	public MemberVO findByPrimaryKey(String mem_Id) {
 		
+		MemberVO memberVO = null;
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		try {
+			
+			con = ds.getConnection();
+			pstmt = con.prepareStatement(GET_ONE_STMT);
 
-		// Handle any driver errors
-	} catch (SQLException se) {
-		throw new RuntimeException("A database error occured. " + se.getMessage());
-		// Clean up JDBC resources
-	} finally {
-		if (rs != null) {
-			try {
-				rs.close();
-			} catch (SQLException se) {
-				se.printStackTrace(System.err);
+			pstmt.setString(1, mem_Id);
+
+			rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				memberVO = new MemberVO();
+				memberVO.setMem_Id(rs.getString("MEM_ID"));
+				memberVO.setMem_Account(rs.getString("MEM_ACCOUNT"));
+				memberVO.setMem_Password(rs.getString("MEM_PASSWORD"));
+				memberVO.setMem_Name(rs.getString("MEM_NAME"));
+				memberVO.setMem_Sex(rs.getInt("MEM_SEX"));
+				memberVO.setMem_Address(rs.getString("MEM_ADDRESS"));
+				memberVO.setMem_Birthday(rs.getDate("MEM_BIRTHDAY"));
+				memberVO.setMem_Phone(rs.getString("MEM_PHONE"));
+				memberVO.setMem_Profile(rs.getString("MEM_PROFILE"));
+				memberVO.setMem_Photo(rs.getBytes("MEM_PHOTO"));
+				memberVO.setMem_State(rs.getInt("MEM_STATE"));
+				
+				memberVO.setDelivery_Address_1(rs.getString("DELIVERY_ADDRESS_1"));
+				memberVO.setDelivery_Address_2(rs.getString("DELIVERY_ADDRESS_2"));
+				memberVO.setDelivery_Address_3(rs.getString("DELIVERY_ADDRESS_3"));
+				
+				memberVO.setSTORE_ADDR_1(rs.getString("STORE_ADDR_1"));
+				memberVO.setSTORE_ADDR_2(rs.getString("STORE_ADDR_2"));
+				memberVO.setSTORE_ADDR_3(rs.getString("STORE_ADDR_3"));
+				
+				memberVO.setSTORE_NAME_1(rs.getString("STORE_NAME_1"));
+				memberVO.setSTORE_NAME_2(rs.getString("STORE_NAME_2"));
+				memberVO.setSTORE_NAME_3(rs.getString("STORE_NAME_3"));
+
+				memberVO.setSTORE_NO_1(rs.getInt("STORE_NO_1"));
+				memberVO.setSTORE_NO_2(rs.getInt("STORE_NO_2"));
+				memberVO.setSTORE_NO_3(rs.getInt("STORE_NO_3"));
+				memberVO.setMem_Reg_Date(rs.getDate("MEM_REG_DATE"));
+
+				String photoEncoded = Base64.getEncoder().encodeToString(rs.getBytes("MEM_PHOTO"));
+				memberVO.setEncoded(photoEncoded);
+				
+//				pstmt.executeUpdate();
+
+
+			}
+			
+			// Handle any SQL errors
+		} catch (SQLException se) {
+			throw new RuntimeException("A database error occured. " + se.getMessage());
+			// Clean up JDBC resources
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (con != null) {
+				try {
+					con.close();
+				} catch (Exception e) {
+					e.printStackTrace(System.err);
+				}
 			}
 		}
-		if (pstmt != null) {
-			try {
-				pstmt.close();
-			} catch (SQLException se) {
-				se.printStackTrace(System.err);
+		return memberVO;
+	}
+	@Override
+	public List<MemberVO> getAll() {
+		List<MemberVO> list = new ArrayList<MemberVO>();
+		MemberVO memberVO = null;
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+
+		try {
+			con = ds.getConnection();
+			pstmt = con.prepareStatement(GET_ALL_STMT);
+			rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				memberVO = new MemberVO();
+				memberVO.setMem_Id(rs.getString("MEM_ID"));
+				memberVO.setMem_Account(rs.getString("MEM_ACCOUNT"));
+				memberVO.setMem_Password(rs.getString("MEM_PASSWORD"));
+				memberVO.setMem_Name(rs.getString("MEM_NAME"));
+				memberVO.setMem_Sex(rs.getInt("MEM_SEX"));
+				memberVO.setMem_Address(rs.getString("MEM_ADDRESS"));
+				memberVO.setMem_Birthday(rs.getDate("MEM_BIRTHDAY"));
+				memberVO.setMem_Phone(rs.getString("MEM_PHONE"));
+				memberVO.setMem_Profile(rs.getString("MEM_PROFILE"));
+				memberVO.setMem_Photo(rs.getBytes("MEM_PHOTO"));
+				memberVO.setMem_State(rs.getInt("MEM_STATE"));
+				
+				memberVO.setDelivery_Address_1(rs.getString("DELIVERY_ADDRESS_1"));
+				memberVO.setDelivery_Address_2(rs.getString("DELIVERY_ADDRESS_2"));
+				memberVO.setDelivery_Address_3(rs.getString("DELIVERY_ADDRESS_3"));
+				
+				memberVO.setSTORE_ADDR_1(rs.getString("STORE_ADDR_1"));
+				memberVO.setSTORE_ADDR_2(rs.getString("STORE_ADDR_2"));
+				memberVO.setSTORE_ADDR_3(rs.getString("STORE_ADDR_3"));
+				
+				memberVO.setSTORE_NAME_1(rs.getString("STORE_NAME_1"));
+				memberVO.setSTORE_NAME_2(rs.getString("STORE_NAME_2"));
+				memberVO.setSTORE_NAME_3(rs.getString("STORE_NAME_3"));
+
+				memberVO.setSTORE_NO_1(rs.getInt("STORE_NO_1"));
+				memberVO.setSTORE_NO_2(rs.getInt("STORE_NO_2"));
+				memberVO.setSTORE_NO_3(rs.getInt("STORE_NO_3"));
+
+				memberVO.setMem_Reg_Date(rs.getDate("MEM_REG_DATE"));
+				
+				list.add(memberVO); // Store the row in the list
+			}
+
+			// Handle any SQL errors
+		} catch (SQLException se) {
+			throw new RuntimeException("A database error occured. " + se.getMessage());
+			// Clean up JDBC resources
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (con != null) {
+				try {
+					con.close();
+				} catch (Exception e) {
+					e.printStackTrace(System.err);
+				}
 			}
 		}
-		if (con != null) {
-			try {
-				con.close();
-			} catch (Exception e) {
-				e.printStackTrace(System.err);
+		return list;
+	}
+
+	@Override
+	public MemberVO login_Member(String mem_Account, String mem_Password) {
+		MemberVO memberVO_login = null;
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+
+		try {
+			
+			con = ds.getConnection();
+			pstmt = con.prepareStatement(login_Member);
+			pstmt.setString(1, mem_Account);
+			pstmt.setString(2, mem_Password);
+			
+			rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				memberVO_login = new MemberVO();
+				memberVO_login.setMem_Id(rs.getString("MEM_ID"));
+				memberVO_login.setMem_Account(rs.getString("MEM_ACCOUNT"));
+				memberVO_login.setMem_Password(rs.getString("MEM_PASSWORD"));
+				memberVO_login.setMem_Name(rs.getString("MEM_NAME"));
+				memberVO_login.setMem_Sex(rs.getInt("MEM_SEX"));
+				memberVO_login.setMem_Address(rs.getString("MEM_ADDRESS"));
+				memberVO_login.setMem_Birthday(rs.getDate("MEM_BIRTHDAY"));
+				memberVO_login.setMem_Phone(rs.getString("MEM_PHONE"));
+				memberVO_login.setMem_Profile(rs.getString("MEM_PROFILE"));
+				memberVO_login.setMem_Photo(rs.getBytes("MEM_PHOTO"));
+				memberVO_login.setMem_State(rs.getInt("MEM_STATE"));
+
+				memberVO_login.setDelivery_Address_1(rs.getString("DELIVERY_ADDRESS_1"));
+				memberVO_login.setDelivery_Address_2(rs.getString("DELIVERY_ADDRESS_2"));
+				memberVO_login.setDelivery_Address_3(rs.getString("DELIVERY_ADDRESS_3"));
+				
+				memberVO_login.setSTORE_ADDR_1(rs.getString("STORE_ADDR_1"));
+				memberVO_login.setSTORE_ADDR_2(rs.getString("STORE_ADDR_2"));
+				memberVO_login.setSTORE_ADDR_3(rs.getString("STORE_ADDR_3"));
+				
+				memberVO_login.setSTORE_NAME_1(rs.getString("STORE_NAME_1"));
+				memberVO_login.setSTORE_NAME_2(rs.getString("STORE_NAME_2"));
+				memberVO_login.setSTORE_NAME_3(rs.getString("STORE_NAME_3"));
+
+				memberVO_login.setSTORE_NO_1(rs.getInt("STORE_NO_1"));
+				memberVO_login.setSTORE_NO_2(rs.getInt("STORE_NO_2"));
+				memberVO_login.setSTORE_NO_3(rs.getInt("STORE_NO_3"));
+				pstmt.executeUpdate();
+
+			}
+			
+			// Handle any driver errors
+		} 
+		catch (SQLException se) {
+			throw new RuntimeException("A database error occured. " + se.getMessage());
+			// Clean up JDBC resources
+		} 
+		finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (con != null) {
+				try {
+					con.close();
+				} catch (Exception e) {
+					e.printStackTrace(System.err);
+				}
+			}
+		}
+		return memberVO_login;
+		}
+
+	@Override
+	public void update_Member(MemberVO memberVO) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		try {
+			con = ds.getConnection();
+			pstmt = con.prepareStatement(update_Member);
+			
+			pstmt.setString(1, memberVO.getMem_Name());
+			pstmt.setString(2, memberVO.getMem_Phone());
+			pstmt.setInt(3, memberVO.getMem_Sex());
+			pstmt.setDate(4, memberVO.getMem_Birthday());
+			pstmt.setBytes(5, memberVO.getMem_Photo());
+			pstmt.setString(6, memberVO.getMem_Profile());
+			pstmt.setString(7, memberVO.getMem_Id());
+			System.out.println("memberVO.getMem_Id()="+memberVO.getMem_Id()+memberVO.getMem_Phone()+memberVO.getMem_Sex()+
+					memberVO.getMem_Birthday()+memberVO.getMem_Photo()+memberVO.getMem_Profile());
+			
+			pstmt.executeUpdate();
+			System.out.println("進來dao/update_member");
+
+		} catch (SQLException se) {
+			throw new RuntimeException("A database error occured. " + se.getMessage());
+			// Clean up JDBC resources
+		} finally {
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (con != null) {
+				try {
+					con.close();
+				} catch (Exception e) {
+					e.printStackTrace(System.err);
+				}
 			}
 		}
 	}
-	return list;
-}
 
-@Override
-public MemberVO checkAccount(String mem_Account) {
-	MemberVO memberVO = null;
-	Connection con = null;
-	PreparedStatement pstmt = null;
-	ResultSet rs = null;
-	try {
-		
-		con = ds.getConnection();
-		pstmt = con.prepareStatement(CHECK_ACCOUNT);
-		pstmt.setString(1, mem_Account);
-		rs = pstmt.executeQuery();
-		
-		while (rs.next()) {
+	@Override
+	public void Mem_Update_Password(MemberVO memberVO) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		try {
+			con = ds.getConnection();
+			pstmt = con.prepareStatement(MEM_Update_PASSWORD);
+			pstmt.setString(1, memberVO.getMem_Password());
+			pstmt.setString(2, memberVO.getMem_Account());
+			pstmt.executeUpdate();
 			
+		} catch (SQLException se) {
+			throw new RuntimeException("A database error occured. " + se.getMessage());
+			// Clean up JDBC resources
+		} finally {
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (con != null) {
+				try {
+					con.close();
+				} catch (Exception e) {
+					e.printStackTrace(System.err);
+				}
+			}
+		}
+	}
+	//管理員更改會員的狀態
+	@Override
+	public int update_State(String mem_Id, Integer mem_State) {
+		Connection con = null ;
+		PreparedStatement pstmt= null;
+		int count=0;
+		if(mem_State == 1) {
+			try {
+				con=ds.getConnection();
+				pstmt=con.prepareStatement(UPDATE_ON_STATE_STMT);
+				
+				pstmt.setString(1,mem_Id);
+				
+				count=pstmt.executeUpdate();
+				
+			}catch(SQLException se) {
+				throw new RuntimeException("資料庫發生錯誤"+se.getMessage());
+			}finally {
+				if(pstmt != null) {
+					try {
+						pstmt.close();
+					}catch(SQLException se) {
+						se.printStackTrace(System.err);
+					}
+				}
+				
+				if(con != null) {
+					try {
+					  con.close();
+					}catch(Exception e) {
+					  e.printStackTrace(System.err);
+					}
+				}
+			}
+			
+		}else if(mem_State == 2) {		
+			try {
+
+				con=ds.getConnection();
+				pstmt=con.prepareStatement(UPDATE_OFF_STATE_STMT);
+				
+				pstmt.setString(1,mem_Id);
+				
+				count=pstmt.executeUpdate();
+				
+			}catch(SQLException se) {
+				throw new RuntimeException("資料庫發生錯誤"+se.getMessage());
+			}finally {
+				if(pstmt != null) {
+					try {
+						pstmt.close();
+					}catch(SQLException se) {
+						se.printStackTrace(System.err);
+					}
+				}
+				
+				if(con != null) {
+					try {
+					  con.close();
+					}catch(Exception e) {
+					  e.printStackTrace(System.err);
+					}
+				}
+			}
+			
+			
+		}
+		return count;
+	}
+
+	@Override
+	public List<MemberVO> getAll_member(String mem_Name){
+		
+		List<MemberVO> list = new ArrayList<MemberVO>();
+		MemberVO memberVO = null;
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		try {
+			con = ds.getConnection();
+			pstmt = con.prepareStatement(getAll_member);
+			pstmt.setString(1, "%" + mem_Name + "%");
+			pstmt.setString(2, "%" + mem_Name + "%");
+
+			rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				
 			memberVO = new MemberVO();
+			memberVO.setMem_Id(rs.getString("MEM_ID"));
 			memberVO.setMem_Account(rs.getString("MEM_ACCOUNT"));
+			memberVO.setMem_Name(rs.getString("MEM_NAME"));
+			memberVO.setMem_Birthday(rs.getDate("MEM_BIRTHDAY"));
+			memberVO.setMem_Phone(rs.getString("MEM_PHONE"));
+			memberVO.setMem_Profile(rs.getString("MEM_PROFILE"));
+			memberVO.setMem_Photo(rs.getBytes("MEM_PHOTO"));
+			memberVO.setMem_State(rs.getInt("MEM_STATE"));
+			memberVO.setMem_Reg_Date(rs.getDate("MEM_REG_DATE"));
+
+			list.add(memberVO);
+			}
 			
-		}
-	}catch (SQLException se) {
-		throw new RuntimeException("A database error occured. " + se.getMessage());
-		// Clean up JDBC resources
-	} finally {
-		if (rs != null) {
-			try {
-				rs.close();
-			} catch (SQLException se) {
-				se.printStackTrace(System.err);
+
+			// Handle any driver errors
+		} catch (SQLException se) {
+			throw new RuntimeException("A database error occured. " + se.getMessage());
+			// Clean up JDBC resources
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (con != null) {
+				try {
+					con.close();
+				} catch (Exception e) {
+					e.printStackTrace(System.err);
+				}
 			}
 		}
-		if (pstmt != null) {
-			try {
-				pstmt.close();
-			} catch (SQLException se) {
-				se.printStackTrace(System.err);
+		return list;
+	}
+
+	@Override
+	public MemberVO checkAccount(String mem_Account) {
+		MemberVO memberVO = null;
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+			
+			con = ds.getConnection();
+			pstmt = con.prepareStatement(CHECK_ACCOUNT);
+			pstmt.setString(1, mem_Account);
+			rs = pstmt.executeQuery();
+			
+			while (rs.next()) {
+				
+				memberVO = new MemberVO();
+				memberVO.setMem_Account(rs.getString("MEM_ACCOUNT"));
+				
+			}
+		}catch (SQLException se) {
+			throw new RuntimeException("A database error occured. " + se.getMessage());
+			// Clean up JDBC resources
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (con != null) {
+				try {
+					con.close();
+				} catch (Exception e) {
+					e.printStackTrace(System.err);
+				}
 			}
 		}
-		if (con != null) {
-			try {
-				con.close();
-			} catch (Exception e) {
-				e.printStackTrace(System.err);
+		return memberVO;
+	}
+
+
+	// 修改 711地址 第一個
+	@Override
+	public void Mem_Update_Store1(MemberVO memberVO) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		try {
+			con = ds.getConnection();
+			pstmt = con.prepareStatement(MEM_Update_STORE1);
+			// "UPDATE MEMBER SET STORE_NO_1=?,STORE_NAME_1=?,STORE_ADDR_1=? WHERE
+			// MEM_ID=?";
+			pstmt.setInt(1, memberVO.getSTORE_NO_1());
+			pstmt.setString(2, memberVO.getSTORE_NAME_1());
+			pstmt.setString(3, memberVO.getSTORE_ADDR_1());
+			pstmt.setString(4, memberVO.getMem_Id());
+			System.out.println(memberVO.getSTORE_NO_1());
+			System.out.println(memberVO.getSTORE_NAME_1());
+			System.out.println(memberVO.getSTORE_ADDR_1());
+			System.out.println(memberVO.getMem_Id());
+			pstmt.executeUpdate();
+
+		} catch (SQLException se) {
+			throw new RuntimeException("A database error occured. " + se.getMessage());
+			// Clean up JDBC resources
+		} finally {
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (con != null) {
+				try {
+					con.close();
+				} catch (Exception e) {
+					e.printStackTrace(System.err);
+				}
 			}
 		}
 	}
-	return memberVO;
-}
+
+	// 修改 711地址 第二個
+	@Override
+	public void Mem_Update_Store2(MemberVO memberVO) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		try {
+			con = ds.getConnection();
+			pstmt = con.prepareStatement(MEM_Update_STORE2);
+			// "UPDATE MEMBER SET STORE_NO_1=?,STORE_NAME_1=?,STORE_ADDR_1=? WHERE
+			// MEM_ID=?";
+			pstmt.setInt(1, memberVO.getSTORE_NO_2());
+			pstmt.setString(2, memberVO.getSTORE_NAME_2());
+			pstmt.setString(3, memberVO.getSTORE_ADDR_2());
+			pstmt.setString(4, memberVO.getMem_Id());
+			System.out.println("修改 711地址 第二個");
+			System.out.println(memberVO.getSTORE_NO_2());
+			System.out.println(memberVO.getSTORE_NAME_2());
+			System.out.println(memberVO.getSTORE_ADDR_2());
+			System.out.println(memberVO.getMem_Id());
+			pstmt.executeUpdate();
+
+		} catch (SQLException se) {
+			throw new RuntimeException("A database error occured. " + se.getMessage());
+			// Clean up JDBC resources
+		} finally {
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (con != null) {
+				try {
+					con.close();
+				} catch (Exception e) {
+					e.printStackTrace(System.err);
+				}
+			}
+		}
+	}
+
+	// 修改 711地址 第三個
+	@Override
+	public void Mem_Update_Store3(MemberVO memberVO) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		try {
+			con = ds.getConnection();
+			pstmt = con.prepareStatement(MEM_Update_STORE3);
+			// "UPDATE MEMBER SET STORE_NO_1=?,STORE_NAME_1=?,STORE_ADDR_1=? WHERE
+			// MEM_ID=?";
+			pstmt.setInt(1, memberVO.getSTORE_NO_3());
+			pstmt.setString(2, memberVO.getSTORE_NAME_3());
+			pstmt.setString(3, memberVO.getSTORE_ADDR_3());
+			pstmt.setString(4, memberVO.getMem_Id());
+			System.out.println(memberVO.getSTORE_NO_3());
+			System.out.println(memberVO.getSTORE_NAME_3());
+			System.out.println(memberVO.getSTORE_ADDR_3());
+			System.out.println(memberVO.getMem_Id());
+			pstmt.executeUpdate();
+
+		} catch (SQLException se) {
+			throw new RuntimeException("A database error occured. " + se.getMessage());
+			// Clean up JDBC resources
+		} finally {
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (con != null) {
+				try {
+					con.close();
+				} catch (Exception e) {
+					e.printStackTrace(System.err);
+				}
+			}
+		}
+	}
+
+	// 刪除 711地址 第一個
+	@Override
+	public void Mem_Delete_Store1(String memId) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		try {
+			con = ds.getConnection();
+			pstmt = con.prepareStatement(MEM_Delete_STORE1);
+			// "UPDATE MEMBER SET STORE_NO_1=null,STORE_NAME_1=null,STORE_ADDR_1=null WHERE
+			// MEM_ID=?";
+
+			pstmt.setString(1, memId);
+			System.out.println(memId);
+			pstmt.executeUpdate();
+
+		} catch (SQLException se) {
+			throw new RuntimeException("A database error occured. " + se.getMessage());
+			// Clean up JDBC resources
+		} finally {
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (con != null) {
+				try {
+					con.close();
+				} catch (Exception e) {
+					e.printStackTrace(System.err);
+				}
+			}
+		}
+	}
+
+	// 刪除 711地址 第二個
+	@Override
+	public void Mem_Delete_Store2(String memId) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		try {
+			con = ds.getConnection();
+			pstmt = con.prepareStatement(MEM_Delete_STORE2);
+			// "UPDATE MEMBER SET STORE_NO_1=null,STORE_NAME_1=null,STORE_ADDR_1=null WHERE
+			// MEM_ID=?";
+
+			pstmt.setString(1, memId);
+			System.out.println(memId);
+			pstmt.executeUpdate();
+
+		} catch (SQLException se) {
+			throw new RuntimeException("A database error occured. " + se.getMessage());
+			// Clean up JDBC resources
+		} finally {
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (con != null) {
+				try {
+					con.close();
+				} catch (Exception e) {
+					e.printStackTrace(System.err);
+				}
+			}
+		}
+	}
+
+	// 刪除 711地址 第三個
+	@Override
+	public void Mem_Delete_Store3(String memId) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		try {
+			con = ds.getConnection();
+			pstmt = con.prepareStatement(MEM_Delete_STORE3);
+			// "UPDATE MEMBER SET STORE_NO_1=null,STORE_NAME_1=null,STORE_ADDR_1=null WHERE
+			// MEM_ID=?";
+
+			pstmt.setString(1, memId);
+			System.out.println(memId);
+			pstmt.executeUpdate();
+
+		} catch (SQLException se) {
+			throw new RuntimeException("A database error occured. " + se.getMessage());
+			// Clean up JDBC resources
+		} finally {
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (con != null) {
+				try {
+					con.close();
+				} catch (Exception e) {
+					e.printStackTrace(System.err);
+				}
+			}
+		}
+	}
+
+	// 修改 宅配地址 第一個
+	@Override
+	public void Mem_Update_Home1(MemberVO memberVO) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		try {
+			con = ds.getConnection();
+			pstmt = con.prepareStatement(MEM_Update_HOME1);
+			// "UPDATE MEMBER SET DELIVERY_ADDRESS_1=? WHERE MEM_ID=?";
+			pstmt.setString(1, memberVO.getDelivery_Address_1());
+			pstmt.setString(2, memberVO.getMem_Id());
+			System.out.println(memberVO.getDelivery_Address_1());
+			System.out.println(memberVO.getMem_Id());
+			pstmt.executeUpdate();
+
+		} catch (SQLException se) {
+			throw new RuntimeException("A database error occured. " + se.getMessage());
+			// Clean up JDBC resources
+		} finally {
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (con != null) {
+				try {
+					con.close();
+				} catch (Exception e) {
+					e.printStackTrace(System.err);
+				}
+			}
+		}
+	}
+
+	// 修改 宅配地址 第二個
+	@Override
+	public void Mem_Update_Home2(MemberVO memberVO) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		try {
+			con = ds.getConnection();
+			pstmt = con.prepareStatement(MEM_Update_HOME2);
+			// "UPDATE MEMBER SET DELIVERY_ADDRESS_1=? WHERE MEM_ID=?";
+			pstmt.setString(1, memberVO.getDelivery_Address_2());
+			pstmt.setString(2, memberVO.getMem_Id());
+			System.out.println(memberVO.getDelivery_Address_2());
+			System.out.println(memberVO.getMem_Id());
+			pstmt.executeUpdate();
+
+		} catch (SQLException se) {
+			throw new RuntimeException("A database error occured. " + se.getMessage());
+			// Clean up JDBC resources
+		} finally {
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (con != null) {
+				try {
+					con.close();
+				} catch (Exception e) {
+					e.printStackTrace(System.err);
+				}
+			}
+		}
+	}
+
+	// 修改 宅配地址 第三個
+	@Override
+	public void Mem_Update_Home3(MemberVO memberVO) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		try {
+			con = ds.getConnection();
+			pstmt = con.prepareStatement(MEM_Update_HOME3);
+			// "UPDATE MEMBER SET DELIVERY_ADDRESS_1=? WHERE MEM_ID=?";
+			pstmt.setString(1, memberVO.getDelivery_Address_3());
+			pstmt.setString(2, memberVO.getMem_Id());
+			System.out.println(memberVO.getDelivery_Address_3());
+			System.out.println(memberVO.getMem_Id());
+			pstmt.executeUpdate();
+
+		} catch (SQLException se) {
+			throw new RuntimeException("A database error occured. " + se.getMessage());
+			// Clean up JDBC resources
+		} finally {
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (con != null) {
+				try {
+					con.close();
+				} catch (Exception e) {
+					e.printStackTrace(System.err);
+				}
+			}
+		}
+	}
+	
+	
+	// 刪除宅配地址 第一個
+		@Override
+		public void Mem_Delete_Home1(String memId) {
+			Connection con = null;
+			PreparedStatement pstmt = null;
+			try {
+				con = ds.getConnection();
+				pstmt = con.prepareStatement(MEM_Delete_HOME1);
+				// "UPDATE MEMBER SET DELIVERY_ADDRESS_1=null WHERE MEM_ID=?";
+
+				pstmt.setString(1, memId);
+				System.out.println(memId);
+				pstmt.executeUpdate();
+
+			} catch (SQLException se) {
+				throw new RuntimeException("A database error occured. " + se.getMessage());
+				// Clean up JDBC resources
+			} finally {
+				if (pstmt != null) {
+					try {
+						pstmt.close();
+					} catch (SQLException se) {
+						se.printStackTrace(System.err);
+					}
+				}
+				if (con != null) {
+					try {
+						con.close();
+					} catch (Exception e) {
+						e.printStackTrace(System.err);
+					}
+				}
+			}
+		}
+	
+		// 刪除宅配地址 第二個
+		@Override
+		public void Mem_Delete_Home2(String memId) {
+			Connection con = null;
+			PreparedStatement pstmt = null;
+			try {
+				con = ds.getConnection();
+				pstmt = con.prepareStatement(MEM_Delete_HOME2);
+				// "UPDATE MEMBER SET DELIVERY_ADDRESS_2=null WHERE MEM_ID=?";
+
+				pstmt.setString(1, memId);
+				System.out.println(memId);
+				pstmt.executeUpdate();
+
+			} catch (SQLException se) {
+				throw new RuntimeException("A database error occured. " + se.getMessage());
+				// Clean up JDBC resources
+			} finally {
+				if (pstmt != null) {
+					try {
+						pstmt.close();
+					} catch (SQLException se) {
+						se.printStackTrace(System.err);
+					}
+				}
+				if (con != null) {
+					try {
+						con.close();
+					} catch (Exception e) {
+						e.printStackTrace(System.err);
+					}
+				}
+			}
+		}
+		
+		
+		// 刪除宅配地址 第二個
+		@Override
+		public void Mem_Delete_Home3(String memId) {
+			Connection con = null;
+			PreparedStatement pstmt = null;
+			try {
+				con = ds.getConnection();
+				pstmt = con.prepareStatement(MEM_Delete_HOME3);
+				// "UPDATE MEMBER SET DELIVERY_ADDRESS_3=null WHERE MEM_ID=?";
+
+				pstmt.setString(1, memId);
+				System.out.println(memId);
+				pstmt.executeUpdate();
+
+			} catch (SQLException se) {
+				throw new RuntimeException("A database error occured. " + se.getMessage());
+				// Clean up JDBC resources
+			} finally {
+				if (pstmt != null) {
+					try {
+						pstmt.close();
+					} catch (SQLException se) {
+						se.printStackTrace(System.err);
+					}
+				}
+				if (con != null) {
+					try {
+						con.close();
+					} catch (Exception e) {
+						e.printStackTrace(System.err);
+					}
+				}
+			}
+		}
+	
 
 }
-
-
+//@Override
+//public MemberVO login_Member(MemberVO memberVO) {
+//	Connection con = null;
+//	PreparedStatement pstmt = null;
+//	ResultSet rs = null;
+//	MemberVO memberVO_login = null;
+//
+//	try {
+//		con = ds.getConnection();
+//		pstmt = con.prepareStatement(Login_Member);
+//		pstmt.setString(1, memberVO.getMem_Account());
+//		pstmt.setString(2, memberVO.getMem_Password());
+//
+//		rs = pstmt.executeQuery();
+//
+//		while (rs.next()) {
+//			memberVO_login = new MemberVO();
+//			memberVO_login.setMem_Account(rs.getString("setMem_Account"));
+//			memberVO_login.setMem_Password(rs.getString("setMem_Password"));
+//
+//		}
+//		// Handle any SQL errors
+//	} catch (SQLException se) {
+//		throw new RuntimeException("A database error occured. " + se.getMessage());
+//		// Clean up JDBC resources
+//	} finally {
+//		if (rs != null) {
+//			try {
+//				rs.close();
+//			} catch (SQLException se) {
+//				se.printStackTrace(System.err);
+//			}
+//		}
+//		if (pstmt != null) {
+//			try {
+//				pstmt.close();
+//			} catch (SQLException se) {
+//				se.printStackTrace(System.err);
+//			}
+//		}
+//		if (con != null) {
+//			try {
+//				con.close();
+//			} catch (Exception e) {
+//				e.printStackTrace(System.err);
+//			}
+//		}
+//	}
+//	return memberVO_login;
+//}
 	

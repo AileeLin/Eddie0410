@@ -13,7 +13,7 @@
 
 	// 紀錄捲動軸位置
 	String scroll = request.getParameter("scroll");
-
+ 
 	MemberVO memberVO = (MemberVO)session.getAttribute("memberVO");
 	String login,logout;
 	if(memberVO != null){		
@@ -29,8 +29,19 @@
 	if(login_state_temp!=null){
 		login_state=(boolean)login_state_temp;
 	}
+	
+	long token=System.currentTimeMillis();
+	session.setAttribute("token", token);
 %>
-
+<%
+	//取得購物車商品數量
+	Object total_items_temp = session.getAttribute("total_items");
+	int total_items = 0;
+	if(total_items_temp != null ){
+		total_items= (Integer) total_items_temp;
+	}
+	pageContext.setAttribute("total_items",total_items);
+%>
 <!DOCTYPE html>
 <jsp:useBean id="Mytag" scope="page" class="com.blog_tag.model.blogTagService"></jsp:useBean>
 <jsp:useBean id="tagName" scope="page" class="com.blog_tag_name.model.blogTagNameService"></jsp:useBean>
@@ -110,6 +121,7 @@
 		    	var action = "collect";
 		    	var blog_id = "${param.blogID}";
 		    	var mem_id = "${memberVO.mem_Id}";
+		    	var blog_id_Owner = "${blogSvc.findByPrimaryKey(param.blogID).mem_id}";
 				var collectMessage = document.getElementById("collectMessage");
 		    	$.ajax({
 		    		url:"<%=request.getContextPath()%>/blog.do",
@@ -157,10 +169,8 @@
                     </ul>
                 </div>
                 <div class="top-banner-right">
-                		
                 		<!-- 暫時登出用的 -->
                      <ul>
-                        
                         <li>
                         	<!-- 判斷是否登入，若有登入將會出現登出按鈕 -->
                          <c:choose>
@@ -172,13 +182,10 @@
                           </c:otherwise>
                          </c:choose>
                          </li>
-                	
-                    
-                        <li style="<%= logout %>"><a class="top_banner" href="<%=request.getContextPath()%>/front_end/personal_area_home.html"><i class="fa fa-user" aria-hidden="true"></i></a></li>
-                        
-                        <li><a class="top_banner" href="#"><i class="fa fa-shopping-cart" aria-hidden="true"></i></a></li>
+                        <li style="<%= logout %>"><a class="top_banner" href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_home.jsp"><i class="fa fa-user" aria-hidden="true"></i></a></li>
+                        <li><a class="top_banner" href="<%=request.getContextPath()%>/front_end/store/store_cart.jsp"><i class="fa fa-shopping-cart shopping-cart" aria-hidden="true"></i><span class="badge">${total_items}</span></a></li>
                         <li><a class="top_banner" href="#"><i class="fa fa-envelope" aria-hidden="true"></i></a></li>
-                    </ul>
+                      </ul>
                 </div>
                 <div class="clearfix"> </div>
             </div>
@@ -199,15 +206,15 @@
                         <!-- Collect the nav links, forms, and other content for toggling -->
                         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                             <ul class="nav navbar-nav">
-								<li><a href="<%=request.getContextPath()%>/front_end/news.jsp">最新消息</a></li>
-								<li><a href="<%=request.getContextPath()%>/front_end/tour.jsp">景點介紹</a></li>
-								<li><a href="<%=request.getContextPath()%>/front_end/plan.jsp">行程規劃</a></li>
-								<li><a href="<%=request.getContextPath()%>/blog.index">旅遊記</a></li>
-								<li><a href="<%=request.getContextPath()%>/front_end/ask.jsp">問答區</a></li>
-								<li><a href="<%=request.getContextPath()%>/front_end/galley.jsp">照片牆</a></li>
-								<li><a href="<%=request.getContextPath()%>/front_end/together.jsp">揪團</a></li>
-								<li><a href="<%=request.getContextPath()%>/front_end/buy.jsp">交易平台</a></li>
-								<li><a href="<%=request.getContextPath()%>/front_end/advertisement.jsp">專欄</a></li>
+								<li><a href="<%=request.getContextPath()%>/front_end/news/news.jsp">最新消息</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/attractions/att.jsp">景點介紹</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/trip/trip.jsp">行程規劃</a></li>
+                                <li><a href="<%=request.getContextPath()%>/blog.index">旅遊記</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/question/question.jsp">問答區</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/photowall/photo_wall.jsp">照片牆</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/grp/grpIndex.jsp">揪團</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/store/store.jsp">交易平台</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/ad/ad.jsp">專欄</a></li>
 								<div class="clearfix"></div>
                             </ul>
                         </div>
@@ -240,7 +247,7 @@
                         </a></li>
                         <li class="brief_info_divider"></li>
                         <li class="brief_info date_icon release_date far fa-calendar-alt">
-                            <label>&nbsp;發表日期：</label> ${blogSvc.findByPrimaryKey(param.blogID).travel_date}</li>
+                            <label>&nbsp;旅行日期：</label> ${blogSvc.findByPrimaryKey(param.blogID).travel_date}</li>
                         <li class="brief_info_divider"></li>
                         <li class="brief_info view_cnt far fa-eye">&nbsp; ${blogSvc.findByPrimaryKey(param.blogID).blog_views}&nbsp;次瀏覽</li>
                         <li class="brief_info_gap"></li>
@@ -319,14 +326,16 @@
                                 </form>
                                 </a>
                             </c:if>
-                            <!-- 如果登入者的id!=留言者的id 則顯示檢舉的按鈕 -->
-                            <c:if test="${memberVO.mem_Id!=blogMessageList.mem_id}">
-                                <a class="report message">
-                                    <font style="vertical-align: inherit;">
-                                        <font style="vertical-align: inherit;">檢舉</font>
-                                        <input type="hidden" name="message_id" value="${blogMessageList.message_id}">            	
-                                    </font>
-                                </a>
+                            <!-- 如果登入者的id!=留言者的id 則顯示檢舉的按鈕，並且確認是登入狀態才顯示 -->
+                            <c:if test="${login_state!=null}">
+	                            <c:if test="${memberVO.mem_Id!=blogMessageList.mem_id}">
+	                                <a class="report message">
+	                                    <font style="vertical-align: inherit;">
+	                                        <font style="vertical-align: inherit;">檢舉</font>
+	                                        <input type="hidden" name="message_id" value="${blogMessageList.message_id}">            	
+	                                    </font>
+	                                </a>
+	                            </c:if>
                             </c:if>
                             </div>
                         </div>
@@ -358,6 +367,7 @@
                             <input type="hidden" name="blog_id" value="${param.blogID}">
                             <input type="hidden" name="mem_id" value="${memberVO.mem_Id}">
                             <input type="hidden" name="scroll" value="">
+                            <input type="hidden" name="token" value="<%=token%>">
                         </form>
                         <!-- //留言區輸入內容的地方 -->
                     </div>
@@ -373,8 +383,8 @@
                 <!-- 檢舉、收藏、留言按鈕 -->
                 <c:if test="${login_state!=null}">
 	                <div class="ui basic buttons">
-	                    <button class="ui button report"><i class="fas fa-ban"></i> 檢舉</button>
-	                    <button class="ui button collect" id="collect"><i class="collection far fa-heart" style='font-weight:${blogCollectSvc.findByPrimaryKey(memberVO.mem_Id,param.blogID)==0?"400":"900"};color:${blogCollectSvc.findByPrimaryKey(memberVO.mem_Id,param.blogID)==0?"black":"red"}'></i> 收藏</button>
+	                    <button class='ui button report ${memberVO.mem_Id==blogSvc.findByPrimaryKey(param.blogID).mem_id?"disabled":""}'><i class="fas fa-ban"></i> 檢舉</button>
+	                    <button class='ui button collect ${memberVO.mem_Id==blogSvc.findByPrimaryKey(param.blogID).mem_id?"disabled":""}' id="collect"><i class="collection far fa-heart" style='font-weight:${blogCollectSvc.findByPrimaryKey(memberVO.mem_Id,param.blogID)==0?"400":"900"};color:${blogCollectSvc.findByPrimaryKey(memberVO.mem_Id,param.blogID)==0?"black":"red"}'></i> 收藏</button>
 	                    <button class="ui button reply"><i class="far fa-comment-dots"></i> 留言</button>
 	                </div>
 
@@ -432,7 +442,7 @@
                 <div class="ui hidden divider"></div>
                 <!-- //我是隔板 -->
                 <!-- 作者的最近文章 -->
-                <c:if test="${not empty blogSvc.getThreeByMem_id(blogSvc.findByPrimaryKey(param.blogID).mem_id,param.blogID).size()}">
+                <c:if test="${not empty blogSvc.getThreeByMem_id(blogSvc.findByPrimaryKey(param.blogID).mem_id,param.blogID)}">
                 
                 <div class="widgetcontainerheader">
                     ${memSvc.findByPrimaryKey(blogSvc.findByPrimaryKey(param.blogID).mem_id).mem_Name}的最近文章
@@ -493,9 +503,9 @@
                     </div>
                     <div class="footer-grid-info">
                         <ul>
-                            <li><a href="about.html">關於Travel Maker</a></li>
-                            <li><a href="about.html">聯絡我們</a></li>
-                            <li><a href="about.html">常見問題</a></li>
+                           <li><a href="<%=request.getContextPath()%>/front_end/about_us/about_us.jsp">關於Travel Maker</a></li>
+                           <li><a href="<%=request.getContextPath()%>/front_end/content/content.jsp">聯絡我們</a></li>
+                           <li><a href="<%=request.getContextPath()%>/front_end/faq/faq.jsp">常見問題</a></li>
                         </ul>
                     </div>
                 </div>
@@ -553,6 +563,8 @@
     			<input type="hidden" name="action" value="reportBlog">
     			<input type="hidden" name="blog_id" value="${param.blogID}">
     			<input type="hidden" name="mem_id" value="${memberVO.mem_Id}">
+    			<input type="hidden" name="blog_id_Owner" value="${blogSvc.findByPrimaryKey(param.blogID).mem_id}">
+    			<input type="hidden" name="token" value="<%=token%>">
     			</form>
     		</div>
     	</div>
@@ -576,6 +588,7 @@
     			<input type="hidden" name="message_id" id="reportBlogMessageId" value="">
     			<input type="hidden" name="mem_id" value="${memberVO.mem_Id}">
     			<input type="hidden" name="blog_id" value="${param.blogID}">
+    			<input type="hidden" name="token" value="<%=token%>">
     			</form>
     		</div>
     	</div>

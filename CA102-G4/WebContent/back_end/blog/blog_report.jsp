@@ -6,7 +6,7 @@
 <%@ page import="com.blog.model.*" %>
 <%@ page import="com.blog_message_report.model.*" %>
 <%@ page import="com.admin.model.*"%>
-<%
+<% 
 	response.setHeader("Pragma","no-cache"); 
 	response.setHeader("Cache-Control","no-store"); 
 	response.setDateHeader("Expires", 0);
@@ -23,15 +23,15 @@
 		adminVO = (AdminVO)session.getAttribute("adminVO");
 	}
 	
-	boolean login_state = false;
-	Object login_state_temp = session.getAttribute("login_state");
+	boolean login_state_backEnd = false;
+	Object login_state_temp = session.getAttribute("login_state_backEnd");
 	if(login_state_temp!=null){
-		login_state=(boolean)login_state_temp;
+		login_state_backEnd=(boolean)login_state_temp;
 	}
 	
-	if(login_state!=true){
-		session.setAttribute("location","/CA102G4/back_end/back_index.jsp");
-		response.sendRedirect("/CA102G4/back_end/back_login.jsp");
+	if(login_state_backEnd!=true){
+		session.setAttribute("location", request.getRequestURI());
+		response.sendRedirect(request.getContextPath()+"/back_end/admin/back_login.jsp");
 	}
 %>
 <jsp:useBean id="blogSvc" scope="page" class="com.blog.model.blogService"/>
@@ -102,114 +102,96 @@
                 <ul class="list-unstyled components">
                     <li class="active">
                         <a href="<%=request.getContextPath()%>/back_end/back_index.jsp">
-                            <i class="fas fa-home"></i>
-                            回首頁
+                            <i class="fas fa-home"></i> 回首頁
                         </a>
                     </li>
                     
                     <li>
                         <li class="dropdown">
                             <a href="#auth_Submenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
-                                <i class="fas fa-users"></i>
-                                權限管理
+                                <i class="fas fa-users"></i>權限管理
                             </a>
 
                             <ul class="dropdown-menu" id="auth_Submenu">
                                 <li>
-                                    <a href="#">管理員</a>
+                                    <a href="<%=request.getContextPath()%>/back_end/admin/manager_admin.jsp">管理員</a>
                                 </li>
                                 <li>
-                                    <a href="#">會員</a>
+                                    <a href="<%=request.getContextPath()%>/back_end/admin/manager_member.jsp">會員</a>
                                 </li>
                             </ul>
 
                         </li>
                         
                         <li>
-                            <a href="#">
-                                <i class="fas fa-newspaper"></i>
-                                最新消息管理
+                            <a href="<%=request.getContextPath()%>/back_end/news/news.jsp">
+                                <i class="fas fa-newspaper"></i>最新消息管理
                             </a>
                         </li>
                         
                         <li>
-                            <a href="#">
-                                <i class="fas fa-image"></i>
-                                景點管理
+                            <a href="<%=request.getContextPath()%>/back_end/attEdit/back_attEdit.jsp">
+                                <i class="fas fa-image"></i>景點管理
                             </a>
                         </li>
                        
                         <li class="dropdown">
                             <a href="#category_Submenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
-                                <i class="fas fa-tag"></i>
-                                標籤管理
+                                <i class="fas fa-tag"></i>標籤管理
                             </a>
                             <ul class="dropdown-menu" id="category_Submenu">
                                 <li>
                                     <a href="<%=request.getContextPath()%>/back_end/blog/blog_tag.jsp">旅遊記</a>
                                 </li>
                                 <li>
-                                    <a href="#">問答區</a>
+                                    <a href="<%=request.getContextPath()%>/back_end/qa_list/qa_list.jsp">問答區</a>
                                 </li>
                             </ul>
                         </li>
                         
                         <li class="dropdown">
                             <a href="#report_Submenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle" aria-haspopup="true" >
-                                <i class="fas fa-comment-dots"></i>
-                                檢舉管理
+                                <i class="fas fa-comment-dots"></i>檢舉管理
                             </a>
                             <ul class="dropdown-menu" id="report_Submenu">
                                 <li>
-                                    <a href="#">會員檢舉</a>
+                                    <a href="<%=request.getContextPath()%>/back_end/member/member_report.jsp">會員檢舉</a>
                                 </li>
                                 <li>
                                     <a href="<%=request.getContextPath()%>/blog.do?action=blogReportManage">旅遊記檢舉</a>
                                 </li>
                                 <li>
-                                    <a href="#">問答區檢舉</a>
+                                    <a href="<%=request.getContextPath()%>/back_end/qa_report/qa_report.jsp">問答區檢舉</a>
                                 </li>
                                 <li>
-                                    <a href="#">照片牆檢舉</a>
+                                    <a href="<%=request.getContextPath()%>/back_end/photo_wall/photo_report.jsp">照片牆檢舉</a>
                                 </li>
                                 <li>
-                                    <a href="#">揪團檢舉</a>
-                                </li>
-                                <li>
-                                    <a href="#">商品檢舉</a>
+                                    <a href="<%=request.getContextPath()%>/back_end/store/product_report.jsp">商品檢舉</a>
                                 </li>
                             </ul>
                         </li>
-                        
-                        <li>
-                            <a href="#">
-                                <i class="fas fa-shopping-cart"></i>
-                                交易款項管理
-                            </a>
-                        </li>
-                        
                         <li>
                             <a href="<%=request.getContextPath()%>/back_end/ad/back_ad.jsp">
-                                <i class="fas fa-audio-description"></i>
-                                專欄廣告管理
+                                <i class="fas fa-audio-description"></i>專欄廣告管理
                             </a>
                         </li>
                         
                         <li class="dropdown">
                             <a href="#aboutUS_Submenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
-                                <i class="fas fa-briefcase"></i>
-                                關於我們管理
+                                <i class="fas fa-briefcase"></i>關於我們管理
                                 </a>
                             <ul class="dropdown-menu" id="aboutUS_Submenu">
                                 <li>
-                                    <a href="#">關於我們</a>
+                                    <a href="<%=request.getContextPath()%>/back_end/about_us/about_us.jsp">關於我們</a>
                                 </li>
                                 <li>
-                                    <a href="#">FAQ</a>
+                                    <a href="<%=request.getContextPath()%>/back_end/faq/faq.jsp">FAQ</a>
                                 </li>
                             </ul>
                         </li>
 
+                    </li>
                 </ul>
 
             </nav>
@@ -217,20 +199,28 @@
             <!-- Page Content  -->
             <div id="content">
 
-                <nav class="navbar"> <!--navbar-expand-lg navbar-light bg-light-->
-                    <div class="container-fluid">
-                        <!--側邊欄按鈕-->
-                        <button type="button" id="sidebarCollapse" class="btn btn-info">
-                            <i class="fas fa-align-left"></i>
-                        </button>
-                        <span style="float: right">
-                        <button type="button" class="btn btn-info" onclick="location.href='<%=request.getContextPath()%>/back_end/back_login.jsp'">
-                            登出
-                            <i class="fas fa-sign-out-alt"></i>
-                        </button>
-                        </span>
-                    </div>
-                </nav>
+            <nav class="navbar">
+			    <!--navbar-expand-lg navbar-light bg-light-->
+			    <div class="container-fluid">
+			     <!--側邊欄按鈕-->
+			     <button type="button" id="sidebarCollapse" class="btn btn-info">
+			      <i class="fas fa-align-left"></i>
+			     </button>
+			     <span style="float: right">
+			     <span style="font-size:1.5em;margin-right:10px;vertical-align:sub;">
+			         Welcome！${adminVO.admin_Name}
+			     </span>
+			     <c:choose>
+                     <c:when test="<%=login_state_backEnd %>">
+                         <a href="<%= request.getContextPath()%>/admin.do?action=logout"><span class=" top_banner btn btn-info"><i class=" fas fa-sign-out-alt" aria-hidden="true"></i></span></a>
+                     </c:when>
+                     <c:otherwise>
+                         <a href="<%= request.getContextPath()%>/admin_login.jsp"><span class="top_banner btn btn-info"><i class=" fa fa-user" aria-hidden="true"></i></span></a>
+                     </c:otherwise>
+			     </c:choose>
+			     </span>
+			    </div>
+               </nav>
                 
                 <div class="row">
                     <div class="col-lg-12">

@@ -14,7 +14,7 @@
 	if(memberVO != null){		
 		login = "display:none;";
 		logout = "display:'';";
-	}else{
+	}else{ 
 		login = "display:'';";
 		logout = "display:none;";
 		 }
@@ -31,6 +31,15 @@
 	MemberService memberSvc = new MemberService();
 	List<MemberVO> memberVOList = (List)memberSvc.getAll();
 	request.setAttribute("memberVOList", memberVOList);
+%>
+<%
+	//取得購物車商品數量
+	Object total_items_temp = session.getAttribute("total_items");
+	int total_items = 0;
+	if(total_items_temp != null ){
+		total_items= (Integer) total_items_temp;
+	}
+	pageContext.setAttribute("total_items",total_items);
 %>
 <!DOCTYPE html>
 <jsp:useBean id="friSvc" scope="page" class="com.fri.model.FriendService"></jsp:useBean>
@@ -100,10 +109,10 @@
     <script src="<%=request.getContextPath()%>/front_end/js/search/search.js"></script>
     <!-- //blog 自定義的js -->
 
-    <!-- 景點幻燈片 -->
+    <!-- 旋轉木馬 -->
     <link href="<%=request.getContextPath()%>/front_end/swiper-4.3.3/dist/css/swiper.min.css" rel="stylesheet">
     <script src="<%=request.getContextPath()%>/front_end/swiper-4.3.3/dist/js/swiper.min.js"></script>
-    <!-- 景點幻燈片 -->
+    <!-- 旋轉木馬 -->
     
     <!-- LogoIcon -->
     <link href="<%=request.getContextPath()%>/front_end/images/all/Logo_Black_use.png" rel="icon" type="image/png">
@@ -138,10 +147,10 @@
                           </c:otherwise>
                          </c:choose>
                          </li>
-                        <li style="<%= logout %>"><a class="top_banner" href="<%=request.getContextPath()%>/front_end/personal_area_home.html"><i class="fa fa-user" aria-hidden="true"></i></a></li>
-                        <li><a class="top_banner" href="#"><i class="fa fa-shopping-cart" aria-hidden="true"></i></a></li>
+                        <li style="<%= logout %>"><a class="top_banner" href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_home.jsp"><i class="fa fa-user" aria-hidden="true"></i></a></li>
+                        <li><a class="top_banner" href="<%=request.getContextPath()%>/front_end/store/store_cart.jsp"><i class="fa fa-shopping-cart shopping-cart" aria-hidden="true"></i><span class="badge">${total_items}</span></a></li>
                         <li><a class="top_banner" href="#"><i class="fa fa-envelope" aria-hidden="true"></i></a></li>
-                    </ul>
+                      </ul>
                 </div>
                 <div class="clearfix"> </div>
             </div>
@@ -162,15 +171,15 @@
                         <!-- Collect the nav links, forms, and other content for toggling -->
                         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                             <ul class="nav navbar-nav">
-								<li><a href="<%=request.getContextPath()%>/front_end/news.jsp">最新消息</a></li>
-								<li><a href="<%=request.getContextPath()%>/front_end/tour.jsp">景點介紹</a></li>
-								<li><a href="<%=request.getContextPath()%>/front_end/plan.jsp">行程規劃</a></li>
-								<li><a href="<%=request.getContextPath()%>/blog.index">旅遊記</a></li>
-								<li><a href="<%=request.getContextPath()%>/front_end/ask.jsp">問答區</a></li>
-								<li><a href="<%=request.getContextPath()%>/front_end/galley.jsp">照片牆</a></li>
-								<li><a href="<%=request.getContextPath()%>/front_end/together.jsp">揪團</a></li>
-								<li><a href="<%=request.getContextPath()%>/front_end/buy.jsp">交易平台</a></li>
-								<li><a href="<%=request.getContextPath()%>/front_end/advertisement.jsp">專欄</a></li>
+								<li><a href="<%=request.getContextPath()%>/front_end/news/news.jsp">最新消息</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/attractions/att.jsp">景點介紹</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/trip/trip.jsp">行程規劃</a></li>
+                                <li><a href="<%=request.getContextPath()%>/blog.index">旅遊記</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/question/question.jsp">問答區</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/photowall/photo_wall.jsp">照片牆</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/grp/grpIndex.jsp">揪團</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/store/store.jsp">交易平台</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/ad/ad.jsp">專欄</a></li>
 								<div class="clearfix"></div>
                             </ul>
                         </div>
@@ -189,7 +198,7 @@
         <!-- 搜尋BAR -->
         <FORM class="keywordForm" METHOD="GET" ACTION="<%=request.getContextPath()%>/blog.do">
 	        <div class="ui fluid action input">
-	            <input type="text" name="keyword" placeholder="搜索行程、旅遊記、會員、問答、揪團、景點" value="${param.keyword}">
+	            <input type="text" name="keyword" placeholder="搜尋遊記、揪團、問答、會員、景點" value="${param.keyword}">
 	            <input type="hidden" name="action" value="searchAll">
 	            <div class="ui button submitKeyword">搜尋</div>
 	        </div>
@@ -199,23 +208,23 @@
         <div class="ui hidden divider"></div>
         <!-- //我是隔板 -->
         <!-- Menu -->
-        <div class="ui tabular menu">
-            <a class="item active" href="<%=request.getContextPath()%>/front_end/search/search_index.jsp">
+	  	<div class="ui tabular menu">
+            <a class='item ${(param.action=="searchAll") || (param.action == null)?"active":""}' href="<%=request.getContextPath()%>/blog.do?action=searchAll&keyword=${param.keyword}">
                 最佳
             </a>
-            <a class="item" href="<%=request.getContextPath()%>/front_end/search/search_blog.jsp">
+            <a class='item ${param.action=="searchBlog"?"active":""}' href="<%=request.getContextPath()%>/blog.do?action=searchBlog&keyword=${param.keyword}">
                 旅遊記
             </a>
-            <a class="item" href="<%=request.getContextPath()%>/front_end/search/search_member.jsp">
+            <a class='item ${param.action=="searchMember"?"active":""}' href="<%=request.getContextPath()%>/blog.do?action=searchMember&keyword=${param.keyword}">
                 會員
             </a>
-            <a class="item" href="<%=request.getContextPath()%>/front_end/search/search_ask.jsp">
+            <a class='item ${param.action=="searchAsk"?"active":""}' href="<%=request.getContextPath()%>/blog.do?action=searchAsk&keyword=${param.keyword}">
                 問答
             </a>
-            <a class="item" href="<%=request.getContextPath()%>/front_end/search/search_together.jsp">
+            <a class='item ${param.action=="searchTogether"?"active":""}' href="<%=request.getContextPath()%>/blog.do?action=searchTogether&keyword=${param.keyword}">
                 揪團
             </a>
-            <a class="item" href="<%=request.getContextPath()%>/front_end/search/search_tour.jsp">
+            <a class='item ${param.action=="searchTour"?"active":""}' href="<%=request.getContextPath()%>/blog.do?action=searchTour&keyword=${param.keyword}">
                 景點
             </a>
         </div>
@@ -234,7 +243,7 @@
 					<!-- 卡片*10張 -->
 	                    <div class="swiper-wrapper ui cards">
 							<c:forEach var="attractionsVO" items="${AttractionsList}">
-		                        <a class="raised card swiper-slide swiper-slide-active" href="#" target="_blank">
+		                        <a class="raised card swiper-slide swiper-slide-active" href="<%=request.getContextPath()%>/front_end/attractions/attDetail.jsp?att_no=${attractionsVO.att_no}" target="_blank">
 		                            <div class="image" style="background: url('<%= request.getContextPath()%>/trip/getPicture.do?att_no=${attractionsVO.att_no}')">
 		                                <div class="ui top right attached  green  label">景點</div>
 		                            </div>
@@ -251,7 +260,7 @@
 	                </div>
                 </c:if>
                 
-                <c:if test="${empty AttractionsList}">
+                <c:if test="${empty AttractionsList && param.action!=null}">
 	                <div class="poi_results swiper-container swiper-container-horizontal swiper-container-free-mode" style="text-align:center;height:239.594px;border:1px solid lightgray;margin:1em auto">
 						<p style="color:darkgray;height:100%;line-height:239.594px;font-size:40px">沒有相關關鍵字的景點!!</p>
 					</div>
@@ -268,7 +277,7 @@
 		                                <a class="ui header title" target="_blank" href="<%=request.getContextPath()%>/blog.do?action=article&blogID=${blogVO.blog_id}">
 		                                    ${blogVO.blog_title}
 		                                </a>
-		                                <div class="description text-truncate">
+		                                <div class="description text-truncate descriptionBlogContent">
 		                                <c:set var="blog_content" value="${blogVO.blog_content}"/> 
 		                                    <%= ((String)pageContext.getAttribute("blog_content")).replaceAll("<[^>]*>","").trim()%>
 		                                </div>
@@ -287,12 +296,17 @@
 	                </div>
                 </c:if>
 
-                <c:if test="${empty blogList}">
+                <c:if test="${empty blogList && param.action!=null}">
 					<div class="ui left aligned search_results empty" style="text-align:center;height:300px;border:1px solid lightgray">
 						<p style="color:darkgray;height:100%;line-height:300px;font-size:40px">沒有相關關鍵字的旅遊記!!</p>
 					</div>
 				</c:if>
                 <!-- //旅遊記 -->
+                <c:if test="${param.action==null}">
+					<div class="ui left aligned search_results empty" style="text-align:center;height:600px;border:1px solid lightgray">
+						<p style="color:darkgray;height:100%;line-height:600px;font-size:40px">請輸入關鍵字查詢!!</p>
+					</div>
+				</c:if>
             </div>
             <!-- //搜尋的結果左邊 -->
             <!-- 搜尋的結果右邊 -->
@@ -308,7 +322,7 @@
 	                                    ${memVO.mem_Name}
 	                                </div>
 	                                <div class="userInfoJoindate">
-	                                    Joined in ${memVO.mem_Birthday}
+	                                    Joined in ${memVO.mem_Reg_Date}
 	                                </div>
 	                                <div class="userInfoDescription">
 	                                    ${memVO.mem_Profile}
@@ -346,9 +360,9 @@
                     </div>
                     <div class="footer-grid-info">
                         <ul>
-                            <li><a href="about.html">關於Travel Maker</a></li>
-                            <li><a href="about.html">聯絡我們</a></li>
-                            <li><a href="about.html">常見問題</a></li>
+                            <li><a href="<%=request.getContextPath()%>/front_end/about_us/about_us.jsp">關於Travel Maker</a></li>
+                            <li><a href="<%=request.getContextPath()%>/front_end/content/content.jsp">聯絡我們</a></li>
+                            <li><a href="<%=request.getContextPath()%>/front_end/faq/faq.jsp">常見問題</a></li>
                         </ul>
                     </div>
                 </div>
@@ -390,7 +404,7 @@
             </div>
             <div class="copyright">
                 <p>Copyright &copy; 2018 All rights reserved
-                    <a href="index.html" target="_blank" title="TravelMaker">TravelMaker</a>
+                    <a href="<%=request.getContextPath()%>/front_end/index.jsp" target="_blank" title="TravelMaker">TravelMaker</a>
                 </p>
             </div>
         </div>

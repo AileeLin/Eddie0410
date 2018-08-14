@@ -3,20 +3,29 @@
 <%@ page import="java.util.*"%>
 <%@ page import="com.attractions.model.*"%>
 <%@ page import="com.mem.model.*"%>
-
+ 
 <%
-	MemberVO memVO = (MemberVO)session.getAttribute("memberVO");
-	if(memVO==null){
+
+	MemberVO memberVO = (MemberVO) request.getAttribute("memberVO"); 
+	if(memberVO == null){
+		memberVO = (MemberVO)session.getAttribute("memberVO");
+	}
+	
+	boolean login_state = false;   
+	Object login_state_temp = session.getAttribute("login_state");
+	if(login_state_temp!=null){
+		login_state=(boolean)login_state_temp;
+	}
+	
+	if(login_state!=true){
 		session.setAttribute("location", "/CA102G4/front_end/attractions/attDetail.jsp");
-		session.setAttribute("att_no", request.getParameter("att_no"));
 		response.sendRedirect("/CA102G4/front_end/member/mem_login.jsp");
 		return;
 	}
+
 %>
 <jsp:useBean id="attVO" scope="request" type="com.attractions.model.AttractionsVO" />
 	
-<jsp:useBean id="memberVO" scope="session" type="com.mem.model.MemberVO"/>
-
 <html>
 <head>
 <!-- 網頁title -->
@@ -27,7 +36,7 @@
 <!-- //指定螢幕寬度為裝置寬度，畫面載入初始縮放比例 100% -->
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- 設定網頁keywords -->
-<meta name="keywords" content="TravleMaker,travlemaker,自助旅行" />
+<meta name="keywords" content="TravelMaker,Travelmaker,自助旅行" />
 <!-- //設定網頁keywords -->
 <!-- 隱藏iPhone Safari位址列的網頁 -->
 <script type="application/x-javascript">
@@ -68,6 +77,10 @@
 	rel='stylesheet' type='text/css'>
 <!-- //font字體 -->
 
+<!-- LogoIcon -->
+<link href="<%=request.getContextPath()%>/front_end/images/all/Logo_Black_use.png" rel="icon" type="image/png">
+<!-- //LogoIcon -->
+
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <script	src="<%=request.getContextPath()%>/front_end/js/all/bootstrap.js"></script>
 
@@ -83,19 +96,29 @@
 						<ul>
 							<li><i class="fa fa-phone" aria-hidden="true"></i> <a
 								href="tel:034257387"> 03-4257387</a></li>
-							<li><a href="mailto:TravleMaker@gmail.com"><i
+							<li><a href="mailto:TravelMaker@gmail.com"><i
 									class="fa fa-envelope" aria-hidden="true"></i>
-									TravleMaker@gmail.com</a></li>
+									TravelMaker@gmail.com</a></li>
 						</ul>
 					</div>
 					<div class="top-banner-right">
 						<ul>
-							<li><a class="top_banner" href="#"><i class="fa fa-user"
-									aria-hidden="true"></i></a></li>
-							<li><a class="top_banner" href="#"><i
-									class="fa fa-shopping-cart" aria-hidden="true"></i></a></li>
-							<li><a class="top_banner" href="#"><i
-									class="fa fa-envelope" aria-hidden="true"></i></a></li>
+							<li>
+								<a href="<%=request.getContextPath()%>/front_end/member/member.do?action=logout">
+									<span class=" top_banner">
+										<i class=" fas fa-sign-out-alt" aria-hidden="true"></i>
+									</span>
+								</a>
+							</li>
+							<li>
+								<a class="top_banner" href="<%=request.getContextPath()%>/front_end/personal_area/nal_area_home.jsp"><i class="fa fa-user" aria-hidden="true"></i></a>
+							</li>
+							<li>
+								<a class="top_banner" href="#"><i class="fa fa-shopping-cart" aria-hidden="true"></i></a>
+							</li>
+							<li>
+								<a class="top_banner" href="#"><i class="fa fa-envelope" aria-hidden="true"></i></a>
+							</li>
 						</ul>
 					</div>
 					<div class="clearfix"></div>
@@ -105,7 +128,7 @@
 				<div class="container">
 					<div class="logo">
 						<h1>
-							<a href="<%=request.getContextPath()%>/front_end/index.jsp">Travle Maker</a>
+							<a href="<%=request.getContextPath()%>/front_end/index.jsp">Travel Maker</a>
 						</h1>
 					</div>
 					<div class="top-nav">
@@ -132,8 +155,6 @@
 										href="<%=request.getContextPath()%>/front_end/ask/ask.html">問答區</a></li>
 									<li><a
 										href="<%=request.getContextPath()%>/front_end/galley/galley.html">照片牆</a></li>
-									<li><a
-										href="<%=request.getContextPath()%>/front_end/chat/chat.html">聊天室</a></li>
 									<li><a
 										href="<%=request.getContextPath()%>/front_end/togetger/together.html">揪團</a></li>
 									<li><a
@@ -273,7 +294,7 @@
 					</div>
 					<div class="footer-grid-info">
 						<ul>
-							<li><a href="about.html">關於Travle Maker</a></li>
+							<li><a href="about.html">關於Travel Maker</a></li>
 							<li><a href="about.html">聯絡我們</a></li>
 							<li><a href="about.html">常見問題</a></li>
 						</ul>
@@ -321,7 +342,7 @@
 			<div class="copyright">
 				<p>
 					Copyright &copy; 2018 All rights reserved <a href="<%=request.getContextPath()%>/front_end/index.jsp"
-						target="_blank" title="TravleMaker">TravleMaker</a>
+						target="_blank" title="TravelMaker">TravelMaker</a>
 				</p>
 			</div>
 		</div>

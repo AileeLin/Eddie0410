@@ -25,11 +25,48 @@ public interface MemberDAO_interface {
 	public List<MemberVO> getAll_member(String mem_Name);
 	//防止重覆註冊
 	MemberVO checkAccount(String mem_Account);
-	//使用信箱驗證
 	
 	public void delete(String mem_Id);
 	public List<MemberVO> getAll() ;
+	
+	//更改711地址 第一個
+	public void Mem_Update_Store1(MemberVO memberVO);
+	
+	//更改711地址 第二個
+	public void Mem_Update_Store2(MemberVO memberVO);
+		
+	//更改711地址 第三個
+	public void Mem_Update_Store3(MemberVO memberVO);
+	
+	//刪除711地址 第一個
+	public void Mem_Delete_Store1(String mem_Id);
+		
+	//刪除711地址 第二個
+	public void Mem_Delete_Store2(String mem_Id);
+			
+	//刪除711地址 第三個
+	public void Mem_Delete_Store3(String mem_Id);
 
+
+	//更改宅配地址 第一個
+	public void Mem_Update_Home1(MemberVO memberVO);
+	
+	//更改宅配地址 第二個
+	public void Mem_Update_Home2(MemberVO memberVO);
+		
+	//更改宅配地址 第三個
+	public void Mem_Update_Home3(MemberVO memberVO);
+	
+	//刪除宅配地址 第一個
+	public void Mem_Delete_Home1(String mem_Id);
+		
+	//刪除宅配地址 第二個
+	public void Mem_Delete_Home2(String mem_Id);
+			
+	//刪除宅配地址 第三個
+	public void Mem_Delete_Home3(String mem_Id);
+
+	
 		
 //	public void Mem_Forget_Password(String mem_Account,String mem_Password);
 //

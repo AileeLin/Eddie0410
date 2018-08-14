@@ -24,16 +24,10 @@ public class photo_reportService {
 		return photo_reportVO;
 	}
 	
-	public Photo_reportVO updatephotoreport(Integer pho_Rep_Stats, String photo_No,String mem_Id) {
-		Photo_reportVO photo_reportVO = new Photo_reportVO();
+	public void update_review_State(String mem_Id,String photo_No,Integer pho_Rep_Stats) {
 		
-		photo_reportVO.setPho_Rep_Stats(pho_Rep_Stats);
-		photo_reportVO.setPhoto_No(photo_No);
-		photo_reportVO.setMem_Id(mem_Id);
-		
-		dao.update(photo_reportVO);
+		dao.update_review_State(mem_Id,photo_No,pho_Rep_Stats);
 
-		return photo_reportVO;
 	}
 	
 	public List<Photo_reportVO> getAll(){

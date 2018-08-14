@@ -254,8 +254,8 @@ public class TripServlet extends HttpServlet {
 				
 				String traTrip_note = req.getParameter("traTrip_note");
 				
-				System.out.println("traTrip_start:"+ traTrip_start );
-				System.out.println("traTrip_end:"+ traTrip_end );
+//				System.out.println("traTrip_start:"+ traTrip_start );
+//				System.out.println("traTrip_end:"+ traTrip_end );
 				
 				if(!errorMsgs.isEmpty()) {
 					RequestDispatcher failureView = req.getRequestDispatcher("/front_end/trip/tripEdit.jsp");
@@ -316,8 +316,8 @@ public class TripServlet extends HttpServlet {
 				Integer attTrip_start = startHour*60+startMin;
 				Integer attTrip_end = endHour*60+endMin;
 				
-				System.out.println("attTrip_start:"+ attTrip_start );
-				System.out.println("attTrip_end:"+ attTrip_end );
+//				System.out.println("attTrip_start:"+ attTrip_start );
+//				System.out.println("attTrip_end:"+ attTrip_end );
 				
 				Integer attTrip_cost = (req.getParameter("attTrip_cost").isEmpty()?0:Integer.parseInt(req.getParameter("attTrip_cost")));
 				
@@ -345,10 +345,11 @@ public class TripServlet extends HttpServlet {
 				detailList.add(attTripVO);
 				//list放到map
 				tripDayMap.put(belongDays, detailList);
-				int count=0;
-				for(Map.Entry<Integer, List<Object>> entry : tripDayMap.entrySet()) {
-					System.out.println("第"+(++count)+"天有"+entry.getValue().size()+"個行程");
-				}
+				
+//				int count=0;
+//				for(Map.Entry<Integer, List<Object>> entry : tripDayMap.entrySet()) {
+//					System.out.println("第"+(++count)+"天有"+entry.getValue().size()+"個行程");
+//				}
 				/***************************3.新增完成,準備轉交(Send the Success view)***********/
 				session.setAttribute("tripDayMap", tripDayMap);
 				RequestDispatcher successView = req.getRequestDispatcher("/front_end/trip/tripEdit.jsp");
@@ -396,10 +397,11 @@ public class TripServlet extends HttpServlet {
 				}
 				//list放到map
 				tripDayMap.put(belongDays, detailList);
-				int count=0;
-				for(Map.Entry<Integer, List<Object>> entry : tripDayMap.entrySet()) {
-					System.out.println("第"+(++count)+"天有"+entry.getValue().size()+"個行程");
-				}
+				
+//				int count=0;
+//				for(Map.Entry<Integer, List<Object>> entry : tripDayMap.entrySet()) {
+//					System.out.println("第"+(++count)+"天有"+entry.getValue().size()+"個行程");
+//				}
 				/***************************3.刪除完成,準備轉交(Send the Success view)***********/
 				session.setAttribute("tripDayMap", tripDayMap);
 				RequestDispatcher successView = req.getRequestDispatcher("/front_end/trip/tripEdit.jsp");
@@ -464,10 +466,11 @@ public class TripServlet extends HttpServlet {
 
 				//list放到map
 				tripDayMap.put(belongDays, detailList);
-				int count=0;
-				for(Map.Entry<Integer, List<Object>> entry : tripDayMap.entrySet()) {
-					System.out.println("第"+(++count)+"天有"+entry.getValue().size()+"個行程");
-				}
+				
+//				int count=0;
+//				for(Map.Entry<Integer, List<Object>> entry : tripDayMap.entrySet()) {
+//					System.out.println("第"+(++count)+"天有"+entry.getValue().size()+"個行程");
+//				}
 				/***************************3.修改完成,準備轉交(Send the Success view)***********/
 				session.setAttribute("tripDayMap", tripDayMap);
 				RequestDispatcher successView = req.getRequestDispatcher("/front_end/trip/tripEdit.jsp");

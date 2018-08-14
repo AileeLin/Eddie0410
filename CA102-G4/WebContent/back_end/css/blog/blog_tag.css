@@ -97,6 +97,7 @@ a.item:hover, a.item:focus, a.item:active {
 	width: 30%;
 	margin: 0 auto !important;
 	text-align: center;
+	font-family:'Oswald','Noto Sans TC', sans-serif;
 }
 
 .page_info {

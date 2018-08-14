@@ -21,4 +21,9 @@ public interface GrpDAO_interface {
 
 	//取得我開揪團的內容(不論狀態0123)
 	List<GrpVO> getAll_ByMemID(String mem_Id);
+	
+	//成團後更改揪團狀態(=2成團)
+	public void update_status(GrpVO grpVO);
+
+
 }

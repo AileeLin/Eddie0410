@@ -30,25 +30,23 @@ public class QuestionDAO implements QuestionDAO_interface{
 		
 		private static final String UPDATE_STMT = "UPDATE QUESTION SET MEM_ID=?, QUESTION_CONTENT=?, BUILD_DATE=? Q_STATE=? WHERE QUESTION_ID = ?";
 		
-		private static final String DELETE_STMT = "DELETE FROM QUESTION WHERE QUESTION_ID = ?";
+		private static final String UPDATE = "UPDATE QUESTION SET  Q_STATE=? WHERE QUESTION_ID = ?";
+		
+		private static final String DELETE_STMT = "DELETE FROM QUESTION WHERE QUESTION_ID =? ";
 		private static final String FIND_BY_PK = "SELECT * FROM QUESTION WHERE QUESTION_ID = ?";
-		private static final String GET_ALL = "SELECT * FROM QUESTION";
+		private static final String GET_ALL = "SELECT * FROM QUESTION ORDER BY QUESTION_ID DESC";
 		
-		private static final String FIND_BY_STATE = "SELECT * FROM QUESTION WHERE Q_STATE= 0";
+		private static final String FIND_BY_STATE = "SELECT * FROM QUESTION WHERE Q_STATE= 0 ORDER BY QUESTION_ID DESC";
 		
-		//更改問答區的狀態
-		private static final String UPDATE_ON_STATE_STMT=
-			"UPDATE QUESTION SET PHOTO_STA = 1 WHERE MEM_ID=? AND QUESTION_ID=?";
-		private static final String UPDATE_OFF_STATE_STMT=
-			"UPDATE QUESTION SET PHOTO_STA = 0 WHERE MEM_ID=? AND QUESTION_ID=?";
-
+		// 世銘打的
+		private static final String FIND_BY_KEYWORD_STMT = "SELECT * FROM QUESTION WHERE UPPER(QUESTION_CONTENT) LIKE UPPER(?)";
 
 		@Override
 		public int insert(QuestionVO questionVO) {
 			int updateCount = 0;
 			Connection con = null;
 			PreparedStatement pstmt = null;
-			System.out.println("Connecting to database successfully! (連線成功！)");
+			System.out.println("Connecting to database successfully! (��蝺����)");
 
 			try {
 
@@ -59,7 +57,7 @@ public class QuestionDAO implements QuestionDAO_interface{
 				pstmt.setString(1, questionVO.getMem_id());
 				pstmt.setString(2, questionVO.getQuestion_content());
 				pstmt.setDate(3, questionVO.getBuild_date());
-				pstmt.setInt(4, questionVO.getQ_state());
+				
 				updateCount = pstmt.executeUpdate();
 
 				// Handle any SQL errors
@@ -143,7 +141,7 @@ public class QuestionDAO implements QuestionDAO_interface{
 				pstmt = con.prepareStatement(DELETE_STMT);
 				
 				pstmt.setString(1, question_id);
-
+				
 				updateCount = pstmt.executeUpdate();
 
 
@@ -294,17 +292,17 @@ public class QuestionDAO implements QuestionDAO_interface{
 
 				con = ds.getConnection();
 
-				// 1●設定於 pstm.executeUpdate()之前
+				// 1��身摰 pstm.executeUpdate()銋��
 				con.setAutoCommit(false);
 
-				// 先新增問題
+				// ��憓���
 				String[] colname= {"QUESTION_ID"};
 				pstmt = con.prepareStatement(INSERT_STMT,colname);
 				
 				pstmt.setString(1, questionVO.getMem_id());
 				pstmt.setString(2, questionVO.getQuestion_content());
 				pstmt.setDate(3, questionVO.getBuild_date());
-				pstmt.setInt(4, questionVO.getQ_state());
+
 				
 				updateCount = pstmt.executeUpdate();
 				ResultSet rs = pstmt.getGeneratedKeys();
@@ -313,7 +311,7 @@ public class QuestionDAO implements QuestionDAO_interface{
 					questionVOkey = rs.getString(1);
 				}
 				System.out.println(questionVOkey);
-				// 再新增分類清單
+				// ��憓���
 				for(Qa_classificationVO qa_classificationVO :list) {
 					pstmt = con.prepareStatement(INSERT_STMT1);
 					pstmt.setString(1,qa_classificationVO.getList_id());
@@ -322,7 +320,7 @@ public class QuestionDAO implements QuestionDAO_interface{
 				}
 				
 
-				// 2●設定於 pstm.executeUpdate()之後
+				// 2��身摰 pstm.executeUpdate()銋��
 				con.commit();
 				con.setAutoCommit(true);
 
@@ -331,7 +329,7 @@ public class QuestionDAO implements QuestionDAO_interface{
 			} catch (SQLException se) {
 				if (con != null) {
 					try {
-						// 3●設定於當有exception發生時之catch區塊內
+						// 3��身摰���xception�����atch��憛
 						con.rollback();
 					} catch (SQLException excep) {
 						throw new RuntimeException("rollback error occured. "
@@ -356,84 +354,14 @@ public class QuestionDAO implements QuestionDAO_interface{
 					}
 				}
 			}
-			
-			
-		}
-		
-		@Override
-		public int update_State(String mem_id, String question_id, Integer q_state) {
-			Connection con = null ;
-			PreparedStatement pstmt= null;
-			int count=0;
-			if(q_state == 1) {
-				try {
-					con=ds.getConnection();
-					pstmt=con.prepareStatement(UPDATE_ON_STATE_STMT);
-					
-					pstmt.setString(1,mem_id);
-					pstmt.setString(2,question_id);
-					
-					
-					count=pstmt.executeUpdate();
-					
-				}catch(SQLException se) {
-					throw new RuntimeException("資料庫發生錯誤"+se.getMessage());
-				}finally {
-					if(pstmt != null) {
-						try {
-							pstmt.close();
-						}catch(SQLException se) {
-							se.printStackTrace(System.err);
-						}
-					}
-					
-					if(con != null) {
-						try {
-						  con.close();
-						}catch(Exception e) {
-						  e.printStackTrace(System.err);
-						}
-					}
-				}
-				
-			}else if(q_state == 0) {		
-				try {
 
-					con=ds.getConnection();
-					pstmt=con.prepareStatement(UPDATE_OFF_STATE_STMT);
-					
-					pstmt.setString(1,mem_id);
-					pstmt.setString(2,question_id);
-					
-					count=pstmt.executeUpdate();
-					
-				}catch(SQLException se) {
-					throw new RuntimeException("資料庫發生錯誤"+se.getMessage());
-				}finally {
-					if(pstmt != null) {
-						try {
-							pstmt.close();
-						}catch(SQLException se) {
-							se.printStackTrace(System.err);
-						}
-					}
-					
-					if(con != null) {
-						try {
-						  con.close();
-						}catch(Exception e) {
-						  e.printStackTrace(System.err);
-						}
-					}
-				}
-				
-				
-			}
-			return count;
+			
 		}
 		
+		
 		@Override
-		public QuestionVO findByState() {
+		public List<QuestionVO> find_by_State() {
+			List<QuestionVO> list = new ArrayList<QuestionVO>();
 			QuestionVO question = null;
 			Connection con = null;
 			PreparedStatement pstmt = null;
@@ -441,21 +369,20 @@ public class QuestionDAO implements QuestionDAO_interface{
 
 			try {
 
-
 				con = ds.getConnection();
 				pstmt = con.prepareStatement(FIND_BY_STATE);
 				
 				rs = pstmt.executeQuery();
 				
-				rs.next();
-				question = new QuestionVO();
-				System.out.println(rs.getString("question_id"));
-				question.setQuestion_id(rs.getString("question_id"));
-				question.setMem_id(rs.getString("mem_id"));
-				question.setQuestion_content(rs.getString("question_content"));
-				question.setBuild_date(rs.getDate("build_date"));
-				question.setQ_state(rs.getInt("q_state"));
-
+				while (rs.next()) {
+					question = new QuestionVO();
+					question.setQuestion_id(rs.getString("question_id"));
+					question.setMem_id(rs.getString("mem_id"));
+					question.setQuestion_content(rs.getString("question_content"));
+					question.setBuild_date(rs.getDate("build_date"));
+					question.setQ_state(rs.getInt("q_state"));
+					list.add(question);
+				}
 				
 				// Handle any SQL errors
 			} catch (SQLException se) {
@@ -485,8 +412,107 @@ public class QuestionDAO implements QuestionDAO_interface{
 					}
 				}
 			}
-			return question;
-
+			return list;
 		}
 		
+		@Override
+		public int updateQ(QuestionVO questionVO) {
+			int updateCount = 0;
+			Connection con = null;
+			PreparedStatement pstmt = null;
+			
+			try {
+				
+
+				con = ds.getConnection();
+				pstmt = con.prepareStatement(UPDATE);
+				
+				
+				pstmt.setInt(1, questionVO.getQ_state());
+				pstmt.setString(2, questionVO.getQuestion_id());
+
+				
+				updateCount = pstmt.executeUpdate();
+
+				// Handle any SQL errors
+			} catch (SQLException se) {
+				throw new RuntimeException("A database error occured. " + se.getMessage());
+				// Clean up JDBC resources
+			}
+			finally {
+				if (pstmt != null) {
+					try {
+						pstmt.close();
+					} catch (SQLException se) {
+						se.printStackTrace(System.err);
+					}
+				}
+				if (con != null) {
+					try {
+						con.close();
+					} catch (Exception e) {
+						e.printStackTrace(System.err);
+					}
+				}
+			}
+			return updateCount;
+		}
+		
+		// 世銘打的
+		@Override
+		public List<QuestionVO> findByKeyword(String keyword) {
+			List<QuestionVO> list = new ArrayList<QuestionVO>();
+			QuestionVO question = null;
+			Connection con = null;
+			PreparedStatement pstmt = null;
+			ResultSet rs = null;
+
+			try {
+
+				con = ds.getConnection();
+				pstmt = con.prepareStatement(FIND_BY_KEYWORD_STMT);
+				pstmt.setString(1, "%"+keyword+"%");
+				
+				rs = pstmt.executeQuery();
+				
+				while (rs.next()) {
+					question = new QuestionVO();
+					question.setQuestion_id(rs.getString("question_id"));
+					question.setMem_id(rs.getString("mem_id"));
+					question.setQuestion_content(rs.getString("question_content"));
+					question.setBuild_date(rs.getDate("build_date"));
+					question.setQ_state(rs.getInt("q_state"));
+					list.add(question);
+				}
+				
+				// Handle any SQL errors
+			} catch (SQLException se) {
+				throw new RuntimeException("A database error occured. "
+						+ se.getMessage());
+				// Clean up JDBC resources
+			} finally {
+				if (rs != null) {
+					try {
+						rs.close();
+					} catch (SQLException se) {
+						se.printStackTrace(System.err);
+					}
+				}
+				if (pstmt != null) {
+					try {
+						pstmt.close();
+					} catch (SQLException se) {
+						se.printStackTrace(System.err);
+					}
+				}
+				if (con != null) {
+					try {
+						con.close();
+					} catch (Exception e) {
+						e.printStackTrace(System.err);
+					}
+				}
+			}
+			return list;
+		}
 	}

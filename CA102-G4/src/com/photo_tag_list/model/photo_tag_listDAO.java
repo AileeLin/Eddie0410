@@ -13,11 +13,11 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
-public class photo_tag_listDAO implements Photo_tag_listDAO_interface {
+public class Photo_tag_listDAO implements Photo_tag_listDAO_interface {
 	
 	//用照片標籤編號找照片(編號)
 	private static final String GET_PHOTO_NO =
-			"SELECT PHOTO_NO FROM PHOTO_TAG_LIST WHERE PHOTO_TAG_NO = ?";
+			"SELECT * FROM PHOTO_TAG_LIST WHERE PHOTO_NO = ?";
 
 	//以下還沒用到
 	private static final String INSERT_STMT =
@@ -25,8 +25,10 @@ public class photo_tag_listDAO implements Photo_tag_listDAO_interface {
 			+ " (?,?)";
 	private static final String DELETE_PHOTO_TAG_LIST = 
 			"DELETE FROM PHOTO_TAG_LIST WHERE PHOTO_TAG_NO= ?";
+	
 	private static final String GET_ONE_STMT =
-			"SELECT * FROM PHOTO_TAG_LIST WHERE PHOTO_TAG_NO = ?";	
+			"SELECT * FROM PHOTO_TAG_LIST WHERE PHOTO_TAG_NO = ?";
+	
 	private static final String GET_ALL_STMT =
 			"SELECT * FROM PHOTO_TAG_LIST ORDER BY PHOTO_TAG_NO";
 	//
@@ -45,7 +47,7 @@ public class photo_tag_listDAO implements Photo_tag_listDAO_interface {
 	//用照片標籤編號找照片(編號)
 
 	@Override
-	public List<Photo_tag_listVO> getAll_Photo_No(String photo_Tag_No) {
+	public List<Photo_tag_listVO> getAll_Photo_No(String photo_No) {
 		List<Photo_tag_listVO> list = new ArrayList<Photo_tag_listVO>();
 		Photo_tag_listVO photo_tag_listVO = null;
 		Connection con = null;
@@ -57,13 +59,13 @@ public class photo_tag_listDAO implements Photo_tag_listDAO_interface {
 
 				pstmt = con.prepareStatement(GET_PHOTO_NO);
 				
-				pstmt.setString(1, photo_Tag_No);
+				pstmt.setString(1, photo_No);
 				
 				rs = pstmt.executeQuery();
 
 				while (rs.next()) {
 					photo_tag_listVO = new Photo_tag_listVO();
-//					photo_tag_listVO.setPhoto_Tag_No(rs.getString("PHOTO_TAG_NO"));
+					photo_tag_listVO.setPhoto_Tag_No(rs.getString("PHOTO_TAG_NO"));
 					photo_tag_listVO.setPhoto_No(rs.getString("PHOTO_NO"));
 
 					list.add(photo_tag_listVO); // Store the row in the list
@@ -123,6 +125,9 @@ public class photo_tag_listDAO implements Photo_tag_listDAO_interface {
 				photo_tag_listVO = new Photo_tag_listVO();
 				photo_tag_listVO.setPhoto_Tag_No(rs.getString("PHOTO_TAG_NO"));
 				photo_tag_listVO.setPhoto_No(rs.getString("PHOTO_NO"));
+				
+				System.out.println(photo_Tag_No+photo_No);
+
 			}
 
 			// Handle any driver errors

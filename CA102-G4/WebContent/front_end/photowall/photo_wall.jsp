@@ -1,13 +1,13 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page import="com.photo_wall.model.*"%>
+<%@ page import="com.photo_tag.model.*"%>
 <%@ page import="com.mem.model.*"%>
 <%@ page import="java.util.*"%>
 
 <%	
-	MemberVO memberVO = (MemberVO)request.getAttribute("memberVO");
+	MemberVO memberVO = (MemberVO)session.getAttribute("memberVO");
 	
-
 	String login,logout;
 	if(memberVO != null){		
 		login = "display:none;";
@@ -27,8 +27,7 @@
  	List<Photo_wallVO> list = photo_wallSvc.getAll();
  	pageContext.setAttribute("list", list);
  	
- 	
- 	
+	
 %>
 
 <!DOCTYPE html>
@@ -36,14 +35,14 @@
 
 <head>
     <!-- 網頁title -->
-    <title>Travle Maker</title>
+    <title>Travel Maker</title>
     <!-- //網頁title -->
     <!-- 指定螢幕寬度為裝置寬度，畫面載入初始縮放比例 100% -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- //指定螢幕寬度為裝置寬度，畫面載入初始縮放比例 100% -->
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <!-- 設定網頁keywords -->
-    <meta name="keywords" content="TravleMaker,travlemaker,自助旅行,照片牆" />
+    <meta name="keywords" content="TravelMaker,Travelmaker,自助旅行,照片牆" />
     <!-- //設定網頁keywords -->
     <!-- 隱藏iPhone Safari位址列的網頁 -->
     <script type="application/x-javascript">
@@ -89,7 +88,7 @@
     <link href='https://fonts.googleapis.com/css?family=Oswald:400,700,300' rel='stylesheet' type='text/css'>
     <link href='https://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css'>
     <!-- //font字體 -->
-		
+
 </head>
 
 <body>
@@ -109,13 +108,18 @@
                         
                      <ul>
                         <li>
-                        	<%= (login_state)? 
-                        	"<a href=\"/CA102G4/front_end/member/member.do?action=logout\"><span class=\" top_banner\"><i class=\" fas fa-sign-out-alt\" aria-hidden=\"true\"></i></span></a>"
-                        	:"<a href=\"/CA102G4/front_end/member/mem_login.jsp\"><span class=\" top_banner\"><i class=\" fa fa-user\" aria-hidden=\"true\"></i></span></a>"%>
-                        </li>
-                	
-                    
-                        <li style="<%= logout %>"><a class="top_banner" href="member/select_page.jsp"><i class="fa fa-user" aria-hidden="true"></i></a></li>
+                        	<!-- 判斷是否登入，若有登入將會出現登出按鈕 -->
+                         <c:choose>
+                          <c:when test="<%=login_state %>">
+                           <a href="<%= request.getContextPath()%>/front_end/member/member.do?action=logout"><span class=" top_banner"><i class=" fas fa-sign-out-alt" aria-hidden="true"></i></span></a>
+                          </c:when>
+                          <c:otherwise>
+                           <a href="<%= request.getContextPath()%>/front_end/member/mem_login.jsp"><span class="top_banner"><i class=" fa fa-user" aria-hidden="true"></i></span></a>
+                          </c:otherwise>
+                         </c:choose>
+                         </li>
+                         
+                        <li style="<%= logout %>"><a class="top_banner" href="<%=request.getContextPath()%>/front_end/personal_area_home.html"><i class="fa fa-user" aria-hidden="true"></i></a></li>
                         
                         <li><a class="top_banner" href="#"><i class="fa fa-shopping-cart" aria-hidden="true"></i></a></li>
                         <li><a class="top_banner" href="#"><i class="fa fa-envelope" aria-hidden="true"></i></a></li>
@@ -140,17 +144,15 @@
                         <!-- Collect the nav links, forms, and other content for toggling -->
                         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                             <ul class="nav navbar-nav">
-                                <li><a href="news.html">最新消息</a></li>
-                                <li><a href="tour.html">景點介紹</a></li>
-                                <li><a href="plan.html">行程規劃</a></li>
-                                <li><a href="blog.html">旅遊記</a></li>
-                                <li><a href="ask.html">問答區</a></li>
-                                <li><a href="galley.html">照片牆</a></li>
-                                <li><a href="chat.html">聊天室</a></li>
-                                <li><a href="together.html">揪團</a></li>
-                                <li><a href="buy.html">交易平台</a></li>
-                                <li><a href="advertisement.html">專欄</a></li>
-
+                                <li><a href="<%=request.getContextPath()%>/front_end/news/news.jsp">最新消息</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/attractions/att.jsp">景點介紹</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/trip/trip.jsp">行程規劃</a></li>
+                                <li><a href="<%=request.getContextPath()%>/blog.index">旅遊記</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/question/question.jsp">問答區</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/photowall/photo_wall.jsp">照片牆</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/grp/grpIndex.jsp">揪團</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/store/store.jsp">交易平台</a></li>
+                                <li><a href="<%=request.getContextPath()%>/front_end/ad/ad.jsp">專欄</a></li>
                                 <div class="clearfix"> </div>
                             </ul>
                         </div>
@@ -180,12 +182,16 @@
     
 <!--  </div> /.col-lg-6 -->
   <div class="col-lg-6 col-lg-offset-3">
+  	<form method="post" action="<%=request.getContextPath() + "/photo_wall.do"%>">
     <div class="input-group">
-      <input type="text" class="form-control">
+      <input type="text" name="tag_Content" placeholder="搜尋地點 ..." class="form-control">
       <span class="input-group-btn">
-        <button class="btn btn-default" type="button">搜尋</button>
+        <button class="btn btn-default" type="submit">搜尋</button>
+        <input type="hidden" name="action" value="get_Keyword">
       </span>
     </div><!-- /input-group -->
+<%--    	 	<jsp:include page="get_one_member.jsp" flush="true" /> --%>
+    </form>
   </div><!-- /.col-lg-6 -->
 </div><!-- /.row -->
     
@@ -193,6 +199,7 @@
     <section>
         <div class="container gal-container">
           <c:forEach var="photo_wallVO" items="${list}">
+        	<c:if test="${photo_wallVO.photo_Sta == 1 }">
         
             <div class="col-md-4 col-sm-12 co-xs-12 gal-item ">
                 <div class="box">
@@ -201,6 +208,7 @@
                 	</a>
                 </div>
             </div>
+            </c:if>
              </c:forEach>
 
     </section>  

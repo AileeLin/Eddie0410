@@ -50,8 +50,14 @@
 	List<blogVO> blogList=blogSvc.findByMemId(memberVO.getMem_Id());
 	pageContext.setAttribute("blogList", blogList);
 	
-	/***************取出登入者的行程且狀態不為0的******************/
-	List<TripVO> TripList = tripSvc.getByMem_id(memberVO.getMem_Id());
+	/***************取出登入者的行程且狀態不為0的 又分1未發表 2已發表(0814在改)*********/
+	List<TripVO> allTripList = tripSvc.getByMem_id(memberVO.getMem_Id());
+	List<TripVO> TripList = new ArrayList<>();
+	for(TripVO tripVO : allTripList){
+		if(tripVO.getTrip_status() == 2){
+			TripList.add(tripVO);		
+		}
+	}
 	pageContext.setAttribute("TripList",TripList);
 	
 	//*****************聊天用：取得登錄者所參與的群組聊天*************/
@@ -153,7 +159,7 @@
     
 </head>
 
-<body onload="connect();">
+<body>
 	<%-- 錯誤表列 --%>
 	<c:if test="${not empty errorMsgs}">
 		<div class="modal fade" id="errorModal">

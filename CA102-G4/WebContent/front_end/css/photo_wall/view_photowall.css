@@ -231,7 +231,6 @@ body > div.container > div > div > div > div.details.col-md-6 > div.rating > div
 
 body > div.container > div > div > div > div.details.col-md-6 > div.profile_all > div.profile_photo > img{
         border-radius:50px;
-        margin-left: 10px;
 }
 .profile_photo_hr_btn{
     width: 100px;
@@ -265,7 +264,6 @@ body > div.container > div > div > div > div.details.col-md-6 > div.rating > div
 .like_heart_position{
     background-color:white;
     border:none;
-    margin-left:50px;
     outline:none;
 }
 

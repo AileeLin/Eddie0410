@@ -49,19 +49,18 @@ public class FriServlet extends HttpServlet {
 					errorMsgs.add("錯誤：登入者好友的會員ID null!");
 				}
 				
-				if(!errorMsgs.isEmpty()) {
+				/***************新增前置作業，確認是是否重複新增???**********************/
+				FriendService friSvc = new FriendService();
+				Friend relationship = friSvc.findRelationship(meId, friId);
+				
+				if(relationship != null || (!errorMsgs.isEmpty())) {
 					RequestDispatcher failureView = req.getRequestDispatcher("/front_end/personal_area/personal_area_public.jsp?uId="+friId);
 					failureView.forward(req, res);
 					return;
 				}
+				/****************2.確認資料無誤，開始新增好友關係(狀態要設成待確認)**********************/		
 				
-				/****************2.確認資料無誤，開始新增好友關係(狀態要設成待確認)**********************/
-				FriendService friSvc = new FriendService();
 				friSvc.insertFri(meId,friId,1);
-				
-				/***************這邊要發通知給對話!!!!!!!!!!!!!!!!!!!!!!!**********************/
-				
-				
 				
 				/****************3.準備轉交**********************/
 				RequestDispatcher successView = req.getRequestDispatcher("/front_end/personal_area/personal_area_public.jsp?uId="+friId);

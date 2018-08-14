@@ -46,7 +46,7 @@ public class Photo_wallDAO implements Photo_wallDAO_interface {
 	//***************為了讀取某位會員的照片***********************
 	private static final String GET_ALL_BYMEMID=
 		"SELECT * FROM PHOTO_WALL WHERE MEM_ID = ? AND PHOTO_STA = 1";
-	
+	//用照片
 	
 	//取得照片牆所有資訊
 	@Override

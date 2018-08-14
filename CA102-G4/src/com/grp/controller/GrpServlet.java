@@ -281,10 +281,8 @@ public class GrpServlet extends HttpServlet {
 					errorMsgs.add("圖片格式不符(.jpg/jpeg/bmp/gif/png)。");
 				}
 				
-				System.out.println("圖片是grp_Photo="+pic);
-
-				
-				
+				System.out.println("圖片是grp_Photo="+pic);			
+						
 				GrpVO grpVO = new GrpVO();
 				
 				grpVO.setGrp_Id(grp_Id);
@@ -295,7 +293,7 @@ public class GrpServlet extends HttpServlet {
 				grpVO.setGrp_Acpt(grp_Acpt);
 				grpVO.setTrip_Details(trip_Details);
 				grpVO.setGrp_Photo(pic);
-				
+
 				
 				if (!errorMsgs.isEmpty()) {
 					req.setAttribute("grpVO", grpVO); // 含有輸入格式錯誤的empVO物件,也存入req
@@ -395,11 +393,56 @@ public class GrpServlet extends HttpServlet {
 			}
 		}
 	   	
-	   	
-	   	
+
+	//更改揪團狀態  成團(變成2)或失敗(被檢舉變成3)
+	if ("update_grp_status".equals(action)) { 
+    	System.out.println("出團囉別睡過頭");
+		List<String> errorMsgs = new LinkedList<String>();
+		req.setAttribute("errorMsgs", errorMsgs);
+
+		try {
+			/***************************1.接收請求參數 - 輸入格式的錯誤處理**********************/
+			String grp_Id = req.getParameter("grp_Id");
+			System.out.println("grp_Id="+grp_Id);
+			
+			Integer grp_Status = Integer.valueOf(req.getParameter("grp_Status"));
 	
+			GrpVO grpVO = new GrpVO();
+			
+			grpVO.setGrp_Id(grp_Id);
+			grpVO.setGrp_Status(grp_Status);
+			
+			if (!errorMsgs.isEmpty()) {
+				req.setAttribute("grpVO", grpVO); // 含有輸入格式錯誤的empVO物件,也存入req
+				System.out.println("失敗囉");
+				RequestDispatcher failureView = req
+						.getRequestDispatcher("/front_end/grp/personal_grp_review.jsp");
+				failureView.forward(req, res);
+				return; //程式中斷			
+			}
+			
+			/***************************2.開始修改資料*****************************************/
+			
+			GrpService grpSvc = new GrpService();
+				grpSvc.update_status(grp_Id,grp_Status);
+			
+			/***************************3.修改完成,準備轉交(Send the Success view)*************/
+
+			req.setAttribute("grpVO", grpVO); 
+			String url = "/front_end/grp/personal_grp_review.jsp";
+			RequestDispatcher successView = req.getRequestDispatcher(url);
+			successView.forward(req, res);
+//			System.out.println("大師兄回來了");
+			/***************************其他可能的錯誤處理*************************************/
+		} catch (Exception e) {
+			errorMsgs.add("修改資料失敗:"+e.getMessage());
+			RequestDispatcher failureView = req
+					.getRequestDispatcher("/front_end/grp/personal_grp_review.jsp");
+			failureView.forward(req, res);
 		}
-	   	
+	}
+	
+	}
 	   	public String getFileNameFromPart(Part part) {
 			String header = part.getHeader("content-disposition");
 			// System.out.println("header=" + header); // 測試用

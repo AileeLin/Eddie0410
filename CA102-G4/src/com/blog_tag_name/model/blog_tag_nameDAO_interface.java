@@ -13,4 +13,6 @@ public interface blog_tag_nameDAO_interface {
 	public List<blog_tag_nameVO> getAllBytagClass(String blog_tag_nameVO);
 	
 	public List<blog_tag_nameVO> getAll();
+	
+	public blog_tag_nameVO findByBtn_id(String btn_id);
 }

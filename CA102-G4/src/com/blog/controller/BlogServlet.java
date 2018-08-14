@@ -12,7 +12,9 @@ import com.blog_message_report.model.*;
 import com.blog_report.model.*;
 import com.blog_tag.model.*;
 import com.blog_tag_name.model.*;
-import com.mem.model.MemberVO;
+import com.grp.model.*;
+import com.mem.model.*;
+import com.question.model.*;
 import com.attractions.model.*;
 
 @MultipartConfig(maxFileSize = 50 * 1024 * 1024, maxRequestSize = 50 * 50 * 1024 * 1024)
@@ -33,7 +35,7 @@ public class BlogServlet extends HttpServlet {
 		// if(orderby==null)
 		// orderby="recent";
 
-		/*************************** 部落格文章依照發文日期由新到舊排列 ********************************/
+		/*************************** 旅遊記文章依照發文日期由新到舊排列 ********************************/
 
 		if ("recent".equals(orderby)) { // 選擇依照日期由新至舊排列
 			List<String> errorMsgs = new LinkedList<String>(); // 判斷關鍵字是不是搜尋標題/內容
@@ -74,18 +76,7 @@ public class BlogServlet extends HttpServlet {
 
 					/*************************** 2.開始查詢資料 *****************************************/
 
-					List<blogVO> list = blogSvc.getAllByNew();
 					Set<blog_tagVO> blogTagList = new LinkedHashSet<>();
-
-					if (list.isEmpty()) { // 如果list是空的代表沒有資料
-						errorMsgs.add("查無資料");
-					}
-
-					if (!errorMsgs.isEmpty()) { // 如果錯誤List不是空的就return，把錯誤資訊轉交到blog.jsp
-						RequestDispatcher failureView = req.getRequestDispatcher("/blog");
-						failureView.forward(req, res);
-						return;
-					}
 
 					List<blog_tag_nameVO> tagNameList = blogTagNameSvc.getAllBytagClass(keyword.trim()); // 把使用者輸入的keyword放到參數中取得list
 					if (tagNameList.isEmpty()) { // 如果list是空的代表沒有資料
@@ -99,7 +90,7 @@ public class BlogServlet extends HttpServlet {
 					}
 
 					List<blog_tagVO> tagList = blogTagSvc.getAll();
-					if (tagNameList.isEmpty()) { // 如果list是空的代表沒有資料
+					if (tagList.isEmpty()) { // 如果list是空的代表沒有資料
 						errorMsgs.add("查無文章");
 					}
 
@@ -108,12 +99,11 @@ public class BlogServlet extends HttpServlet {
 						failureView.forward(req, res);
 						return;
 					}
-
+					
 					for (int i = 0; i < tagList.size(); i++) {
-						for (int j = 0; j < tagNameList.size(); j++) {
-							if (tagList.get(i).getBtn_id().equals(tagNameList.get(j).getBtn_id())) {
-								blogTagList
-										.add(new blog_tagVO(tagList.get(i).getBlog_id(), tagList.get(i).getBtn_id()));
+							for (int j = 0; j < tagNameList.size(); j++) {
+								if ((tagList.get(i).getBtn_id().equals(tagNameList.get(j).getBtn_id())) && (blogSvc.findByPrimaryKey(tagList.get(i).getBlog_id()) != null)) {
+									blogTagList.add(new blog_tagVO(tagList.get(i).getBlog_id(), tagList.get(i).getBtn_id()));
 							}
 						}
 					}
@@ -160,7 +150,7 @@ public class BlogServlet extends HttpServlet {
 			}
 		}
 
-		/*************************** 部落格文章依照瀏覽數由多至少排列 ********************************/
+		/*************************** 旅遊記文章依照瀏覽數由多至少排列 ********************************/
 		if ("popular".equals(orderby)) {
 			List<String> errorMsgs = new LinkedList<String>(); // 判斷關鍵字是不是搜尋標題/內容
 			req.setAttribute("errorMsgs", errorMsgs);
@@ -200,18 +190,7 @@ public class BlogServlet extends HttpServlet {
 
 					/*************************** 2.開始查詢資料 *****************************************/
 
-					List<blogVO> list = blogSvc.getAllByHot();
 					Set<blog_tagVO> blogTagListHot = new LinkedHashSet<>();
-
-					if (list.isEmpty()) { // 如果list是空的代表沒有資料
-						errorMsgs.add("查無資料");
-					}
-
-					if (!errorMsgs.isEmpty()) { // 如果錯誤List不是空的就return，把錯誤資訊轉交到blog.jsp
-						RequestDispatcher failureView = req.getRequestDispatcher("/blog");
-						failureView.forward(req, res);
-						return;
-					}
 
 					List<blog_tag_nameVO> tagNameList = blogTagNameSvc.getAllBytagClass(keyword.trim()); // 把使用者輸入的keyword放到參數中取得list
 					if (tagNameList.isEmpty()) { // 如果list是空的代表沒有資料
@@ -237,9 +216,8 @@ public class BlogServlet extends HttpServlet {
 
 					for (int i = 0; i < tagList.size(); i++) {
 						for (int j = 0; j < tagNameList.size(); j++) {
-							if (tagList.get(i).getBtn_id().equals(tagNameList.get(j).getBtn_id())) {
-								blogTagListHot
-										.add(new blog_tagVO(tagList.get(i).getBlog_id(), tagList.get(i).getBtn_id()));
+							if ((tagList.get(i).getBtn_id().equals(tagNameList.get(j).getBtn_id()))  && (blogSvc.findByPrimaryKey(tagList.get(i).getBlog_id()) != null)) {
+								blogTagListHot.add(new blog_tagVO(tagList.get(i).getBlog_id(), tagList.get(i).getBtn_id()));
 							}
 						}
 					}
@@ -285,7 +263,7 @@ public class BlogServlet extends HttpServlet {
 			}
 		}
 
-		/*************************** 新增資料 **********************************/
+		/*************************** 新增旅遊記 **********************************/
 		if ("insert".equals(action)) { // 如果是送insert值代表按新增按鈕
 			List<String> errorMsgs = new LinkedList<String>();
 			req.setAttribute("errorMsgs", errorMsgs);
@@ -298,7 +276,19 @@ public class BlogServlet extends HttpServlet {
 				String mem_id = ((MemberVO)req.getSession().getAttribute("memberVO")).getMem_Id(); // 會員編號
 				Integer blog_views = 0; // 瀏覽次數預設給0
 				String[] btn_id = req.getParameterValues("tag"); // 取得選擇的tagID
-
+				
+				long token = Long.parseLong(req.getParameter("token")); //input送的token
+				long tokenSession = Long.parseLong(req.getSession().getAttribute("token")+""); //session存的token
+				
+				if(token==tokenSession) {
+					System.out.println("ok");
+					//如果是第一次送表單，產生新的token
+					req.getSession().setAttribute("token", System.currentTimeMillis());
+				}else {
+					res.sendRedirect(req.getContextPath()+"/blog.index");
+					return;
+				}
+									
 				// 封面照片
 				byte[] blog_coverimage = getPictureByteArray(req.getPart("travel_coverimage"));
 
@@ -546,7 +536,7 @@ public class BlogServlet extends HttpServlet {
 			}
 		}
 
-		/*************************** 部落格文章依照發文日期由新到舊排列 ********************************/
+		/*************************** 旅遊記文章依照發文日期由新到舊排列 ********************************/
 		if ("article".equals(action)) {
 			List<String> errorMsgs = new LinkedList<String>();
 			req.setAttribute("errorMsgs", errorMsgs);
@@ -578,19 +568,25 @@ public class BlogServlet extends HttpServlet {
 			}
 		}
 
-		/*************************** 收藏部落格文章 ********************************/
+		/*************************** 收藏旅遊記文章 ********************************/
 		if ("collect".equals(action)) {
 			res.setContentType("text/html;charset=UTF-8");
 			PrintWriter out = res.getWriter();
 			try {
 
 				/*************************** 1.接收請求參數 ***************************************/
-
+				MemberVO memVO =(MemberVO) req.getSession().getAttribute("memberVO");
 				String blog_id = req.getParameter("blog_id");
 				String mem_id = req.getParameter("mem_id");
-
+				String blog_id_Owner = req.getParameter("blog_id_Owner");
+				
 				/*************************** 2.開始增加收藏 ***************************************/
 
+				if(memVO.getMem_Id().equals(blog_id_Owner)) {
+					out.print("請不要收藏自己的文章!!");
+					return;
+				}
+				
 				blogCollectService blogSvc = new blogCollectService();
 				int cnt = blogSvc.findByPrimaryKey(mem_id, blog_id);
 
@@ -626,6 +622,19 @@ public class BlogServlet extends HttpServlet {
 				String mem_id = req.getParameter("mem_id");
 				String blog_message = req.getParameter("blog_message");
 				String scroll = req.getParameter("scroll");
+				
+				long token = Long.parseLong(req.getParameter("token")); //input送的token
+				long tokenSession = Long.parseLong(req.getSession().getAttribute("token")+""); //session存的token
+				
+				if(token==tokenSession) {
+					System.out.println("ok");
+					//如果是第一次送表單，產生新的token
+					req.getSession().setAttribute("token", System.currentTimeMillis());
+				}else {
+					res.sendRedirect(req.getContextPath()+"/blog.do?action=article&blogID="+blog_id);
+					return;
+				}
+				
 				/*************************** 2.開始新增留言 ***************************************/
 
 				blogMessageService blogMessageSvc = new blogMessageService();
@@ -649,7 +658,7 @@ public class BlogServlet extends HttpServlet {
 			}
 		}
 
-		/*************************** 新增部落格檢舉 ********************************/
+		/*************************** 新增旅遊記檢舉 ********************************/
 
 		if ("reportBlog".equals(action)) {
 			List<String> errorMsgs = new LinkedList<String>();
@@ -658,13 +667,40 @@ public class BlogServlet extends HttpServlet {
 			/*************************** 2.接收請求參數 ***************************************/
 
 			try {
-
+				
+				MemberVO memVO =(MemberVO) req.getSession().getAttribute("memberVO");
 				blog_id = req.getParameter("blog_id");
 				String mem_id = req.getParameter("mem_id");
 				String br_reason = req.getParameter("br_reason");
-
+				String blog_id_Owner = req.getParameter("blog_id_Owner");
+				
+				long token = Long.parseLong(req.getParameter("token")); //input送的token
+				long tokenSession = Long.parseLong(req.getSession().getAttribute("token")+""); //session存的token
+				
+				if(token==tokenSession) {
+					System.out.println("ok");
+					//如果是第一次送表單，產生新的token
+					req.getSession().setAttribute("token", System.currentTimeMillis());
+				}else {
+					res.sendRedirect(req.getContextPath()+"/blog.do?action=article&blogID="+blog_id);
+					return;
+				}
+				
 				/*************************** 2.開始新增檢舉資料 ***************************************/
 
+				if(memVO.getMem_Id().equals(blog_id_Owner)) {
+					errorMsgs.add("請不要檢舉自己的文章!");
+					errorMsgs.add("你是不是在找麻煩!");
+				}
+				
+				if (!errorMsgs.isEmpty()) {
+					RequestDispatcher failureView = req
+							.getRequestDispatcher("/front_end/blog/blog_article.jsp?action=article&blogID=" + blog_id);
+					failureView.forward(req, res);
+					return;
+				}
+				
+				
 				blogReportService blogReportSvc = new blogReportService();
 				blog_reportVO blog_reportVO = blogReportSvc.getOne(blog_id, mem_id);
 
@@ -692,7 +728,7 @@ public class BlogServlet extends HttpServlet {
 			}
 		}
 
-		/*************************** 新增部落格留言檢舉 ********************************/
+		/*************************** 新增旅遊記留言檢舉 ********************************/
 
 		if ("reportMessage".equals(action)) {
 			List<String> errorMsgs = new LinkedList<String>();
@@ -707,6 +743,18 @@ public class BlogServlet extends HttpServlet {
 				String mem_id = req.getParameter("mem_id");
 				String bmr_reason = req.getParameter("bmr_reason");
 
+				long token = Long.parseLong(req.getParameter("token")); //input送的token
+				long tokenSession = Long.parseLong(req.getSession().getAttribute("token")+""); //session存的token
+				
+				if(token==tokenSession) {
+					System.out.println("ok");
+					//如果是第一次送表單，產生新的token
+					req.getSession().setAttribute("token", System.currentTimeMillis());
+				}else {
+					res.sendRedirect(req.getContextPath()+"/blog.do?action=article&blogID="+blog_id);
+					return;
+				}
+				
 				/*************************** 2.開始新增檢舉資料 ***************************************/
 
 				blogMessageReportService blogMessageReportSvc = new blogMessageReportService();
@@ -772,7 +820,7 @@ public class BlogServlet extends HttpServlet {
 			}
 		}
 
-		/*************************** 會員管理自己的部落格文章 ********************************/
+		/*************************** 會員管理自己的旅遊記文章 ********************************/
 
 		if ("myBlog".equals(action)) {
 			List<String> errorMsgs = new LinkedList<String>();
@@ -824,7 +872,7 @@ public class BlogServlet extends HttpServlet {
 			}
 		}
 
-		/*************************** 會員查看管理收藏部落格文章頁面 ********************************/
+		/*************************** 會員查看管理收藏旅遊記文章頁面 ********************************/
 
 		if ("myCollect".equals(action)) {
 			List<String> errorMsgs = new LinkedList<String>();
@@ -877,7 +925,7 @@ public class BlogServlet extends HttpServlet {
 			}
 		}
 
-		/*************************** 會員刪除收藏的部落格文章 ********************************/
+		/*************************** 會員刪除收藏的旅遊記文章 ********************************/
 
 		if ("delCollect".equals(action)) {
 			List<String> errorMsgs = new LinkedList<String>();
@@ -963,7 +1011,7 @@ public class BlogServlet extends HttpServlet {
 				whichPage = req.getParameter("whichPage");
 
 				/***************************
-				 * 2.先刪除跟部落格有關聯的標籤
+				 * 2.先刪除跟旅遊記有關聯的標籤
 				 ***************************************/
 
 				blogTagService blogTagSvc = new blogTagService();
@@ -1004,6 +1052,18 @@ public class BlogServlet extends HttpServlet {
 				String btn_name = req.getParameter("blogTagName");
 				whichPage = req.getParameter("whichPage");
 
+				long token = Long.parseLong(req.getParameter("token")); //input送的token
+				long tokenSession = Long.parseLong(req.getSession().getAttribute("token")+""); //session存的token
+				
+				if(token==tokenSession) {
+					System.out.println("ok");
+					//如果是第一次送表單，產生新的token
+					req.getSession().setAttribute("token", System.currentTimeMillis());
+				}else {
+					res.sendRedirect(req.getContextPath()+"/back_end/blog/blog_tag.jsp?whichPage="+whichPage);
+					return;
+				}
+				
 				/*************************** 2.開始新增資料 ***************************************/
 
 				blogTagNameService blogTagNameSvc = new blogTagNameService();
@@ -1226,11 +1286,6 @@ public class BlogServlet extends HttpServlet {
 				blogService blogSvc = new blogService();
 				List<blogVO> blogList = blogSvc.getAllByKeywordOrderByViews(keyword);
 				
-				if(blogList.isEmpty()) {
-					errorMsgs.add("沒有相關關鍵字的旅遊記!!");
-				}
-
-				
 				String[] temp = new String [1];
 				temp[0]=keyword;
 				Map map = new LinkedHashMap();
@@ -1238,10 +1293,6 @@ public class BlogServlet extends HttpServlet {
 				
 				AttractionsService attractionsSvc = new AttractionsService();
 				List<AttractionsVO> AttractionsList = attractionsSvc.getAll(map);
-				
-				if(AttractionsList.isEmpty()) {
-					errorMsgs.add("沒有相關關鍵字的景點!!");
-				}
 				
 				/*************************** 3.查詢完成,準備轉交(Send the Success view) *************/
 				
@@ -1259,6 +1310,166 @@ public class BlogServlet extends HttpServlet {
 				failureView.forward(req, res);
 			}
 		}
+		
+		if("searchBlog".equals(action)) {
+			List<String> errorMsgs = new LinkedList<String>();
+			req.setAttribute("errorMsgs", errorMsgs);
+			
+			try {
+				
+				/*************************** 1.接收請求參數 ***************************************/
+				
+				/*************************** 2.開始查詢資料***************************************/
+				
+				blogService blogSvc = new blogService();
+				List<blogVO> blogList = blogSvc.getAllByKeywordOrderByViews(keyword);
+
+				/*************************** 3.查詢完成,準備轉交(Send the Success view) *************/
+				
+				req.setAttribute("blogList", blogList);
+				String url = "/front_end/search/search_blog.jsp";
+				RequestDispatcher successView = req.getRequestDispatcher(url);
+				successView.forward(req, res); // 把結果forward到search_index.jsp
+				
+				/*************************** 其他可能的錯誤處理 **********************************/
+				
+			} catch(Exception e) {
+				errorMsgs.add("無法取得資料" + e.getMessage());
+				RequestDispatcher failureView = req.getRequestDispatcher("/front_end/search/search_blog.jsp");
+				failureView.forward(req, res);
+			}
+		}
+		
+		if("searchTour".equals(action)) {
+			List<String> errorMsgs = new LinkedList<String>();
+			req.setAttribute("errorMsgs", errorMsgs);
+			
+			try {
+				
+				/*************************** 1.接收請求參數 ***************************************/
+				
+				/*************************** 2.開始查詢資料***************************************/
+				
+				String[] temp = new String [1];
+				temp[0]=keyword;
+				Map map = new LinkedHashMap();
+				map.put("att_name",temp);
+				map.put("country", temp);
+				map.put("att_address", temp);
+				map.put("administrative_area", temp);
+				
+				AttractionsService attractionsSvc = new AttractionsService();
+				List<AttractionsVO> AttractionsList = attractionsSvc.getAll(map);
+				
+				/*************************** 3.查詢完成,準備轉交(Send the Success view) *************/
+				
+				req.setAttribute("AttractionsList", AttractionsList);
+				String url = "/front_end/search/search_tour.jsp";
+				RequestDispatcher successView = req.getRequestDispatcher(url);
+				successView.forward(req, res); // 把結果forward到search_index.jsp
+				
+				/*************************** 其他可能的錯誤處理 **********************************/
+				
+			} catch(Exception e) {
+				errorMsgs.add("無法取得資料" + e.getMessage());
+				RequestDispatcher failureView = req.getRequestDispatcher("/front_end/search/search_tour.jsp");
+				failureView.forward(req, res);
+			}
+		}
+		
+		if("searchMember".equals(action)) {
+			List<String> errorMsgs = new LinkedList<String>();
+			req.setAttribute("errorMsgs", errorMsgs);
+			
+			try {
+				
+				/*************************** 1.接收請求參數 ***************************************/
+				
+				/*************************** 2.開始查詢資料***************************************/
+								
+				MemberService memSvc = new MemberService();
+				List<MemberVO> memList = memSvc.getAll_member(keyword);
+				
+				/*************************** 3.查詢完成,準備轉交(Send the Success view) *************/
+				
+				req.setAttribute("memList", memList);
+				String url = "/front_end/search/search_member.jsp";
+				RequestDispatcher successView = req.getRequestDispatcher(url);
+				successView.forward(req, res); // 把結果forward到search_index.jsp
+				
+				/*************************** 其他可能的錯誤處理 **********************************/
+				
+			} catch(Exception e) {
+				errorMsgs.add("無法取得資料" + e.getMessage());
+				RequestDispatcher failureView = req.getRequestDispatcher("/front_end/search/search_member.jsp");
+				failureView.forward(req, res);
+			}
+		}
+		
+		if("searchTogether".equals(action)) {
+			List<String> errorMsgs = new LinkedList<String>();
+			req.setAttribute("errorMsgs", errorMsgs);
+			
+			try {
+				
+				/*************************** 1.接收請求參數 ***************************************/
+				
+				/*************************** 2.開始查詢資料***************************************/
+				
+				String[] temp = new String [1];
+				temp[0]=keyword;
+				Map map = new LinkedHashMap();
+				map.put("TRIP_LOCALE",temp);
+				map.put("TRIP_DETAILS", temp);
+				
+				GrpService grpSvc = new GrpService();
+				List<AttractionsVO> grpList = grpSvc.getAll(map);
+				
+				/*************************** 3.查詢完成,準備轉交(Send the Success view) *************/
+				
+				req.setAttribute("grpList", grpList);
+				String url = "/front_end/search/search_together.jsp";
+				RequestDispatcher successView = req.getRequestDispatcher(url);
+				successView.forward(req, res); // 把結果forward到search_index.jsp
+				
+				/*************************** 其他可能的錯誤處理 **********************************/
+				
+			} catch(Exception e) {
+				errorMsgs.add("無法取得資料" + e.getMessage());
+				RequestDispatcher failureView = req.getRequestDispatcher("/front_end/search/search_together.jsp");
+				failureView.forward(req, res);
+			}
+		}
+		
+		if("searchAsk".equals(action)) {
+			List<String> errorMsgs = new LinkedList<String>();
+			req.setAttribute("errorMsgs", errorMsgs);
+			
+			try {
+				
+				/*************************** 1.接收請求參數 ***************************************/
+				
+				/*************************** 2.開始查詢資料***************************************/
+				
+				QuestionService QuestionSvc = new QuestionService();
+				List<QuestionVO> QuestionList = QuestionSvc.findByKeyword(keyword);
+
+				/*************************** 3.查詢完成,準備轉交(Send the Success view) *************/
+				
+				req.setAttribute("QuestionList", QuestionList);
+				String url = "/front_end/search/search_ask.jsp";
+				RequestDispatcher successView = req.getRequestDispatcher(url);
+				successView.forward(req, res); // 把結果forward到search_index.jsp
+				
+				/*************************** 其他可能的錯誤處理 **********************************/
+				
+			} catch(Exception e) {
+				errorMsgs.add("無法取得資料" + e.getMessage());
+				RequestDispatcher failureView = req.getRequestDispatcher("/front_end/search/search_ask.jsp");
+				failureView.forward(req, res);
+			}
+		}
+		
 	}
 
 	public String getFileNameFromPart(Part part) {
