@@ -33,8 +33,8 @@ public class ChatRoomServlet extends HttpServlet {
 		
 		//新增群組聊天
 		if("addNewCR".equals(action)) {
-			List<String> errorMsgs = new LinkedList<>();
-			req.setAttribute("errorMsgs", errorMsgs);
+			List<String> errorMsgs_Ailee = new LinkedList<>();
+			req.setAttribute("errorMsgs_Ailee", errorMsgs_Ailee);
 			String requestURL = req.getParameter("requestURL");
 			ChatRoom_JoinService crjSvc = new ChatRoom_JoinService();
 
@@ -45,15 +45,15 @@ public class ChatRoomServlet extends HttpServlet {
 
 			/**************第一步接受參數，錯誤處理******************************/
 			if(myMemId == null || myMemId.trim().length() == 0) {
-				errorMsgs.add("錯誤：未取到登入者的會員ID。");
+				errorMsgs_Ailee.add("錯誤：未取到登入者的會員ID。");
 			}
 			
 			if(input_newChatName == null || input_newChatName.trim().length() == 0 || input_newChatName.trim().length() > 12) {
-				errorMsgs.add("聊天對話名稱，請勿空白或字數請勿超過12個字");
+				errorMsgs_Ailee.add("聊天對話名稱，請勿空白或字數請勿超過12個字");
 			}
 			
 			if(select_friList == null || select_friList.length == 0 || select_friList.length <= 1) {
-				errorMsgs.add("新的聊天對話要加入的人員，請勿空白,且至少需要選兩位好友唷!");
+				errorMsgs_Ailee.add("新的聊天對話要加入的人員，請勿空白,且至少需要選兩位好友唷!");
 			}
 			
 			//假設我只選擇一位朋友，我要判斷我與他的對話已經存在了嗎?存在的話，就不要在新增了?? 可能要刪掉，因為不需要了??
@@ -64,7 +64,7 @@ public class ChatRoomServlet extends HttpServlet {
 					if( join_memid.size() == 2) {
 						for(ChatRoom_JoinVO join_list : join_memid) {
 							if(join_list.getJoin_MemID().equals(select_friList[0])) {
-								errorMsgs.add("您與該位朋友的對話已經存在了唷");
+								errorMsgs_Ailee.add("您與該位朋友的對話已經存在了唷");
 							}
 						}	
 					}
@@ -72,7 +72,7 @@ public class ChatRoomServlet extends HttpServlet {
 			}
 			
 
-			if(!errorMsgs.isEmpty()) {
+			if(!errorMsgs_Ailee.isEmpty()) {
 				RequestDispatcher failureView  = req.getRequestDispatcher(requestURL);
 				failureView.forward(req, res);
 				return;
@@ -111,7 +111,7 @@ public class ChatRoomServlet extends HttpServlet {
 			successView.forward(req, res);
 			
 			}catch(Exception e) {
-				errorMsgs.add(e.getMessage());
+				errorMsgs_Ailee.add(e.getMessage());
 				RequestDispatcher failureView  = req.getRequestDispatcher(requestURL);
 				failureView.forward(req, res);
 			}

@@ -155,8 +155,8 @@
 
 <body>
     <%-- 錯誤表列 --%>
-	<c:if test="${not empty errorMsgs}">
-		<div class="modal fade" id="errorModal">
+	<c:if test="${not empty errorMsgs_Ailee}">
+		<div class="modal fade" id="errorModal_Ailee">
 		    <div class="modal-dialog modal-sm" role="dialog">
 		      <div class="modal-content">
 		        <div class="modal-header">
@@ -164,7 +164,7 @@
 		          <span class="modal-title"><h4>請修正以下錯誤:</h4></span>
 		        </div>
 		        <div class="modal-body">
-					<c:forEach var="message" items="${errorMsgs}">
+					<c:forEach var="message" items="${errorMsgs_Ailee}">
 						<li style="color:red" type="square">${message}</li>
 					</c:forEach>
 		        </div>

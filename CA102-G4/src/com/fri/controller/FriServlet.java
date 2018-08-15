@@ -31,8 +31,8 @@ public class FriServlet extends HttpServlet {
 		
 		//送出好友邀請時
 		if("insertFri".equals(action)) {
-			List<String> errorMsgs = new LinkedList<String>();
-			req.setAttribute("errorMsgs", errorMsgs);
+			List<String> errorMsgs_Ailee = new LinkedList<String>();
+			req.setAttribute("errorMsgs_Ailee", errorMsgs_Ailee);
 			String meId =null;
 			String friId=null;
 			
@@ -42,18 +42,18 @@ public class FriServlet extends HttpServlet {
 				friId  = req.getParameter("friId");
 				
 				if(meId == null || meId.trim().length() == 0) {
-					errorMsgs.add("錯誤：登入者會員ID null!");
+					errorMsgs_Ailee.add("錯誤：登入者會員ID null!");
 				}
 				
 				if(friId == null || friId.trim().length() == 0) {
-					errorMsgs.add("錯誤：登入者好友的會員ID null!");
+					errorMsgs_Ailee.add("錯誤：登入者好友的會員ID null!");
 				}
 				
 				/***************新增前置作業，確認是是否重複新增???**********************/
 				FriendService friSvc = new FriendService();
 				Friend relationship = friSvc.findRelationship(meId, friId);
 				
-				if(relationship != null || (!errorMsgs.isEmpty())) {
+				if(relationship != null || (!errorMsgs_Ailee.isEmpty())) {
 					RequestDispatcher failureView = req.getRequestDispatcher("/front_end/personal_area/personal_area_public.jsp?uId="+friId);
 					failureView.forward(req, res);
 					return;
@@ -75,8 +75,8 @@ public class FriServlet extends HttpServlet {
 		
 		//確認對方發起的交友邀請
 		if("becomeFri".equals(action)) {
-			List<String> errorMsgs = new LinkedList<String>();
-			req.setAttribute("errorMsgs", errorMsgs);
+			List<String> errorMsgs_Ailee = new LinkedList<String>();
+			req.setAttribute("errorMsgs_Ailee", errorMsgs_Ailee);
 			String meId =null;
 			String friId=null;
 			try {
@@ -85,14 +85,14 @@ public class FriServlet extends HttpServlet {
 				friId  = req.getParameter("friId");
 				
 				if(meId == null || meId.trim().length() == 0) {
-					errorMsgs.add("錯誤：登入者會員ID null!");
+					errorMsgs_Ailee.add("錯誤：登入者會員ID null!");
 				}
 				
 				if(friId == null || friId.trim().length() == 0) {
-					errorMsgs.add("錯誤：登入者好友的會員ID null!");
+					errorMsgs_Ailee.add("錯誤：登入者好友的會員ID null!");
 				}
 				
-				if(!errorMsgs.isEmpty()) {
+				if(!errorMsgs_Ailee.isEmpty()) {
 					RequestDispatcher failureView = req.getRequestDispatcher("/front_end/personal_area/personal_area_public.jsp?uId="+friId);
 					failureView.forward(req, res);
 					return;
@@ -103,7 +103,7 @@ public class FriServlet extends HttpServlet {
 				
 				//先確認資料庫是否有資料???免得因為重新整理重新新增
 				if(friSvc.findRelationship(meId, friId) != null) {
-					errorMsgs.add("錯誤：已經成為好友了");
+					errorMsgs_Ailee.add("錯誤：已經成為好友了");
 					RequestDispatcher failureView = req.getRequestDispatcher("/front_end/personal_area/personal_area_public.jsp?uId="+friId);
 					failureView.forward(req, res);
 					return;
@@ -125,8 +125,8 @@ public class FriServlet extends HttpServlet {
 		}
 		//刪除對方發起的交友邀請
 		if("reject".equals(action)) {
-			List<String> errorMsgs = new LinkedList<String>();
-			req.setAttribute("errorMsgs", errorMsgs);
+			List<String> errorMsgs_Ailee = new LinkedList<String>();
+			req.setAttribute("errorMsgs_Ailee", errorMsgs_Ailee);
 			String meId =null;
 			String friId=null;
 			try {
@@ -135,14 +135,14 @@ public class FriServlet extends HttpServlet {
 				friId  = req.getParameter("friId");
 				
 				if(meId == null || meId.trim().length() == 0) {
-					errorMsgs.add("錯誤：登入者會員ID null!");
+					errorMsgs_Ailee.add("錯誤：登入者會員ID null!");
 				}
 				
 				if(friId == null || friId.trim().length() == 0) {
-					errorMsgs.add("錯誤：登入者好友的會員ID null!");
+					errorMsgs_Ailee.add("錯誤：登入者好友的會員ID null!");
 				}
 				
-				if(!errorMsgs.isEmpty()) {
+				if(!errorMsgs_Ailee.isEmpty()) {
 					RequestDispatcher failureView = req.getRequestDispatcher("/front_end/personal_area/personal_area_public.jsp?uId="+friId);
 					failureView.forward(req, res);
 					return;
@@ -166,8 +166,8 @@ public class FriServlet extends HttpServlet {
 		
 		//解除好友關係時
 		if("deleteFri".equals(action)) {
-			List<String> errorMsgs = new LinkedList<String>();
-			req.setAttribute("errorMsgs", errorMsgs);
+			List<String> errorMsgs_Ailee = new LinkedList<String>();
+			req.setAttribute("errorMsgs_Ailee", errorMsgs_Ailee);
 			
 			try {
 				/****************1.接受請求參數,錯誤驗證**********************/
@@ -176,14 +176,14 @@ public class FriServlet extends HttpServlet {
 
 				
 				if(meId == null || meId.trim().length() == 0) {
-					errorMsgs.add("錯誤：登入者會員ID null!");
+					errorMsgs_Ailee.add("錯誤：登入者會員ID null!");
 				}
 				
 				if(friId == null || friId.trim().length() == 0) {
-					errorMsgs.add("錯誤：登入者好友的會員ID null!");
+					errorMsgs_Ailee.add("錯誤：登入者好友的會員ID null!");
 				}
 				
-				if(!errorMsgs.isEmpty()) {
+				if(!errorMsgs_Ailee.isEmpty()) {
 					RequestDispatcher failureView = req.getRequestDispatcher("/front_end/personal_area/personal_area_friend.jsp");
 					failureView.forward(req, res);
 					return;
@@ -201,7 +201,7 @@ public class FriServlet extends HttpServlet {
 				
 				
 			}catch(Exception e) {
-				errorMsgs.add(e.getMessage());
+				errorMsgs_Ailee.add(e.getMessage());
 				RequestDispatcher failureView = req.getRequestDispatcher("/front_end/personal_area/personal_area_friend.jsp");
 				failureView.forward(req, res);
 			}
@@ -209,8 +209,8 @@ public class FriServlet extends HttpServlet {
 		
 		//封鎖好友時，收到personal_area_friend.jsp請求
 		if("blockFri".equals(action)) {
-			List<String> errorMsgs = new LinkedList<String>();
-			req.setAttribute("errorMsgs",errorMsgs);
+			List<String> errorMsgs_Ailee = new LinkedList<String>();
+			req.setAttribute("errorMsgs_Ailee",errorMsgs_Ailee);
 			
 			try {
 				/********************1.接受參數，錯誤驗證****************************/
@@ -218,14 +218,14 @@ public class FriServlet extends HttpServlet {
 				String friId = req.getParameter("friId");
 				
 				if(meId == null || meId.trim().length() == 0) {
-					errorMsgs.add("錯誤：登入者會員ID null!");
+					errorMsgs_Ailee.add("錯誤：登入者會員ID null!");
 				}
 				
 				if(friId == null || friId.trim().length() == 0) {
-					errorMsgs.add("錯誤：登入者好友的會員ID null!");
+					errorMsgs_Ailee.add("錯誤：登入者好友的會員ID null!");
 				}
 				
-				if(!errorMsgs.isEmpty()) {
+				if(!errorMsgs_Ailee.isEmpty()) {
 					RequestDispatcher failureView = req.getRequestDispatcher("/front_end/personal_area/personal_area_friend.jsp");
 					failureView.forward(req, res);
 					return;
@@ -244,7 +244,7 @@ public class FriServlet extends HttpServlet {
 				
 				
 			}catch(Exception e) {
-				errorMsgs.add(e.getMessage());
+				errorMsgs_Ailee.add(e.getMessage());
 				RequestDispatcher failureView = req.getRequestDispatcher("/front_end/personal_area/personal_area_friend.jsp");
 				failureView.forward(req, res);
 			}
@@ -256,8 +256,8 @@ public class FriServlet extends HttpServlet {
 		//對某位好友解除封鎖時
 		if("unBlockFri".equals(action)) {
 			
-			List<String> errorMsgs = new LinkedList<String>();
-			req.setAttribute("errorMsgs",errorMsgs);
+			List<String> errorMsgs_Ailee = new LinkedList<String>();
+			req.setAttribute("errorMsgs_Ailee",errorMsgs_Ailee);
 			
 			try {
 				String meId = req.getParameter("meId");
@@ -266,14 +266,14 @@ public class FriServlet extends HttpServlet {
 				
 				/*****************1.取得參數，錯誤處理*************************/
 				if(meId == null || meId.trim().length() == 0) {
-					errorMsgs.add("錯誤:未取得登入者ID");
+					errorMsgs_Ailee.add("錯誤:未取得登入者ID");
 				}
 				
 				if(friId == null || friId.trim().length() == 0) {
-					errorMsgs.add("錯誤:未取得登入者的好友ID");
+					errorMsgs_Ailee.add("錯誤:未取得登入者的好友ID");
 				}
 				
-				if(!errorMsgs.isEmpty()) {
+				if(!errorMsgs_Ailee.isEmpty()) {
 					RequestDispatcher failureView = req.getRequestDispatcher("/front_end/personal_area/personal_area_friend.jsp");
 					failureView.forward(req, res);
 				}
@@ -296,7 +296,7 @@ public class FriServlet extends HttpServlet {
 				
 				
 			}catch(Exception e) {
-				errorMsgs.add("發生exception"+e.getMessage());
+				errorMsgs_Ailee.add("發生exception"+e.getMessage());
 				RequestDispatcher failureView = req.getRequestDispatcher("/front_end/personal_area/personal_area_friend.jsp");
 				failureView.forward(req, res);
 			}
@@ -306,8 +306,8 @@ public class FriServlet extends HttpServlet {
 		
 		//確認之間的好友關係是 封鎖?好友?非好友? 來自於personal_area_public.jsp的請求
 		if("checkFri".equals(action)) {
-			List<String> errorMsgs = new LinkedList<String>();
-			req.setAttribute("errorMsgs", errorMsgs);
+			List<String> errorMsgs_Ailee = new LinkedList<String>();
+			req.setAttribute("errorMsgs_Ailee", errorMsgs_Ailee);
 			PrintWriter out = res.getWriter() ;  //回傳資料給Ajax
 			
 			try {
@@ -315,14 +315,14 @@ public class FriServlet extends HttpServlet {
 				String meId = req.getParameter("meId");
 				String uId = req.getParameter("uId");
 				if(meId == null || meId.trim().length() == 0) {
-					errorMsgs.add("錯誤：未取到登入者ID");
+					errorMsgs_Ailee.add("錯誤：未取到登入者ID");
 				}
 				
 				if(uId == null || uId.trim().length() == 0) {
-					errorMsgs.add("錯誤：未取到查看他人個人頁面的ID");
+					errorMsgs_Ailee.add("錯誤：未取到查看他人個人頁面的ID");
 				}
 	
-				if(!errorMsgs.isEmpty()) {
+				if(!errorMsgs_Ailee.isEmpty()) {
 					RequestDispatcher failureView = req.getRequestDispatcher("/front_end/index.jsp"); // 到時要改!!!
 					failureView.forward(req, res);
 				}
@@ -357,7 +357,7 @@ public class FriServlet extends HttpServlet {
 				/************3.準備轉交*******************/
 				
 			}catch(Exception e) {
-				errorMsgs.add(e.getMessage());
+				errorMsgs_Ailee.add(e.getMessage());
 				RequestDispatcher failureView = req.getRequestDispatcher("/front_end/index.jsp"); // 到時要改!!!
 				failureView.forward(req, res);
 			}

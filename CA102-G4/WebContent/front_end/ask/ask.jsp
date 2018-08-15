@@ -20,16 +20,16 @@
 		}
 		
 		boolean login_state = false;   
-		 Object login_state_temp = session.getAttribute("login_state");
+		Object login_state_temp = session.getAttribute("login_state");
 		 if(login_state_temp!=null){
-		 login_state=(boolean)login_state_temp;
+		 	login_state=(boolean)login_state_temp;
 		 }
 		
 		 if(login_state!=true){
-		 session.setAttribute("location", request.getRequestURI());
-		  response.sendRedirect("/CA102G4/front_end/member/mem_login.jsp");
-		  return;
-		  }
+		 	session.setAttribute("location", request.getRequestURI());
+		  	response.sendRedirect("/CA102G4/front_end/member/mem_login.jsp");
+		  	return;
+		 }
 %>
 <%
 	//取得購物車商品數量
@@ -40,6 +40,37 @@
 	}
 	pageContext.setAttribute("total_items",total_items);
 %>
+<%@ page import="com.chat.model.*" %>
+<%@ page import="com.fri.model.*" %>
+<jsp:useBean id="memberSvc" scope="page" class="com.mem.model.MemberService"></jsp:useBean>
+<jsp:useBean id="chatRoomSvc" scope="page" class="com.chat.model.ChatRoomService"></jsp:useBean>
+<jsp:useBean id="chatRoomJoinSvc" scope="page" class="com.chat.model.ChatRoom_JoinService"></jsp:useBean>
+<%
+	//*****************聊天用：取得登錄者所參與的群組聊天*************/
+	List<ChatRoom_JoinVO> myCRList =chatRoomJoinSvc.getMyChatRoom(memberVO.getMem_Id());
+	Set<ChatRoom_JoinVO> myCRGroup = new HashSet<>(); //裝著我參與的聊天對話為群組聊天時
+	
+	for(ChatRoom_JoinVO myRoom : myCRList){
+		//查詢我參與的那間聊天對話，初始人數是否大於2?? 因為這樣一定就是群組聊天
+		int initJoinCount = chatRoomSvc.getOne_ByChatRoomID(myRoom.getChatRoom_ID()).getChatRoom_InitCNT();
+		if(initJoinCount > 2){
+			myCRGroup.add(myRoom);
+		}
+	}
+	pageContext.setAttribute("myCRList", myCRGroup);
+	
+	/***************聊天用：取出會員的好友******************/
+	FriendService friSvc = new FriendService();
+	List<Friend> myFri = friSvc.findMyFri(memberVO.getMem_Id(),2); //互相為好友的狀態
+	pageContext.setAttribute("myFri",myFri);
+	
+	/**************避免聊天-新增群組重新整理後重複提交********/
+	session.setAttribute("addCR_token",new Date().getTime());
+
+%>
+
+
+
 <head>
 	<!-- 網頁title -->
 	<title>Travel Maker</title>
@@ -84,7 +115,16 @@
 	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 	<script src="<%=request.getContextPath()%>/front_end/js/all/index_bootstrap.js"></script>
 	<script src="<%=request.getContextPath()%>/front_end/js/ckeditor/ckeditor.js"></script>
- 
+ 	
+ 	<!-- 聊天相關CSS及JS -->
+    <link href="<%=request.getContextPath()%>/front_end/css/chat/chat_style.css" rel="stylesheet" type="text/css">
+    <script src="<%=request.getContextPath()%>/front_end/js/chat/vjUI_fileUpload.js"></script>
+    <script src="<%=request.getContextPath()%>/front_end/js/chat/chat.js"></script>
+    <%@ include file="/front_end/personal_area/chatModal_JS.file" %>
+    <!-- //聊天相關CSS及JS -->
+    
+ 	
+ 	
 </head>
 
 <body>

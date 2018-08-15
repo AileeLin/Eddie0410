@@ -23,10 +23,6 @@
 			$(".nav-item>a").parent().removeClass("active");
 			$(".nav-item>a[href='"+tem+"']").parent().addClass("active");
 		});
-		
-		/***********************若有錯誤訊息時，就會跳出視窗***********************/
-	   	$('#errorModal').modal();
-
 
 	   	/***********************會員檢舉會跳出的視窗***********************/
 		$(".ui.inverted.red.button.mini._Memreport").click(function(){
