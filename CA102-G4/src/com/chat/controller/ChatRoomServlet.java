@@ -37,12 +37,11 @@ public class ChatRoomServlet extends HttpServlet {
 			req.setAttribute("errorMsgs", errorMsgs);
 			String requestURL = req.getParameter("requestURL");
 			ChatRoom_JoinService crjSvc = new ChatRoom_JoinService();
-			
+
 			try {
 			String myMemId = req.getParameter("myMemId");
 			String input_newChatName = req.getParameter("input_newChatName");
 			String[] select_friList = req.getParameterValues("select_fri");
-			
 
 			/**************第一步接受參數，錯誤處理******************************/
 			if(myMemId == null || myMemId.trim().length() == 0) {
@@ -71,12 +70,32 @@ public class ChatRoomServlet extends HttpServlet {
 					}
 				}
 			}
+			
 
 			if(!errorMsgs.isEmpty()) {
 				RequestDispatcher failureView  = req.getRequestDispatcher(requestURL);
 				failureView.forward(req, res);
 				return;
 			}
+
+
+			//*****************************排除重複提交問題**********************************//
+			//session來的token
+			long session_token = Long.parseLong(req.getSession().getAttribute("addCR_token")+"");
+			//input來的token
+			long addCR_token = Long.parseLong(req.getParameter("addCR_token"));
+			System.out.println(session_token);
+			System.out.println(addCR_token);
+			
+			if(session_token == addCR_token) {
+				//代表第一次送就可以換token值了
+				req.getSession().setAttribute("addCR_token",new Date().getTime());
+			}else {
+				RequestDispatcher failureView  = req.getRequestDispatcher(requestURL);
+				failureView.forward(req, res);
+				return;
+			}
+			
 			
 			/***************************第二步錯誤處理完畢，準備新增新的聊天對話****************/
 			ChatRoomService crSvc = new ChatRoomService();

@@ -1,8 +1,12 @@
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" import="javax.servlet.http.*"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ page import="com.fri.model.*" %>
+<%@ page import="com.fri.model.*,com.chat.model.*" %>
 <%@ page import="com.mem.model.*" %>
 <%@ page import="java.util.*" %>
+<jsp:useBean id="chatRoomSvc" scope="page" class="com.chat.model.ChatRoomService"></jsp:useBean>
+<jsp:useBean id="chatRoomJoinSvc" scope="page" class="com.chat.model.ChatRoom_JoinService"></jsp:useBean>
+<jsp:useBean id="friSvc" scope="page" class="com.fri.model.FriendService"></jsp:useBean>
+<jsp:useBean id="memberSvc" scope="page" class="com.mem.model.MemberService"></jsp:useBean>
 <%
 
 	MemberVO memberVO = (MemberVO)session.getAttribute("memberVO");
@@ -33,13 +37,8 @@
 
 	/***************取出登入者會員資訊******************/
 	String memId = ((MemberVO)session.getAttribute("memberVO")).getMem_Id();
-	
-	//為了join(寫法有servlet3.0限制)
-	MemberService memSvc = new MemberService();
-	pageContext.setAttribute("memSvc",memSvc); 
-	
+
 	/***************取出會員的好友******************/
-	FriendService friSvc = new FriendService();
 	List<Friend> myFri = friSvc.findMyFri(memId,2); //互相為好友的狀態
 	List<Friend> myFri_Block = friSvc.findMyFri(memId,3); //會員封鎖好友名單
 	List<Friend> myNewFri = friSvc.findMyNewFri(memId);
@@ -59,6 +58,26 @@
 	pageContext.setAttribute("total_items",total_items);
 %>
 
+<%
+	//*****************聊天用：取得登錄者所參與的群組聊天*************/
+	List<ChatRoom_JoinVO> myCRList =chatRoomJoinSvc.getMyChatRoom(memberVO.getMem_Id());
+	Set<ChatRoom_JoinVO> myCRGroup = new HashSet<>(); //裝著我參與的聊天對話為群組聊天時
+	
+	for(ChatRoom_JoinVO myRoom : myCRList){
+		//查詢我參與的那間聊天對話，初始人數是否大於2?? 因為這樣一定就是群組聊天
+		int initJoinCount = chatRoomSvc.getOne_ByChatRoomID(myRoom.getChatRoom_ID()).getChatRoom_InitCNT();
+		if(initJoinCount > 2){
+			myCRGroup.add(myRoom);
+		}
+	}
+	pageContext.setAttribute("myCRList", myCRGroup);
+	
+	/***************聊天用：取出會員的好友,上面已有******************/
+	
+	/**************避免聊天-新增群組重新整理後重複提交********/
+	session.setAttribute("addCR_token",new Date().getTime());
+
+%>
 <!DOCTYPE html>
 <html>
 
@@ -126,13 +145,11 @@
     <script src="<%=request.getContextPath()%>/front_end/js/chat/vjUI_fileUpload.js"></script>
     <script src="<%=request.getContextPath()%>/front_end/js/chat/chat.js"></script>
     <!-- //聊天相關CSS及JS -->
-
+    
+	<%@ include file="/front_end/personal_area/chatModal_JS.file" %>
     <script>
     	$(document).ready(function(){
     		
-        	/*若有錯誤訊息時，就會跳出視窗.......*/
-      		$('#errorModal').modal();
-        	
       	    //《好友管理頁面》中的搜尋好友
       	    $("#u_search_Fri").on("keyup", function() {
       	        var value = $(this).val().toLowerCase();
@@ -152,8 +169,6 @@
         	
     	});
     	
-    	
-
     </script>
 </head>
 
@@ -221,7 +236,7 @@
             <div class="container">
                 <div class="logo">
                     <h1>
-                        <a href="index.html">Travel Maker</a>
+                        <a href="<%=request.getContextPath()%>/front_end/index.jsp">Travel Maker</a>
                     </h1>
                 </div>
                 <div class="top-nav">
@@ -379,7 +394,7 @@
 	                            </a>
 	                            <div>                                
                                 	<a href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_public.jsp?uId=${frivo.memID_Fri}">
-                                		<p>${memSvc.getOneMember(frivo.memID_Fri).mem_Name}</p>
+                                		<p>${memberSvc.getOneMember(frivo.memID_Fri).mem_Name}</p>
                                 	</a>
 	                            </div>
 	                            <div>
@@ -421,7 +436,7 @@
 	                            </a>
 	                            <div>
                                 	<a href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_public.jsp?uId=${frivo.memID_Fri}">
-                                		<p>${memSvc.getOneMember(frivo.memID_Fri).mem_Name}</p>
+                                		<p>${memberSvc.getOneMember(frivo.memID_Fri).mem_Name}</p>
                                 	</a>
 	                            </div>
 	                            <div>
@@ -462,8 +477,8 @@
 		                               <img src="<%=request.getContextPath()%>/front_end/readPic?action=member&id=${frivo.memID_Fri}">
 		                            </a>
 		                            <div>
-		                                <a href="">
-		                                    <p>${memSvc.getOneMember(frivo.memID_Fri).mem_Name}</p>
+		                                <a href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_public.jsp?uId=${frivo.memID_Fri}">
+		                                    <p>${memberSvc.getOneMember(frivo.memID_Fri).mem_Name}</p>
 		                                </a>
 		                            </div>
 		                            <div>
@@ -505,7 +520,7 @@
 	                            </a>
 	                            <div>
                                 	<a href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_public.jsp?uId=${frivo.memID_Fri}">
-                                		<p>${memSvc.getOneMember(frivo.memID_Fri).mem_Name}</p>
+                                		<p>${memberSvc.getOneMember(frivo.memID_Fri).mem_Name}</p>
                                 	</a>
 	                            </div>
 	                            <div>

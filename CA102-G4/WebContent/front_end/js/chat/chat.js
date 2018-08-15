@@ -14,7 +14,7 @@ $(document).ready(function(){
 		$(".input_chatContainer").toggleClass("chatWindow_Content");
 	}else{
 		//當session空的時候，代表沒有任何開啟的聊天對話視窗
-		alert("sessionStorage是空的，所以設定初始位置");
+		console.log("sessionStorage是空的，所以設定初始位置");
 		sessionStorage.setItem("marginRight",350);
 	}
 	
@@ -40,12 +40,7 @@ $(document).ready(function(){
 		$(this).tooltip();
 	});
 	
-	//******************************************待改
-	$("body").on("click","div.top-banner-right i.fas.fa-sign-out-alt",function(){
-		sessionStorage.clear();
-	});
-	
-	
+
 	//當按下登出按鈕後，sessionStorage清空
 	$("body").on("click","div.top-banner-right i.fas.fa-sign-out-alt",function(){
 		sessionStorage.clear();
@@ -59,13 +54,13 @@ $(document).ready(function(){
 		$(".input_chatContainer[value='"+crId_close+"']").remove(); //刪除對應的聊天內容視窗
 		
 		var right = Number(sessionStorage.getItem("marginRight"));
-		alert("關閉時，目前長度"+right);
+		console.log("關閉時，目前長度"+right);
 		if(right <= 350){
 			sessionStorage.setItem("marginRight",350);
 		}else{
 			sessionStorage.setItem("marginRight",right-290);
 		}
-		alert("關閉後，目前長度"+sessionStorage.getItem("marginRight"));
+		console.log("關閉後，目前長度"+sessionStorage.getItem("marginRight"));
 		sessionStorage.removeItem(crId_close); //從session移出關閉的聊天對話區塊
 		e.stopPropagation();
 		
@@ -405,23 +400,26 @@ function createNode(){
 			var date = new Date();
 			var date_str = date.toJSON().substr(0,10);
 			var time_str = date.toTimeString().substr(0,8);
-			var jsonObj ={
-					"TYPE":"chat",
-					"TO_CHATROOMID":cr_id,
-					"TO_CRNAME":cr_name,
-					"MEM_ID":loginMemId_Now,
-					"MSG":"<img src='"+files[0]+"' style='width:100px;height:auto'>",
-					"TIME":date_str+" "+time_str
-			 };
-			 webSocket.send(JSON.stringify(jsonObj));
+			
+			var n=files.length;
+
+			for(var i=0;i<n;i++){
+				var jsonObj ={
+						"TYPE":"chat",
+						"TO_CHATROOMID":cr_id,
+						"TO_CRNAME":cr_name,
+						"MEM_ID":loginMemId_Now,
+						"MSG":"<img src='"+files[i]+"' style='width:100px;height:auto'>",
+						"TIME":date_str+" "+time_str
+				 };
+				 webSocket.send(JSON.stringify(jsonObj));
+			 }
+			
 			 file_upload.clearFiles();
 		}
 	});
 
 }
-
-
-
 
 //************************為了拖拉圖片才新增物件 STEP2**************************//
 $(document).ready(function () {

@@ -122,6 +122,7 @@
               <input  type="hidden" name="action" value="addNewCR"/>
               <input  type="hidden" name="myMemId" value="${memberVO.mem_Id}"/>
               <input  type="hidden" name="requestURL" value="<%=request.getServletPath()%>"/>
+              <input  type="hidden" name="addCR_token" value="${addCR_token}"/>
               <button type="submit" class="btn btn-success">確認</button>
             </div>
         
@@ -224,9 +225,10 @@
 	<!-- 顯示圖片的Modal END -->
 
     <script>
+ 
     /***********************頁面準備好時，連線WS***********************/
     $(document).ready(function(){
-	    connect();
+	    connect();		
 	 });
 	/***********************若有錯誤訊息時，就會跳出視窗***********************/
    	$('#errorModal').modal();
@@ -260,22 +262,22 @@
 					};
 				webSocket.send(JSON.stringify(jsonObj_hist));
 				
-				$('body').append(<%@ include file="chat_div.file"%>);
+				$('body').append(<%@ include file="/front_end/personal_area/chat_div.file"%>);
 				
 				var right = Number(sessionStorage.getItem("marginRight"));
 				if(right > 1220 || right <= 0){
-					alert("超過邊界了openChatRoom");
+					console.log("超過邊界了openChatRoom");
 					right = 350;
 				}
-				alert("openChatRoom時，長度:"+right);
+				console.log("openChatRoom時，長度:"+right);
 				$("#"+openChatRoomID+"").css("right",right);
 				sessionStorage.setItem("marginRight",right+290);
 			}else{
-				//alert("已經存在了啦");
+				//console.log("已經存在了啦");
 			}
 
     	}
-    	alert(cnt);
+    	console.log("判斷是否為一對一聊天："+cnt);
     	//不讓一對一的聊天，有加入更多人的按鈕
 		if(cnt.toString().trim() === '2'){
 			$("div.input_chatContainer_select[value='"+chatRoom_id+"'] .input_chatHeader>#chat_addFri_span").css("display","none");
@@ -293,7 +295,7 @@
 	/******************************WebSocket開始**************************/
 	var MyPoint = "/chat/${memberVO.mem_Id}";
 	var host = window.location.host;
-	var endPointURL = "ws://localhost:8081<%=request.getContextPath()%>"+MyPoint;
+	var endPointURL = "ws://"+host+"<%=request.getContextPath()%>"+MyPoint;
 	var webSocket;
 	
 	function connect(){
@@ -313,7 +315,7 @@
 			/****************補通知*********************/
 			var titie = jsonObj.title; //通知才有的
 			if(titie != undefined){
-				alert("會進來通知"+titie+"-");
+				alert("會進來通知:"+titie+"-");
 				return;
 			}
 			/****************補通知********************/
@@ -334,11 +336,13 @@
 					
 				//若到對應聊天室的DIV時
 				if($("#" + openChatRoomID + "").length != 0){
+					//alert(document.getElementsByClassName("input_chatContext")[0].scrollHeight);
+					//alert($("#" + openChatRoomID +" .input_chatContext").height());
 					//會把收到的訊息，append到聊天對話內容
-					<%@ include file="chatContent_div.file" %>
+					<%@ include file="/front_end/personal_area/chatContent_div.file" %>
 					$("#"+openChatRoomID+"").removeClass("chatWindow_Content");
-					$(".input_chatContext").scrollTop(99999999); //讓聊天內容的捲軸都是在最下面
-					
+					$("#"+openChatRoomID+" .input_chatContext").scrollTop(99999999); //讓聊天內容的捲軸都是在最下面
+
 					if($("div.input_chatContainer_select[value='"+openChatRoomID+"']").html() == undefined){
 						//因為視窗存在的時候，可能有兩種狀況 1)有完成的div.input_chatContainer_select  2)先前存在sessionStorage
 						sessionStorage.setItem(openChatRoomID,$("div.input_chatContainer[value='"+openChatRoomID+"']").prop("outerHTML"));
@@ -362,10 +366,10 @@
 				
 				/*******start伺服端若判斷為是一對一對話時，會有回傳參數CNT，讓開啟的視窗顏色會是紫色*********/
 				var countColor = jsonObj.CNT;
-				//alert("沒視窗時要append視窗");
+				//console.log("沒視窗時要append視窗");
 				
 				//動態新增DOM
-				$('body').append(<%@ include file="chat_div.file" %>);
+				$('body').append(<%@ include file="/front_end/personal_area/chat_div.file" %>);
 				
 				if(countColor != null){
 					if(countColor.toString() === '2'){
@@ -378,17 +382,17 @@
 
 				var right = Number(sessionStorage.getItem("marginRight"));
 				if(right > 1220 || right <= 0){
-					alert("超過邊界了openChatRoom");
+					console.log("超過邊界了openChatRoom");
 					right = 350;
 				}
-				alert("訊息來時，但div尚未存在"+right);
+				console.log("訊息來時，但div尚未存在:"+right);
 				//設定對話視窗產生的位置
 				$("#"+openChatRoomID+"").css("right",right);
 				
 				sessionStorage.setItem("marginRight",right+290);
 				sessionStorage.setItem(openChatRoomID,$("div.input_chatContainer_select[value='"+openChatRoomID+"']").html());
 				
-				alert("歷史訊息append1111111111111");
+				console.log("歷史訊息append1111111111111");
 			}else if(msgType.trim() == "history"){
 				var history_jsonObject = JSON.parse(jsonObj.HISTORYMSG);
 
@@ -402,9 +406,9 @@
 					
 					senderMemId = history_jsonObject[i].MEM_ID;
 					//會把收到的訊息，append到聊天對話內容
-					<%@ include file="chatContent_div.file" %>
+					<%@ include file="/front_end/personal_area/chatContent_div.file" %>
 				}
-					alert("歷史訊息append2222222222");
+					console.log("歷史訊息append2222222222");
 			}else if(msgType.trim() == "open"){
 				if(jsonObj.openMemId.trim() != loginMemId_Now){
 					//問題?? 是否再判斷這個人是否封鎖我???
@@ -426,12 +430,11 @@
 				msgContent = jsonObj.MSG;
 				senderMemId = jsonObj.MEM_ID;
 				//會把收到的訊息，append到聊天對話內容
-				<%@ include file="chatContent_div.file" %>
+				<%@ include file="/front_end/personal_area/chatContent_div.file" %>
 				
 				$("#" + openChatRoomID + " .input_chatContext > .chatTextItem_self").last().children().children().css("background-color","white");
 				$("#" + openChatRoomID + " .input_chatContext > .chatTextItem_self").last().children().children().css("color","red");
-				$(".input_chatContext").scrollTop(99999999); //讓聊天內容的捲軸都是在最下面
-				
+				$("#"+openChatRoomID+" .input_chatContext").scrollTop(99999999);//讓聊天內容的捲軸都是在最下面
 				sessionStorage.removeItem(openChatRoomID); //從session移出關閉的聊天對話區塊
 				
 				var right = Number(sessionStorage.getItem("marginRight")); //
@@ -447,7 +450,7 @@
 			}
 
 			$(".input_chatContext").scrollTop(99999999); //讓聊天內容的捲軸都是在最下面
-			alert("WS的onmessage被觸發了"+msgType);
+			console.log("WS的onmessage被觸發了"+msgType);
 			console.log("開啟的聊天對話:"+openChatRoomID);
 			if(openChatRoomID != undefined){
 				console.log("不等於undefined webSocket.onmessage"+openChatRoomID);
@@ -469,6 +472,13 @@
 		};
 		
 	}
+	
+	//body_unload，關閉WS
+	$(window).unload(function() {
+		console.log("ws斷線了");
+  		webSocket.close();
+	});
+	
 	/******************************WebSocket結束**************************/
 	
 	

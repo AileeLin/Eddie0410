@@ -5,18 +5,14 @@
 <%@ page import="com.photo_wall.model.*" %>
 <%@ page import="com.blog.model.*" %>
 <%@ page import="java.util.*" %>
-<%@ page import="com.fri.model.*" %>
 <%@ page import="com.trip.model.*" %>
 <%@ page import="com.grp.model.*" %>
 <%@ page import="com.question.model.*" %>
-<%@ page import="com.chat.model.*" %>
-<jsp:useBean id="friSvc" scope="page" class="com.fri.model.FriendService"></jsp:useBean>
 <jsp:useBean id="tripSvc" scope="page" class="com.trip.model.TripService"></jsp:useBean>
 <jsp:useBean id="grpSvc" scope="page" class="com.grp.model.GrpService"></jsp:useBean>
 <jsp:useBean id="qaSvc" scope="page" class="com.question.model.QuestionService"></jsp:useBean>
 <jsp:useBean id="memberSvc" scope="page" class="com.mem.model.MemberService"></jsp:useBean>
-<jsp:useBean id="chatRoomSvc" scope="page" class="com.chat.model.ChatRoomService"></jsp:useBean>
-<jsp:useBean id="chatRoomJoinSvc" scope="page" class="com.chat.model.ChatRoom_JoinService"></jsp:useBean>
+
 <%	 
 	//因為沒有登入也可以查看他人的個人頁面，但無法顯示加入好友的按鈕
 	MemberVO memberVO = (MemberVO)session.getAttribute("memberVO");
@@ -114,6 +110,11 @@
 	}
 	pageContext.setAttribute("total_items",total_items);
 %>
+
+<%@ page import="com.fri.model.*,com.chat.model.*" %>
+<jsp:useBean id="chatRoomSvc" scope="page" class="com.chat.model.ChatRoomService"></jsp:useBean>
+<jsp:useBean id="chatRoomJoinSvc" scope="page" class="com.chat.model.ChatRoom_JoinService"></jsp:useBean>
+<jsp:useBean id="friSvc" scope="page" class="com.fri.model.FriendService"></jsp:useBean>
 <%
 	if(memberVO != null){
 		//*****************聊天用：取得登錄者所參與的群組聊天*************/
@@ -133,6 +134,9 @@
 		List<Friend> myFri = friSvc.findMyFri(memberVO.getMem_Id(),2); //互相為好友的狀態
 		pageContext.setAttribute("myFri",myFri);
 		
+		/**************避免聊天-新增群組重新整理後重複提交********/
+		session.setAttribute("addCR_token",new Date().getTime());
+
 	}
 
 %>
@@ -209,12 +213,57 @@
     <script src="<%=request.getContextPath()%>/front_end/js/chat/vjUI_fileUpload.js"></script>
     <script src="<%=request.getContextPath()%>/front_end/js/chat/chat.js"></script>
     <!-- //聊天相關CSS及JS -->
-
-</head>
-
-    <body>
     
-    	<script>
+	<!-- 登入才會有的功能(檢舉、送出或接受交友邀請通知)-->
+	<c:if test="${memberVO != null}">
+		<script>
+			/**再送出好友邀請時，先比對是否傳遞的參數都有出去**/
+			function checkSendFriendMessage(me_id,fri_id){
+				var checkRelationShip = "<%=friSvc.findRelationship(memId,uId)%>";
+				
+				if(me_id.trim() == "" || fri_id.trim() == "" || checkRelationShip != "null"){
+					alert("未取到登入者或對方的會員ID");
+					return false;
+				}
+				
+				var jsonObj = {
+					"title"		:"好友邀請",
+				  	"sender"	: me_id,
+				 	"receiver"	: fri_id,
+				 	"message"	:"您有一筆好友邀請待確認"
+				};
+				webSocket.send(JSON.stringify(jsonObj));
+				
+				return true;
+			}
+			
+			/**再送出好友邀請時，先比對是否傳遞的參數都有出去**/
+			function comfirmBeFriMessage(me_id,fri_id){
+				console.log("有送出確認好友邀請");
+				if(me_id.trim() == "" || fri_id.trim() == ""){
+					alert("未取到登入者或對方的會員ID");
+					return false;
+				}
+				
+				var jsonObj = {
+					"title"		:"好友關係確認",
+				  	"sender"	: me_id,
+				 	"receiver"	: fri_id,
+				 	"message"	:"您與${memberVO.mem_Name}已成為好友"
+				};
+				webSocket.send(JSON.stringify(jsonObj));
+				
+				return true;
+			}
+		</script>
+		
+		<%@ include file="/front_end/personal_area/chatModal_JS.file" %>
+		
+	</c:if>
+	  
+    
+    
+	<script>
 
     	$(document).ready(function(){
     		/*若沒登錄，根本不用去確認與該會員是否為好友?*/
@@ -273,6 +322,14 @@
     	
     	</script>
     	
+    	
+    	
+    	
+</head>
+
+    <body>
+    
+
     	<%-- 錯誤表列 --%>
 		<c:if test="${not empty errorMsgs}">
 			<div class="modal fade" id="errorModal">
@@ -879,48 +936,6 @@
     	</div>
 		
 		
-		<!-- 登入才會有的功能(檢舉、送出或接受交友邀請通知)-->
-		<c:if test="${memberVO != null}">
-			<script>
-				/**再送出好友邀請時，先比對是否傳遞的參數都有出去**/
-				function checkSendFriendMessage(me_id,fri_id){
-					if(me_id.trim() == "" || fri_id.trim() == ""){
-						alert("未取到登入者或對方的會員ID");
-						return false;
-					}
-					var jsonObj = {
-						"title"		:"好友邀請",
-					  	"sender"	: me_id,
-					 	"receiver"	: fri_id,
-					 	"message"	:"您有一筆好友邀請待確認"
-					};
-					webSocket.send(JSON.stringify(jsonObj));
-					
-					return true;
-				}
-				
-				/**再送出好友邀請時，先比對是否傳遞的參數都有出去**/
-				function comfirmBeFriMessage(me_id,fri_id){
-					if(me_id.trim() == "" || fri_id.trim() == ""){
-						alert("未取到登入者或對方的會員ID");
-						return false;
-					}
-					
-					var jsonObj = {
-						"title"		:"好友關係確認",
-					  	"sender"	: me_id,
-					 	"receiver"	: fri_id,
-					 	"message"	:"您與${memberVO.mem_Name}已成為好友"
-					};
-					webSocket.send(JSON.stringify(jsonObj));
-					
-					return true;
-				}
-			</script>
-			
-			<%@ include file="chatModal_JS.file" %>
-			
-		</c:if>
 		
 		
 		

@@ -1,9 +1,13 @@
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" import="javax.servlet.http.*"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page import="com.fri.model.*" %>
+<%@ page import="com.chat.model.*" %>
 <%@ page import="com.mem.model.*" %>
 <%@ page import="com.photo_wall.model.*" %>
 <%@ page import="java.util.*" %>
+<jsp:useBean id="chatRoomSvc" scope="page" class="com.chat.model.ChatRoomService"></jsp:useBean>
+<jsp:useBean id="chatRoomJoinSvc" scope="page" class="com.chat.model.ChatRoom_JoinService"></jsp:useBean>
+<jsp:useBean id="memberSvc" scope="page" class="com.mem.model.MemberService"></jsp:useBean>
 <%
 
 	MemberVO memberVO = (MemberVO)session.getAttribute("memberVO");
@@ -51,7 +55,31 @@
 	}
 	pageContext.setAttribute("total_items",total_items);
 %>
+<%
 
+	//*****************聊天用：取得登錄者所參與的群組聊天*************/
+	List<ChatRoom_JoinVO> myCRList =chatRoomJoinSvc.getMyChatRoom(memberVO.getMem_Id());
+	Set<ChatRoom_JoinVO> myCRGroup = new HashSet<>(); //裝著我參與的聊天對話為群組聊天時
+	
+	for(ChatRoom_JoinVO myRoom : myCRList){
+		//查詢我參與的那間聊天對話，初始人數是否大於2?? 因為這樣一定就是群組聊天
+		int initJoinCount = chatRoomSvc.getOne_ByChatRoomID(myRoom.getChatRoom_ID()).getChatRoom_InitCNT();
+		if(initJoinCount > 2){
+			myCRGroup.add(myRoom);
+		}
+	}
+	pageContext.setAttribute("myCRList", myCRGroup);
+	
+	/***************聊天用：取出會員的好友******************/
+	FriendService friSvc = new FriendService();
+	List<Friend> myFri = friSvc.findMyFri(memberVO.getMem_Id(),2); //互相為好友的狀態
+	pageContext.setAttribute("myFri",myFri);
+	
+	/**************避免聊天-新增群組重新整理後重複提交********/
+	session.setAttribute("addCR_token",new Date().getTime());
+
+
+%>
 <!DOCTYPE html>
 <html>
 
@@ -119,36 +147,10 @@
     <script src="<%=request.getContextPath()%>/front_end/js/chat/vjUI_fileUpload.js"></script>
     <script src="<%=request.getContextPath()%>/front_end/js/chat/chat.js"></script>
     <!-- //聊天相關CSS及JS -->
+	
+	<%@ include file="/front_end/personal_area/chatModal_JS.file" %>
 
 
-    <script>
-    	$(document).ready(function(){
-    		
-        	/*若有錯誤訊息時，就會跳出視窗.......*/
-      		$('#errorModal').modal();
-        	
-      	    //《好友管理頁面》中的搜尋好友
-      	    $("#u_search_Fri").on("keyup", function() {
-      	        var value = $(this).val().toLowerCase();
-      	        $("#allFri .list-group-item").filter(function() {
-      	            $(this).toggle($(this).children("div").children("a").children("p").text().toLowerCase().indexOf(value) > -1)
-      	        });
-      	        $("#newFri .list-group-item").filter(function() {
-      	            $(this).toggle($(this).children("div").children("a").children("p").text().toLowerCase().indexOf(value) > -1)
-      	        });
-      	        $("#friBir .list-group-item").filter(function() {
-      	            $(this).toggle($(this).children("div").children("a").children("p").text().toLowerCase().indexOf(value) > -1)
-      	        });
-      	        $("#blockFri .list-group-item").filter(function() {
-      	            $(this).toggle($(this).children("div").children("a").children("p").text().toLowerCase().indexOf(value) > -1)
-      	        });
-      	    });
-        	
-    	});
-    	
-    	
-
-    </script>
 </head>
 
 <body>

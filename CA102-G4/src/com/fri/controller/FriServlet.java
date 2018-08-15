@@ -147,7 +147,7 @@ public class FriServlet extends HttpServlet {
 					failureView.forward(req, res);
 					return;
 				}
-			
+
 				/**********2.確認資料無誤，刪除他人發送的好友邀請***********/
 				FriendService friSvc = new FriendService();
 				friSvc.rejectFri(meId, friId);
