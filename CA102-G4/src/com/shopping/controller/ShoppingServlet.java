@@ -230,10 +230,10 @@ public class ShoppingServlet extends HttpServlet {
 			CartBean cartBean = (CartBean)session.getAttribute("cart");
 			List<CartItem> CartItemList = cartBean.getCartItems();
 			List<CartItem> CheckOutItemList =new ArrayList<CartItem>();
-			String token = (String)session.getAttribute("token2");
+			String token = (String)session.getAttribute("token");
 			String judgeDuplicate = req.getParameter("judgeDuplicate");
 			System.out.println(token);
-			
+			System.out.println(judgeDuplicate);
 			if(StringUtils.isNotBlank(token) && token.equals(judgeDuplicate)) {
 				try {
 						System.out.println("付款方法"+payment_method);
@@ -314,6 +314,8 @@ public class ShoppingServlet extends HttpServlet {
 					String url = "/front_end/store/store_checkout_3.jsp";
 					RequestDispatcher successView = req.getRequestDispatcher(url);
 					successView.forward(req, res);
+					
+					session.removeAttribute("token");
 	
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -456,7 +458,7 @@ public class ShoppingServlet extends HttpServlet {
 		String judgeDuplicate = req.getParameter("judgeDuplicate");
 		String token = (String)session.getAttribute("token");
 		System.out.println(token);
-		
+		System.out.println(judgeDuplicate);
 		if(StringUtils.isNotBlank(token) && token.equals(judgeDuplicate)) {
 			try {
 				System.out.println(sellerListStr);
@@ -480,16 +482,13 @@ public class ShoppingServlet extends HttpServlet {
 				req.setAttribute("shipMethod", shipMethod);
 				req.setAttribute("productIdListStr", productIdListStr);
 				req.setAttribute("sellerListStr", sellerListStr);
+				
+				session.removeAttribute("token");
 	
 				String url = "/front_end/store/store_checkout_2.jsp";
 				RequestDispatcher successView = req.getRequestDispatcher(url);
 				successView.forward(req, res);
-				
-				session.removeAttribute("token");
 	
-				UUID uuid = UUID.randomUUID();
-			    session.setAttribute("token2",uuid.toString());//給結帳按鈕用的token
-			    
 			    
 			} catch (Exception e) {
 				e.printStackTrace();

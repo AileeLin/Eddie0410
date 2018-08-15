@@ -497,7 +497,7 @@
 							<%System.out.println(attTripList.size()); %>
 							<%if(attTripList==null){%>
 							<%}else if(attTripList.size()>2){%>
-								<c:forEach var="attTripGMap" items="${attTripList}" begin="1" end="${attTripList.size()-1}" varStatus="s">
+								<c:forEach var="attTripGMap" items="${attTripList}" begin="1" end="${attTripList.size()-2}" varStatus="s">
 									waypts.push({
 						                location: new google.maps.LatLng(${attSvc.getOneAttByPK(attTripGMap.att_no).att_lat}, ${attSvc.getOneAttByPK(attTripGMap.att_no).att_lon}),
 						                stopover: true

@@ -64,9 +64,9 @@ Integer shipMethod = (Integer)request.getAttribute("shipMethod");
 String productIdListStr = (String)request.getAttribute("productIdListStr");
 String sellerListStr = (String)request.getAttribute("sellerListStr");
 //給結帳按鈕用的token
-String token = (String)session.getAttribute("token2");
-pageContext.setAttribute("token2", token);
-
+UUID uuid = UUID.randomUUID();
+session.setAttribute("token", uuid.toString());
+pageContext.setAttribute("token", uuid.toString());
 
 pageContext.setAttribute("storeName", storeName);
 pageContext.setAttribute("addr", addr);

@@ -26,7 +26,7 @@
 	}
 	
 	if(login_state_backEnd!=true){
-		session.setAttribute("location", request.getRequestURI());
+		session.setAttribute("location_Backend", request.getRequestURI());
 		response.sendRedirect(request.getContextPath()+"/back_end/admin/back_login.jsp");
 	}
 	

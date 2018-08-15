@@ -1,6 +1,6 @@
 package com.grp_mem.model;
 
-import com.photo_wall_like.model.photo_wall_likeVO;
+import java.util.List;
 
 public class Grp_memService {
 	private Grp_memDAO_interface dao;
@@ -68,9 +68,15 @@ public class Grp_memService {
 		
 		return cnt;
 	}
-	
+	//更改參加者的會員狀態(grp_Leader=0 被婉拒 =1接受)
 	public void update_State(String grp_Id, String mem_Id, String grp_Leader) {
 		dao.update_State(grp_Id,mem_Id,grp_Leader);
 	}
+	
+	//取得參加者(GRP_LEADER=1)的會員資料
+	public List<Grp_memVO> getAll_check_mem(String grp_Id, String grp_Leader) {
+		return dao.getAll_check_mem(grp_Id,grp_Leader);
+	}
+	
 
 }

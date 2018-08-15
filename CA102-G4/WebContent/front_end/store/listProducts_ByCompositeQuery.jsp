@@ -43,12 +43,17 @@
 	}
 	pageContext.setAttribute("total_items",total_items);
 	
-	List<ProductVO> list = (List<ProductVO>)request.getAttribute("list");
-	int maxPrice = 0;
-    for(int i = 0 ;i<list.size();i++){
-  		if(list.get(i).getProduct_price()>maxPrice){
-  			maxPrice = list.get(i).getProduct_price();
-  		}	
+	List<ProductVO> list2 = (List<ProductVO>)request.getAttribute("list");
+  List<ProductVO> list = new ArrayList<ProductVO>();
+    int maxPrice = 0;
+    for(int i = 0 ;i<list2.size();i++){
+    	if(list2.get(i).getProduct_status()==1){
+
+    		if(list2.get(i).getProduct_price()>maxPrice){
+    			maxPrice = list2.get(i).getProduct_price();
+    		} 
+    		list.add(list2.get(i));
+    	}
     }
 	pageContext.setAttribute("list",list);
 	pageContext.setAttribute("maxPrice",maxPrice);
@@ -123,12 +128,10 @@
 	    <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/front_end/css/store/nouislider.css">
 		<link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/front_end/css/store/seller_prod_mgt.css">
 		 <!-- //store 自定義的css -->
+	    <!-- LogoIcon -->
+	    <link href="<%=request.getContextPath()%>/front_end/images/all/Logo_Black_use.png" rel="icon" type="image/png">
+	    <!-- //LogoIcon -->
 
-	
-	    <!-- store 自定義的js -->
- 	    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-
- 	    <!-- //store 自定義的js -->
 		<style>
 			#myHeader{
 				position: fixed;
@@ -375,7 +378,7 @@
 							<!-- Block2 -->
 							
 								<div class="block2">
-									<div class="block2-img wrap-pic-w of-hidden pos-relative block2-labelnew" style="height:16rem">
+									<div class="block2-img wrap-pic-w of-hidden pos-relative" style="height:16rem">
 										<img src="data:image/jpeg;base64,${productVO.product_photo_1_base}" onerror="this.src='<%=request.getContextPath()%>/front_end/images/store/no-image-icon-15.png'"  alt="IMG-PRODUCT">
 										<div class="block2-overlay trans-0-4">
 											<div class="block2-btn-addcart w-size1 trans-0-4">

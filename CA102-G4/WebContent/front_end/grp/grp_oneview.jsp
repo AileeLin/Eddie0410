@@ -286,7 +286,9 @@
                
                 <div class="thumbnail">
                     <div class="caption">
-                        <h2 style="font-size:24px; color:red; width: 100%;">可報名人數：${grpVO.grp_Acpt}</h2>
+                        <h2 style="font-size:24px; color:red; width: 100%;">可報名人數：<span id="joinCount">${grpVO.grp_Cnt}</span></h2>
+<%--                         <h2 style="font-size:24px; color:red; width: 100%;">預計出團人數：${grpVO.grp_Acpt}</h2> --%>
+                        
                         <p>結束報名時間：
                         <fmt:formatDate pattern="YYYY年MM月dd日 " value="${grpVO.grp_End}" />
                         </p>
@@ -316,7 +318,7 @@
 
                     	%>
                         
-                        <!-- //關注商品 -->
+                        <!-- //參加揪團 -->
                         <button class="btn btn-info aaa" id="join_grp" style='font-weight:<%=(cnt == null) ? "1;" : "2;"%>${grpVO.grp_Status == 2 ? "display:none":" "}'><%=(cnt == null) ? "我要參加" : "取消參加"%></button>
                         
                         	<script type="text/javascript">
@@ -427,6 +429,14 @@
 	       var action = "collect";
 	       var grp_Id = "${grpVO.grp_Id}";
 	   	   var mem_Id = "${memberVO.mem_Id}";
+		   var grp_Cnt = "${grpVO.grp_Cnt}";
+		   if($("#join_grp").text() == "取消參加"){
+		    	//.text的內容都會轉型成字串再用parseInt轉成整數在.text送到SERVLET
+		    	  $("#joinCount").text( parseInt($("#joinCount").text())-1);
+		    }else if($("#join_grp").text() == "我要參加"){
+		 		 $("#joinCount").text( parseInt($("#joinCount").text())+1)
+		     }
+		  
 	    $.ajax({
 	     url : "<%=request.getContextPath()%>/grp_mem.do",
 	     method : "POST",
@@ -434,12 +444,14 @@
 	      action:action,
 	      grp_Id:grp_Id,
 	      mem_Id:mem_Id,
-	      grp_Leader:0
+	      grp_Leader:0,
+	      grp_Cnt:grp_Cnt,
+	      joinOrNot:$("#join_grp").text()
 	     },
 	     success: function(response){
 	    	 alert(response);
 	     }
-	    });
+	    });  
 	   });
 	  });
 </script>

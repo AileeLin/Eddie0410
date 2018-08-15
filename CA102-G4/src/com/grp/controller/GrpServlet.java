@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -27,6 +28,11 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
 import com.grp.model.*;
+import com.grp_mem.model.Grp_memService;
+import com.grp_mem.model.Grp_memVO;
+import com.mem.model.MemberService;
+import com.mem.model.MemberVO;
+import com.tools.JavaMailSender;
 
 
 @MultipartConfig(maxFileSize=-1,maxRequestSize=-1)
@@ -424,7 +430,43 @@ public class GrpServlet extends HttpServlet {
 			/***************************2.開始修改資料*****************************************/
 			
 			GrpService grpSvc = new GrpService();
-				grpSvc.update_status(grp_Id,grp_Status);
+			grpSvc.update_status(grp_Id,grp_Status);
+			System.out.println("確認出團");
+			
+			
+			Grp_memService grp_memSvc = new Grp_memService();
+			List<Grp_memVO> list = grp_memSvc.getAll_check_mem(grp_Id,"1");
+			
+			for(int i = 0 ; i < list.size(); i++) {
+				
+				//從GRPVO的LIST取出所有參加的人
+				Grp_memVO mem = list.get(i);
+				//從所有參加會員名單取出會員的資料(帳戶EMAIL)
+				MemberService memsvc = new MemberService();
+				MemberVO memberVO = memsvc.getOneMember(mem.getMem_Id());
+				
+				GrpService grpsvc = new GrpService();
+				GrpVO grpVO_Title = grpsvc.findByPrimaryKey(grp_Id);
+				//送EMAIL
+				JavaMailSender mailSvc = new JavaMailSender();
+				
+				String mem_Account = memberVO.getMem_Account();
+			    String subject = "Travel Maker的揪團通知";
+			    String messageText = memberVO.getMem_Name() + "您好，您參加的揪團，揪團團名為：" + grpVO_Title.getGrp_Title() + "，已經成功出團" ;
+			    mailSvc.sendMail(mem_Account, subject, messageText);
+				
+			    //送簡訊
+				Send sendSvc = new Send();
+				
+				String[] tel = {memberVO.getMem_Phone()};
+				String message = memberVO.getMem_Name() + "您好，您參加的揪團，揪團團名為：" + grpVO_Title.getGrp_Title() + "，已經成功出團" ;
+
+				sendSvc.sendMessage(tel,message);
+			   		    
+			}
+			System.out.println("簡訊已經寄出");			
+			System.out.println("出團信件已經寄出");			
+			
 			
 			/***************************3.修改完成,準備轉交(Send the Success view)*************/
 

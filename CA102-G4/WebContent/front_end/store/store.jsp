@@ -122,11 +122,10 @@
 		<link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/front_end/css/store/seller_prod_mgt.css">
 		 <!-- //store 自定義的css -->
 
-	
-	    <!-- store 自定義的js -->
- 	    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-
- 	    <!-- //store 自定義的js -->
+ 	    <!-- LogoIcon -->
+	    <link href="<%=request.getContextPath()%>/front_end/images/all/Logo_Black_use.png" rel="icon" type="image/png">
+	    <!-- //LogoIcon -->
+    
 		<style>
 			#myHeader{
 				position: fixed;

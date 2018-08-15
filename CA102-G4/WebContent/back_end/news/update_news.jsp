@@ -17,7 +17,7 @@
 	}
 	
 	if(login_state_backEnd!=true){
-	 session.setAttribute("location", request.getRequestURI());
+	 session.setAttribute("location_Backend", request.getRequestURI());
 	 response.sendRedirect(request.getContextPath()+"/back_end/admin/back_login.jsp");
 	}
 %>
@@ -146,20 +146,10 @@ NewsVO newsVO = (NewsVO) request.getAttribute("newsVO");
                                     <a href="<%=request.getContextPath()%>/back_end/photo_wall/photo_report.jsp">照片牆檢舉</a>
                                 </li>
                                 <li>
-                                    <a href="#">揪團檢舉</a>
-                                </li>
-                                <li>
-                                    <a href="#">商品檢舉</a>
+                                    <a href="<%=request.getContextPath()%>/back_end/store/product_report.jsp">商品檢舉</a>
                                 </li>
                             </ul>
                         </li>
-                        
-                        <li>
-                            <a href="#">
-                                <i class="fas fa-shopping-cart"></i>交易款項管理
-                            </a>
-                        </li>
-                        
                         <li>
                             <a href="<%=request.getContextPath()%>/back_end/ad/back_ad.jsp">
                                 <i class="fas fa-audio-description"></i>專欄廣告管理

@@ -186,17 +186,6 @@
         <!-- 我是隔板 -->
         <div class="ui hidden divider"></div>
         <!-- //我是隔板 -->
-
-        <%-- 錯誤表列 --%>
-		<c:if test="${not empty errorMsgs}">
-			<font color='red'>請修正以下錯誤:
-			<ul>
-				<c:forEach var="message" items="${errorMsgs}">
-					<li>${message}</li>
-				</c:forEach>
-			</ul>
-			</font>
-		</c:if>
         
         <input type="hidden" name="action" value="updating">
         <input type="hidden" name="blog_id" value="${blogVO.blog_id}">

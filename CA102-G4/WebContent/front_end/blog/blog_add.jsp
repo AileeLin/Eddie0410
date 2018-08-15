@@ -204,18 +204,24 @@
            	<!-- 旅遊日期 -->
            	<p>日期：<input type="text" id="datepicker" size="30" readonly name="travel_date" value="<%= (blogVO==null)? "" : blogVO.getTravel_date()%>"></p>
             <!-- //旅遊日期 -->
+            
             <!-- 標籤 -->
 			<div class="ui sub header">設定標籤可以增加文章的曝光率唷!</div>
-			<select multiple="" name="tag" class="ui multiple selection dropdown">
-					<option value="">添加標籤</option>
-					<c:forEach var="blogTagNameVO" items="${list}">
-					<option value="${blogTagNameVO.btn_id}">${blogTagNameVO.btn_class} - ${blogTagNameVO.btn_name}</option>
-					</c:forEach>
-			</select>
+			<div class="ui multiple selection dropdown">
+				  <input name="tag" type="hidden" value='<c:forEach var="blog_tagVO" items="${blogTagList}">${blog_tagVO},</c:forEach>'>
+				  <i class="dropdown icon"></i>
+				  <div class="default text">添加標籤</div>
+				  <div class="menu">
+				  <c:forEach var="blogTagNameVO" items="${list}">
+				      <div class="item" data-value="${blogTagNameVO.btn_id}">${blogTagNameVO.btn_class} - ${blogTagNameVO.btn_name}</div>
+				  </c:forEach>
+				  </div>
+			</div>	
 			<!-- //標籤 -->
+			
             <!-- 編輯器區塊 -->
             <textarea name="editor1">
-            <%= (blogVO==null)? "" : blogVO.getBlog_content()%>
+            	<%= (blogVO==null)? "" : blogVO.getBlog_content()%>
             </textarea>
             <!-- //編輯器區塊 -->
         </form>

@@ -181,7 +181,9 @@
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/front_end/css/store/store_order_mgt.css">	   
    
     <!-- //賣場相關CSS及JS -->
-   
+     <!-- LogoIcon -->
+    <link href="<%=request.getContextPath()%>/front_end/images/all/Logo_Black_use.png" rel="icon" type="image/png">
+    <!-- //LogoIcon -->
    <style>
 	   a:hover, a:focus {
 		    color: #aaa;
@@ -449,7 +451,7 @@
 										<%@ include file="page1.file" %>
 										<div class="page-top flex-sb-m flex-w p-b-35 p-t-40" style="display: inline-block;">
 											<span class="s-text8 p-t-5 p-b-5">
-												第<%=whichPage%>/<%=pageNumber%>頁  共<%=rowNumber%>筆
+												第<%=whichPage%>/<%=pageNumber%>頁  共<span id="rowno"><%=rowNumber%></span>筆
 											</span>
 										</div>
 									</div>
@@ -903,149 +905,7 @@
         </div>
     </div>
     <!-- //footer -->
-    
-    <!-- 小的聊天列表 start-->
-    <div class="chatContainer">
-        <div class="chatHeader">
-            
-                &nbsp;<i class="fas fa-comment"></i>&nbsp;聊天室
-                <span style="float: right;padding-right: 10px" id="chat_addFri_span">
-                    <span data-toggle="tooltip" title="建立新對話" data-placement="top" >
-                        <i class="fas fa-user-plus"></i>
-                    </span>
-                </span> 
-
-        </div>
-        <div class="chatContext">
-            <ul class="list-group">
-                <li class="list-group-item"><img class="avatar" src="<%=request.getContextPath()%>/front_end/images/all/p1.jpg">凱文</li>
-                <li class="list-group-item"><img class="avatar" src="<%=request.getContextPath()%>/front_end/images/all/p2.jpg">大眼怪</li>
-                <li class="list-group-item"><img class="avatar" src="<%=request.getContextPath()%>/front_end/images/all/p3.png">卡納赫拉</li>
-                <li class="list-group-item"><img class="avatar" src="<%=request.getContextPath()%>/front_end/images/all/p4.png">臭跩貓</li>
-                <li class="list-group-item"><img class="avatar" src="<%=request.getContextPath()%>/front_end/images/all/p5.jpg">好想兔</li>
-                <li class="list-group-item"><img class="avatar" src="<%=request.getContextPath()%>/front_end/images/all/p6.png">茶包</li>
-            </ul>
-        </div>
-        <div class="chatFooter">
-            <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1"><i class="fas fa-search"></i></span>
-              <input type="text" class="form-control" placeholder="搜尋" aria-describedby="basic-addon1" id="search_Fri">
-            </div>
-        </div>
-    </div>
-    <!-- 小的聊天列表 END -->
-    
-    <!-- Modal 建立聊天視窗 start-->
-    <div class="modal fade" id="chat_AddFri_Modal" role="dialog">
-        <div class="modal-dialog">
-
-          <!-- Modal 建立聊天視窗content start-->
-          <div class="modal-content" >
-            
-            <div class="modal-header">
-              <h4 class="modal-title">建立聊天</h4>
-            </div>
-            
-            <div class="modal-body"> 
-                <!--輸入盒聊天對話-->
-                <div class="ui left icon input fluid">
-                  <input type="text" placeholder="為聊天命名" id="chatName" required>
-                  <i class="users icon"></i>
-                </div>
-                <!--分隔線-->
-                <hr>
-                <!--搜尋要加入聊天對話的好友-->
-                <div style="height:400px;margin-top:10px">
-                      <div style="float:left;width:60%;height:inherit">
-                          <div class="ui icon input fluid">
-                              <input type="text" placeholder="搜尋要加入的用戶" id="search_Fri_modal">
-                              <i class="search icon"></i>
-                          </div>
-                          <div class="ui middle aligned selection list" style="height:89%;overflow:auto">
-                              
-                           <div class="item">
-                               <input type="checkbox" class="ui checkbox" id="fri01">
-                               <label for="fri01" style="width:80%">
-                                  <img class="ui avatar image" src="<%=request.getContextPath()%>/front_end/images/all/p1.jpg">
-                                  <span class="content">小小兵small</span>  
-                               </label>
-                           </div>
-                           <div class="item">
-                               <input type="checkbox" class="ui checkbox" id="fri02">
-                               <label for="fri02" style="width:80%">
-                                  <img class="ui avatar image" src="<%=request.getContextPath()%>/front_end/images/all/p2.jpg">
-                                  <span class="content">大眼怪eye</span>  
-                               </label>
-                           </div>
-                           <div class="item">
-                               <input type="checkbox" class="ui checkbox" id="fri03">
-                               <label for="fri03" style="width:80%">
-                                  <img class="ui avatar image" src="<%=request.getContextPath()%>/front_end/images/all/p3.png">
-                                  <span class="content">卡納赫拉kanihei</span>  
-                               </label>
-                           </div>
-                           <div class="item">
-                               <input type="checkbox" class="ui checkbox" id="fri04">
-                               <label for="fri04" style="width:80%">
-                                  <img class="ui avatar image" src="<%=request.getContextPath()%>/front_end/images/all/p4.png">
-                                  <span class="content">北爛貓cat</span>  
-                               </label>
-                           </div>
-                           <div class="item">
-                               <input type="checkbox" class="ui checkbox" id="fri05">
-                               <label for="fri05" style="width:80%">
-                                  <img class="ui avatar image" src="<%=request.getContextPath()%>/front_end/images/all/p5.jpg">
-                                  <span class="content">好想兔rabbit</span>  
-                               </label>
-                           </div>
-                           <div class="item">
-                               <input type="checkbox" class="ui checkbox" id="fri06">
-                               <label for="fri06" style="width:80%">
-                                  <img class="ui avatar image" src="<%=request.getContextPath()%>/front_end/images/all/p6.png">
-                                  <span class="content">豆卡頻道dog</span>  
-                               </label>
-                           </div>
-                           <div class="item">
-                               <input type="checkbox" class="ui checkbox" id="fri07">
-                               <label for="fri07" style="width:80%">
-                                  <img class="ui avatar image" src="<%=request.getContextPath()%>/front_end/images/all/author1.jpg">
-                                  <span class="content">美女women</span>  
-                               </label>
-                           </div>
-                           <div class="item">
-                               <input type="checkbox" class="ui checkbox" id="fri08">
-                               <label for="fri08" style="width:80%">
-                                  <img class="ui avatar image" src="<%=request.getContextPath()%>/front_end/images/all/t4.jpg">
-                                  <span class="content">帥哥man</span>  
-                               </label>
-                           </div>
-                              
-                          </div>
-                      </div>
-                      <!--已選擇加入聊天對話列表-->
-                      <div style="float:left;width:40%;height:inherit;border-left: 1px" id="select_Fri">
-                          <div style="padding-left: 20px;height: 10%">
-                          已選擇<i class="check circle icon"></i>
-                          </div>
-                          <div class="ui middle aligned selection list" style="height:89%;overflow:auto" id="select_FriList">
-                                <!--這裡我要塞被選到的好友；動態顯示--> 
-                          </div>
-                      </div>         
-                </div>    
-            </div>
-            
-            <div class="modal-footer"> 
-              <button type="button" class="btn btn-danger" data-dismiss="modal">取消</button>
-              <button type="button" class="btn btn-success">確認</button>
-            </div>
-                      
-          </div>
-          <!-- Modal 建立聊天視窗content END-->
-        </div>
-      </div>
-    <!-- Modal 建立聊天視窗 END -->
-    
-
+   
 <!--===============================================================================================-->
 <!--加入購物車-->
 <script>
@@ -1092,6 +952,8 @@
 					 success:function(data){ 
 						// alert("刪除成功!");
 						removeEle.remove();
+						var oldrowno = $('#rowno').html();
+						$('#rowno').html(oldrowno-1);
 						console.log(data.wishlikesize);
 					 }
 				 })
@@ -1345,11 +1207,11 @@ function cancelOrderById(){
 		success:function(data){
 			console.log("買家取消訂單成功");
 			$('#ord_block_'+ordId).remove();
-	
 		}
 	})
-	
 }
+
+
 <!--============================================================================================-->
 <!--查看取消詳情按鈕-->
 
@@ -1445,7 +1307,7 @@ function ratingById(){
 	var ordId = $(".modal-footer #ratingOrdId").val();
 	var action = "ratingOrder";
 	var rating = $("#ratingStar").val();
-	var ratingDescr = $("#ratingDescr").html();
+	var ratingDescr = $("#ratingDescr").val();
 	$.ajax({
 		url:"${pageContext.request.contextPath}/front_end/store/shopping.do",
 		method:"POST",

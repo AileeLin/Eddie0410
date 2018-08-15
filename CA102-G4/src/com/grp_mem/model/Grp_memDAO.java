@@ -27,7 +27,7 @@ public class Grp_memDAO implements Grp_memDAO_interface {
 	}
 	
 	private static final String INSERT_STMT =
-			"Insert into GRP_MEM (GRP_ID,MEM_ID,GRP_LEADER) VALUES (?,?,?)";
+			"Insert into GRP_MEM (GRP_ID,MEM_ID,GRP_LEADER,GRP_CHECKIN) VALUES (?,?,?,0)";
 	private static final String UPDATE = 
 			"UPDATE GRP_MEM SET GRP_LEADER= ? WHERE GRP_ID =? AND MEM_ID = ?";
 	private static final String DELETE_GRP_MEM = 
@@ -46,6 +46,11 @@ public class Grp_memDAO implements Grp_memDAO_interface {
 		"UPDATE GRP_MEM SET GRP_LEADER= ? WHERE GRP_ID =? AND MEM_ID = ?";
 	private static final String UPDATE_OFF_STATE_STMT=
 		"UPDATE GRP_MEM SET GRP_LEADER= ? WHERE GRP_ID =? AND MEM_ID = ?";	
+	
+	//取得參加者(GRP_LEADER=1)的會員資料
+	private static final String GET_CHECK_MEMBER = 
+		"SELECT * FROM GRP_MEM WHERE GRP_ID = ? AND GRP_LEADER = 1 ";
+	
 	
 	
 	@Override
@@ -434,6 +439,65 @@ public class Grp_memDAO implements Grp_memDAO_interface {
 		return count;
 	}
 
+	@Override
+	public List<Grp_memVO> getAll_check_mem(String grp_Id,String grp_Leader) {
+			List<Grp_memVO> list = new ArrayList<Grp_memVO>();
+			Grp_memVO grp_memVO = null;
+			Connection con = null;
+			PreparedStatement pstmt = null;
+			ResultSet rs = null;
+			
+			try {
+				con = ds.getConnection();
+				
+				pstmt = con.prepareStatement(GET_CHECK_MEMBER);
+				
+				pstmt.setString(1, grp_Id);
+				//因為指令已經寫死 grp_Leader = 1  所以這邊註解
+//				pstmt.setString(2, grp_Leader);
+				
+				
+				rs = pstmt.executeQuery();
+
+				while (rs.next()) {
+					
+					grp_memVO = new Grp_memVO();
+					grp_memVO.setGrp_Id(rs.getString("GRP_ID"));
+					grp_memVO.setMem_Id(rs.getString("MEM_ID"));
+					grp_memVO.setGrp_Leader(rs.getString("GRP_LEADER"));
+					list.add(grp_memVO);
+				}
+				
+
+				// Handle any driver errors
+			}catch (SQLException se) {
+				throw new RuntimeException("A database error occured. " + se.getMessage());
+				// Clean up JDBC resources
+			} finally {
+				if (rs != null) {
+					try {
+						rs.close();
+					} catch (SQLException se) {
+						se.printStackTrace(System.err);
+					}
+				}
+				if (pstmt != null) {
+					try {
+						pstmt.close();
+					} catch (SQLException se) {
+						se.printStackTrace(System.err);
+					}
+				}
+				if (con != null) {
+					try {
+						con.close();
+					} catch (Exception e) {
+						e.printStackTrace(System.err);
+					}
+				}
+			}
+			return list;
+		}
 	
 	
 }

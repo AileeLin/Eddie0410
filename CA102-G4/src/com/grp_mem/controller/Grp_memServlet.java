@@ -163,7 +163,7 @@ public class Grp_memServlet extends HttpServlet {
 				
 				if(joinOrNot.equals("我要參加")){
 					grpSvc_plus.update_mem_plus(grp_Id,grp_Cnt);
-					grp_Cnt += 1;
+//					grp_Cnt += 1;
 					System.out.println("grp_Cnt3="+grp_Cnt);
 					grpSvc_plus.update_mem_plus(grp_Id,grp_Cnt);
 					Integer mem_plus = grpVO.getGrp_Cnt();

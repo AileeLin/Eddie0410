@@ -56,8 +56,9 @@ $(document).ready(function () {
 	       resizable: false,
 	       draggable: false,
 	       buttons: {
-	           "更新": function () {
+	           "送出": function () {
 	           	$(this).dialog("close");
+	           	sendblogReportResult();
 	           	$(".blogReportManageDialogForm").submit();
 	           },
 	           "返回": function () {
@@ -91,8 +92,9 @@ $(document).ready(function () {
 	       resizable: false,
 	       draggable: false,
 	       buttons: {
-	           "更新": function () {
+	           "送出": function () {
 	           	$(this).dialog("close");
+	           	sendblogMessageReportResult();
 	           	$(".blogMessageReportManageDialogForm").submit();
 	           },
 	           "返回": function () {

@@ -4,7 +4,16 @@ public class Grp_memVO implements java.io.Serializable{
 	private String grp_Id;
 	private String mem_Id;
 	private String grp_Leader;
+	private String grp_Checkin;
 	
+	public String getGrp_Checkin() {
+		return grp_Checkin;
+	}
+
+	public void setGrp_Checkin(String grp_Checkin) {
+		this.grp_Checkin = grp_Checkin;
+	}
+
 	public Grp_memVO() {
 		
 	}

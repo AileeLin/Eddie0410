@@ -22,7 +22,7 @@
 	}
 	
 	if(login_state_backEnd!=true){
-	 session.setAttribute("location","/CA102G4/back_end/back_index.jsp");
+	 session.setAttribute("location_Backend","/CA102G4/back_end/back_index.jsp");
 	 response.sendRedirect(request.getContextPath()+"/back_end/admin/back_login.jsp");
 	}
 

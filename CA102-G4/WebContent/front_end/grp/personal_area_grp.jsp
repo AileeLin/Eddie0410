@@ -148,18 +148,18 @@
     <link href="<%=request.getContextPath()%>/front_end/css/personal/personal_area_home.css" rel="stylesheet" type="text/css">
     <!-- //AD_Page相關CSS及JS -->
     
-    <!-- 聊天相關CSS及JS -->
-    <link href="<%=request.getContextPath()%>/front_end/css/chat/chat_style.css" rel="stylesheet" type="text/css">
-    <script src="<%=request.getContextPath()%>/front_end/js/chat/chat.js"></script>
-    <!-- //聊天相關CSS及JS -->
+<!--     聊天相關CSS及JS -->
+<%--     <link href="<%=request.getContextPath()%>/front_end/css/chat/chat_style.css" rel="stylesheet" type="text/css"> --%>
+<%--     <script src="<%=request.getContextPath()%>/front_end/js/chat/chat.js"></script> --%>
+<!--     //聊天相關CSS及JS -->
     
     
 
     
 
 </head>
-
-<body onload="connect();">
+<!-- onload="connect();" -->
+<body>
 	<%-- 錯誤表列 --%>
 	<c:if test="${not empty errorMsgs}">
 		<div class="modal fade" id="errorModal">

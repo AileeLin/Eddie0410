@@ -107,10 +107,10 @@ public class AdminServlet extends HttpServlet {
 
 				session.setAttribute("adminVO", adminVO); // session包著員工資料走
 				try {
-					String location = (String) session.getAttribute("location");
-					if (location != null) {
-						session.removeAttribute("location"); // *工作2: 看看有無來源網頁 (-->如有來源網頁:則重導至來源網頁)
-						res.sendRedirect(location);
+					String location_Backend = (String) session.getAttribute("location_Backend");
+					if (location_Backend != null) {
+						session.removeAttribute("location_Backend"); // *工作2: 看看有無來源網頁 (-->如有來源網頁:則重導至來源網頁)
+						res.sendRedirect(location_Backend);
 						return;
 					}
 				} catch (Exception ignored) {

@@ -145,6 +145,10 @@
 
 <!-- //store 自定義的css -->
 
+<!-- LogoIcon -->
+<link href="<%=request.getContextPath()%>/front_end/images/all/Logo_Black_use.png" rel="icon" type="image/png">
+<!-- //LogoIcon -->
+    
  <script>
     	$(document).ready(function(){
     		

@@ -30,7 +30,7 @@
 	}
 	
 	if(login_state_backEnd!=true){
-		session.setAttribute("location", request.getRequestURI());
+		session.setAttribute("location_Backend", request.getRequestURI());
 		response.sendRedirect(request.getContextPath()+"/back_end/admin/back_login.jsp");
 	}
 %>
@@ -88,9 +88,163 @@
         <!-- blogTag自己定義的JS檔案-->
         <script src="<%=request.getContextPath()%>/back_end/js/blog/blog_report.js"></script>
         <!-- //blogTag自己定義的JS檔案-->
-                
+        
+        <script>
+				//下方Uid 自行改發通知者的id
+				var MyPoint = "/chat/${adminVO.admin_Id}";
+				var host = window.location.host;
+				var path = window.location.pathname;
+				var webCtx = path.substring(0, path.indexOf('/', 1));
+				var endPointURL = "ws://" + window.location.host + webCtx + MyPoint;
+				
+				var webSocket;
+			
+				function connect() {
+					// create a websocket
+					console.log(endPointURL);
+					webSocket = new WebSocket(endPointURL);
+			
+					webSocket.onopen = function(event) {
+					};
+			
+					webSocket.onmessage = function(event) {
+					};
+			
+					webSocket.onclose = function(event) {
+					};
+				}
+			
+
+				function sendblogReportResult() {
+					var br_status = $("#blogReportDialogBrStatus").val();
+					if(br_status==="1"){
+/////////////////////////////////////////////     傳送給檢舉人     /////////////////////////////////////////////
+						//送標題
+						var title = "回報結果";
+						//送發送者名
+						var sender = "${adminVO.admin_Id}";
+						//送接收者名 測試用名為james 搭配indexed.html測試
+						var receiver = $("#blogReportDialogMemID").val();
+						//送訊息內容
+						var message = "我們審查了你檢舉的旅遊記文章。因為該文章確實違反了網站規定，我們已將他移除。感謝你的回報，我們會讓被檢舉人知道他的文章已被移除，但不會透漏檢舉人的身份。";
+						
+							var jsonObj = {
+								"title"		:title,
+							  	"sender"	:sender,
+							 	"receiver"	:receiver,
+							 	"message"	:message
+							};
+							webSocket.send(JSON.stringify(jsonObj));
+							
+/////////////////////////////////////////////     傳送給被檢舉者     /////////////////////////////////////////////
+							//送標題
+							var title2= "回報結果";
+							//送發送者名
+							var sender2 = "${adminVO.admin_Id}";
+							//送接收者名 測試用名為james 搭配indexed.html測試
+							var receiver2 = $("#blogOwner").val();
+							//送訊息內容
+							var message2 = "根據我們的審查，由於您檢舉的旅遊記文章未遵循網站規定，因此我們已予以移除";
+							
+								var jsonObj2 = {
+									"title"		:title2,
+								  	"sender"	:sender2,
+								 	"receiver"	:receiver2,
+								 	"message"	:message2
+								};
+							webSocket.send(JSON.stringify(jsonObj2));
+								
+						}else if(br_status==="2") {
+							
+/////////////////////////////////////////////     傳送給檢舉人     /////////////////////////////////////////////
+							//送標題
+							var title = "回報結果";
+							//送發送者名
+							var sender = "${adminVO.admin_Id}";
+							//送接收者名 測試用名為james 搭配indexed.html測試
+							var receiver = $("#blogReportDialogMemID").val();
+							//送訊息內容
+							var message = "根據我們的審查，我們判定您檢舉的文章並無違反TravelMaker的網站規定，感謝您的檢舉。";
+							
+								var jsonObj = {
+									"title"		:title,
+								  	"sender"	:sender,
+								 	"receiver"	:receiver,
+								 	"message"	:message
+								};
+								webSocket.send(JSON.stringify(jsonObj));
+						}
+					}
+
+				function sendblogMessageReportResult() {
+					var br_status = $("#blogMessageReportDialogBmrStatus").val();
+					if(br_status==="1"){
+/////////////////////////////////////////////     傳送給檢舉人     /////////////////////////////////////////////
+						//送標題
+						var title = "回報結果";
+						//送發送者名
+						var sender = "${adminVO.admin_Id}";
+						//送接收者名 測試用名為james 搭配indexed.html測試
+						var receiver = $("#blogMessageReportDialogMemID").val();
+						//送訊息內容
+						var message = "我們審查了你檢舉的留言。因為該留言確實違反了網站規定，我們已將他移除。感謝你的回報，我們會讓被檢舉人知道他的留言已被移除，但不會透漏檢舉人的身份。";
+						
+							var jsonObj = {
+								"title"		:title,
+							  	"sender"	:sender,
+							 	"receiver"	:receiver,
+							 	"message"	:message
+							};
+							webSocket.send(JSON.stringify(jsonObj));
+							
+/////////////////////////////////////////////     傳送給被檢舉者     /////////////////////////////////////////////
+							//送標題
+							var title2= "回報結果";
+							//送發送者名
+							var sender2 = "${adminVO.admin_Id}";
+							//送接收者名 測試用名為james 搭配indexed.html測試
+							var receiver2 = $("#messageOwner").val();
+							//送訊息內容
+							var message2 = "根據我們的審查，由於您檢舉的留言未遵循網站規定，因此我們已予以移除";
+							
+								var jsonObj2 = {
+									"title"		:title2,
+								  	"sender"	:sender2,
+								 	"receiver"	:receiver2,
+								 	"message"	:message2
+								};
+							webSocket.send(JSON.stringify(jsonObj2));
+								
+						}else if(br_status==="2") {
+							
+/////////////////////////////////////////////     傳送給檢舉人     /////////////////////////////////////////////
+							//送標題
+							var title = "回報結果";
+							//送發送者名
+							var sender = "${adminVO.admin_Id}";
+							//送接收者名 測試用名為james 搭配indexed.html測試
+							var receiver = $("#blogMessageReportDialogMemID").val();
+							//送訊息內容
+							var message = "根據我們的審查，我們判定您檢舉的留言並無違反TravelMaker的網站規定，感謝您的檢舉。";
+							
+								var jsonObj = {
+									"title"		:title,
+								  	"sender"	:sender,
+								 	"receiver"	:receiver,
+								 	"message"	:message
+								};
+								webSocket.send(JSON.stringify(jsonObj));
+						}
+					}
+				
+				function disconnect() {
+					webSocket.close();
+				}
+
+	        </script>
+	
     </head>
-    <body>
+    <body onload="connect();" onunload="disconnect();">
         <div class="wrapper">
                 <!-- Sidebar  -->
             <nav id="sidebar" class="navbar-fixed-left">
