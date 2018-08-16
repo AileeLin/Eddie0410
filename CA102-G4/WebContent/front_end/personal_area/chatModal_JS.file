@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 	<!--小的聊天列表 startOK -->
     <div class="chatContainer">
         <div class="chatHeader">

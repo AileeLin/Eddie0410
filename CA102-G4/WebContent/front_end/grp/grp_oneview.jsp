@@ -74,6 +74,37 @@
 	
 %>
 
+<%@ page import="com.fri.model.*,com.chat.model.*" %>
+<jsp:useBean id="chatRoomSvc" scope="page" class="com.chat.model.ChatRoomService"></jsp:useBean>
+<jsp:useBean id="chatRoomJoinSvc" scope="page" class="com.chat.model.ChatRoom_JoinService"></jsp:useBean>
+<jsp:useBean id="friSvc" scope="page" class="com.fri.model.FriendService"></jsp:useBean>
+<%
+	if(memberVO != null){
+		//*****************聊天用：取得登錄者所參與的群組聊天*************/
+		List<ChatRoom_JoinVO> myCRList =chatRoomJoinSvc.getMyChatRoom(memberVO.getMem_Id());
+		Set<ChatRoom_JoinVO> myCRGroup = new HashSet<>(); //裝著我參與的聊天對話為群組聊天時
+		
+		for(ChatRoom_JoinVO myRoom : myCRList){
+			//查詢我參與的那間聊天對話，初始人數是否大於2?? 因為這樣一定就是群組聊天
+			int initJoinCount = chatRoomSvc.getOne_ByChatRoomID(myRoom.getChatRoom_ID()).getChatRoom_InitCNT();
+			if(initJoinCount > 2){
+				myCRGroup.add(myRoom);
+			}
+		}
+		pageContext.setAttribute("myCRList", myCRGroup);
+		
+		/***************聊天用：取出會員的好友******************/
+		List<Friend> myFri = friSvc.findMyFri(memberVO.getMem_Id(),2); //互相為好友的狀態
+		pageContext.setAttribute("myFri",myFri);
+		
+		/**************避免聊天-新增群組重新整理後重複提交********/
+		session.setAttribute("addCR_token",new Date().getTime());
+
+		
+	}
+
+%>
+
 <!DOCTYPE html>
 <html>
 
@@ -153,15 +184,44 @@
 	<script src="<%=request.getContextPath()%>/front_end/js/member/bootstrap.min.js"></script>
 	<!--//燈箱效果 -->
 
-	<style>
+	<!-- 聊天相關CSS及JS -->
+	<link href="<%=request.getContextPath()%>/front_end/css/chat/chat_style.css" rel="stylesheet" type="text/css">
+	<script src="<%=request.getContextPath()%>/front_end/js/chat/vjUI_fileUpload.js"></script>
+	<script src="<%=request.getContextPath()%>/front_end/js/chat/chat.js"></script>
+	<!-- //聊天相關CSS及JS -->
 	
+	<!-- 登入才會有的功能(檢舉、送出或接受交友邀請通知)-->
+	<c:if test="${memberVO != null}">
+			<%@ include file="/front_end/personal_area/chatModal_JS.file" %>
+	</c:if>
 
-	
-	</style>
 
 </head>
 
 <body>
+    <%-- 錯誤表列 --%>
+	<c:if test="${not empty errorMsgs_Ailee}">
+		<div class="modal fade" id="errorModal_Ailee">
+		    <div class="modal-dialog modal-sm" role="dialog">
+		      <div class="modal-content">
+		        <div class="modal-header">
+		          <i class="fas fa-exclamation-triangle"></i>
+		          <span class="modal-title"><h4>&nbsp;注意：</h4></span>
+		        </div>
+		        <div class="modal-body">
+					<c:forEach var="message" items="${errorMsgs_Ailee}">
+						<li style="color:red" type="square">${message}</li>
+					</c:forEach>
+		        </div>
+		        <div class="modal-footer">
+		          <button type="button" class="btn btn-default" data-dismiss="modal">關閉</button>
+		        </div>
+		      </div>
+		    </div>
+		 </div>
+	</c:if>
+	<%-- 錯誤表列 --%>
+
    
     <!-- banner -->
     <div class="banner about-bg">

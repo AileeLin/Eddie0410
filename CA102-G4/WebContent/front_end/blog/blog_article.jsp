@@ -49,6 +49,40 @@
 <jsp:useBean id="blogMessageSvc" scope="page" class="com.blog_message.model.blogMessageService"></jsp:useBean>
 <jsp:useBean id="blogSvc" scope="page" class="com.blog.model.blogService"></jsp:useBean>
 <jsp:useBean id="memSvc" scope="page" class="com.mem.model.MemberService"></jsp:useBean>
+
+<%@ page import="com.fri.model.*,com.chat.model.*" %>
+<jsp:useBean id="chatRoomSvc" scope="page" class="com.chat.model.ChatRoomService"></jsp:useBean>
+<jsp:useBean id="chatRoomJoinSvc" scope="page" class="com.chat.model.ChatRoom_JoinService"></jsp:useBean>
+<jsp:useBean id="memberSvc" scope="page" class="com.mem.model.MemberService"></jsp:useBean>
+<jsp:useBean id="friSvc" scope="page" class="com.fri.model.FriendService"></jsp:useBean>
+<%
+	if(memberVO != null){
+		//*****************聊天用：取得登錄者所參與的群組聊天*************/
+		List<ChatRoom_JoinVO> myCRList =chatRoomJoinSvc.getMyChatRoom(memberVO.getMem_Id());
+		Set<ChatRoom_JoinVO> myCRGroup = new HashSet<>(); //裝著我參與的聊天對話為群組聊天時
+		
+		for(ChatRoom_JoinVO myRoom : myCRList){
+			//查詢我參與的那間聊天對話，初始人數是否大於2?? 因為這樣一定就是群組聊天
+			int initJoinCount = chatRoomSvc.getOne_ByChatRoomID(myRoom.getChatRoom_ID()).getChatRoom_InitCNT();
+			if(initJoinCount > 2){
+				myCRGroup.add(myRoom);
+			}
+		}
+		pageContext.setAttribute("myCRList", myCRGroup);
+		
+		/***************聊天用：取出會員的好友******************/
+		List<Friend> myFri = friSvc.findMyFri(memberVO.getMem_Id(),2); //互相為好友的狀態
+		pageContext.setAttribute("myFri",myFri);
+		
+		/**************避免聊天-新增群組重新整理後重複提交********/
+		session.setAttribute("addCR_token",new Date().getTime());
+
+		
+	}
+
+%>
+
+
 <html>
 
 <head>
@@ -141,7 +175,7 @@
 		document.addEventListener('DOMContentLoaded', function() {
 		    setTimeout(function() {
 		        window.scrollTo(0, "${param.scroll}");
-		    }, 20);
+		    }, 30);
 		});
 		
 //     	$('html,body').animate({
@@ -154,9 +188,47 @@
     <link href="<%=request.getContextPath()%>/front_end/jquery-ui-1.12.1/jquery-ui.css" rel="stylesheet">
     <script src="<%=request.getContextPath()%>/front_end/jquery-ui-1.12.1/jquery-ui.js"></script>
     <!-- //blog使用到的jQuery Dialog -->
+    
+	 <!-- 聊天相關CSS及JS -->
+	 <link href="<%=request.getContextPath()%>/front_end/css/chat/chat_style.css" rel="stylesheet" type="text/css">
+	 <script src="<%=request.getContextPath()%>/front_end/js/chat/vjUI_fileUpload.js"></script>
+	 <script src="<%=request.getContextPath()%>/front_end/js/chat/chat.js"></script>
+	 <!-- //聊天相關CSS及JS -->
+	 
+	 <!-- 登入才會有的功能(檢舉、送出或接受交友邀請通知)-->
+	 <c:if test="${memberVO != null}">
+	 		<%@ include file="/front_end/personal_area/chatModal_JS.file" %>
+	 </c:if>
+    
+    
 </head>
 
 <body>
+
+    <%-- 錯誤表列 --%>
+	<c:if test="${not empty errorMsgs_Ailee}">
+		<div class="modal fade" id="errorModal_Ailee">
+		    <div class="modal-dialog modal-sm" role="dialog">
+		      <div class="modal-content">
+		        <div class="modal-header">
+		          <i class="fas fa-exclamation-triangle"></i>
+		          <span class="modal-title"><h4>&nbsp;注意：</h4></span>
+		        </div>
+		        <div class="modal-body">
+					<c:forEach var="message" items="${errorMsgs_Ailee}">
+						<li style="color:red" type="square">${message}</li>
+					</c:forEach>
+		        </div>
+		        <div class="modal-footer">
+		          <button type="button" class="btn btn-default" data-dismiss="modal">關閉</button>
+		        </div>
+		      </div>
+		    </div>
+		 </div>
+	</c:if>
+	<%-- 錯誤表列 --%>
+
+
     <!-- banner -->
     <div class="banner about-bg">
         <div class="top-banner about-top-banner">
@@ -287,9 +359,11 @@
                     </h3>
 				<c:forEach var="blogMessageList" items="${blogMessageSvc.findByBlogId(param.blogID)}">
                     <div class="comment">
-                        <a class="avatar"><img src="<%=request.getContextPath()%>/front_end/readPic?action=member&id=${memSvc.findByPrimaryKey(blogMessageList.mem_id).mem_Id}"></a>
+                        <a class="avatar" href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_public.jsp?uId=${blogMessageList.mem_id}">
+                        	<img src="<%=request.getContextPath()%>/front_end/readPic?action=member&id=${memSvc.findByPrimaryKey(blogMessageList.mem_id).mem_Id}">
+                        </a>
                         <div class="content">
-                            <a class="author">
+                            <a class="author" href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_public.jsp?uId=${blogMessageList.mem_id}">
                                 <font style="vertical-align: inherit;">
                                     <font style="vertical-align: inherit;">${memSvc.findByPrimaryKey(blogMessageList.mem_id).mem_Name}</font>
                                 </font>
@@ -462,11 +536,11 @@
                             </div>
                             <div class="article_body">
                                 <div class="article_title right">
-                                    <a href="#" title="${blogVO.blog_title}">${blogVO.blog_title}</a>
+                                    <a href="<%=request.getContextPath()%>/blog.do?action=article&blogID=${blogVO.blog_id}" title="${blogVO.blog_title}">${blogVO.blog_title}</a>
                                 </div>
                                 <div class="article_info_container helper-clear">
                                     <div class="brief_info author">
-                                        <a href="#">&nbsp;${memSvc.findByPrimaryKey(blogSvc.findByPrimaryKey(param.blogID).mem_id).mem_Name}</a>
+                                        <a href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_public.jsp?uId=${blogVO.mem_id}">&nbsp;${memSvc.findByPrimaryKey(blogSvc.findByPrimaryKey(param.blogID).mem_id).mem_Name}</a>
                                     </div>
                                 </div>
                                 <div class="article_info_container helper-clear">

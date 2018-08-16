@@ -441,7 +441,7 @@
                                                 <td><p class="br_time">
                                                 		<fmt:formatDate value="${blogReportVO.br_time}" type="both"/>
                                         		</p></td>
-                                                <td><p class="br_status">${blogReportVO.br_status eq "0"?"未處理":"已處理"}</p></td>	
+                                                <td><p class="br_status" ${blogReportVO.br_status eq "0"?"style='color:red'":""}>${blogReportVO.br_status eq "0"?"未處理":"已處理"}</p></td>	
                                                 <td>
                                                     <FORM action="<%=request.getContextPath()%>/blog.do" method="post">
                                                         <input type="hidden" name="br_status" value="${blogReportVO.br_status}">
@@ -520,7 +520,7 @@
                                                 <td><p class="bmr_time">
                                                 		<fmt:formatDate value="${blogMessageReportVO.bmr_time}" type="both"/>
                                         		</p></td>
-                                                <td><p class="bmr_status">${blogMessageReportVO.bmr_status eq "0"?"未處理":"已處理"}</p></td>	
+                                                <td><p class="bmr_status" ${blogMessageReportVO.bmr_status eq "0"?"style='color:red'":""}>${blogMessageReportVO.bmr_status eq "0"?"未處理":"已處理"}</p></td>	
                                                 <td>
                                                     <FORM action="<%=request.getContextPath()%>/blog.do" method="post">
                                                         <input type="hidden" name="br_status" value="${blogMessageReportVO.bmr_status}">

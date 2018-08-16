@@ -128,6 +128,31 @@
 </head>
 
 <body>
+    <%-- 錯誤表列 --%>
+	<c:if test="${not empty errorMsgs_Ailee}">
+		<div class="modal fade" id="errorModal_Ailee">
+		    <div class="modal-dialog modal-sm" role="dialog">
+		      <div class="modal-content">
+		        <div class="modal-header">
+		          <i class="fas fa-exclamation-triangle"></i>
+		          <span class="modal-title"><h4>&nbsp;注意：</h4></span>
+		        </div>
+		        <div class="modal-body">
+					<c:forEach var="message" items="${errorMsgs_Ailee}">
+						<li style="color:red" type="square">${message}</li>
+					</c:forEach>
+		        </div>
+		        <div class="modal-footer">
+		          <button type="button" class="btn btn-default" data-dismiss="modal">關閉</button>
+		        </div>
+		      </div>
+		    </div>
+		 </div>
+	</c:if>
+	<%-- 錯誤表列 --%>
+	
+
+
 	<!-- banner -->
 	<div class="banner about-bg">
 		<div class="top-banner about-top-banner">

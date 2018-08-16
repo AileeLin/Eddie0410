@@ -36,6 +36,7 @@
 	}
 	pageContext.setAttribute("total_items",total_items);
 %>
+
 <!DOCTYPE html>
 <html>
 <jsp:useBean id="blogSvc" scope="page" class="com.blog.model.blogService"></jsp:useBean>
@@ -43,6 +44,40 @@
 <jsp:useBean id="adSvc" scope="page" class="com.ad.model.AdService"></jsp:useBean>
 <jsp:useBean id="grpSvc" scope="page" class="com.grp.model.GrpService"></jsp:useBean>
 <jsp:useBean id="attSvc" scope="page" class="com.attractions.model.AttractionsService"></jsp:useBean>
+
+
+<%@ page import="com.fri.model.*,com.chat.model.*" %>
+<jsp:useBean id="chatRoomSvc" scope="page" class="com.chat.model.ChatRoomService"></jsp:useBean>
+<jsp:useBean id="chatRoomJoinSvc" scope="page" class="com.chat.model.ChatRoom_JoinService"></jsp:useBean>
+<jsp:useBean id="memberSvc" scope="page" class="com.mem.model.MemberService"></jsp:useBean>
+<jsp:useBean id="friSvc" scope="page" class="com.fri.model.FriendService"></jsp:useBean>
+<%
+	if(memberVO != null){
+		//*****************聊天用：取得登錄者所參與的群組聊天*************/
+		List<ChatRoom_JoinVO> myCRList =chatRoomJoinSvc.getMyChatRoom(memberVO.getMem_Id());
+		Set<ChatRoom_JoinVO> myCRGroup = new HashSet<>(); //裝著我參與的聊天對話為群組聊天時
+		
+		for(ChatRoom_JoinVO myRoom : myCRList){
+			//查詢我參與的那間聊天對話，初始人數是否大於2?? 因為這樣一定就是群組聊天
+			int initJoinCount = chatRoomSvc.getOne_ByChatRoomID(myRoom.getChatRoom_ID()).getChatRoom_InitCNT();
+			if(initJoinCount > 2){
+				myCRGroup.add(myRoom);
+			}
+		}
+		pageContext.setAttribute("myCRList", myCRGroup);
+		
+		/***************聊天用：取出會員的好友******************/
+		List<Friend> myFri = friSvc.findMyFri(memberVO.getMem_Id(),2); //互相為好友的狀態
+		pageContext.setAttribute("myFri",myFri);
+		
+		/**************避免聊天-新增群組重新整理後重複提交********/
+		session.setAttribute("addCR_token",new Date().getTime());
+
+		
+	}
+
+%>
+
 <head>
     <!-- 網頁title -->
     <title>Travel Maker</title>
@@ -103,9 +138,49 @@
     <!-- LogoIcon -->
     <link href="<%=request.getContextPath()%>/front_end/images/all/Logo_Black_use.png" rel="icon" type="image/png">
     <!-- //LogoIcon -->
+    
+    <!-- 聊天相關CSS及JS -->
+	 <link href="<%=request.getContextPath()%>/front_end/css/chat/chat_style.css" rel="stylesheet" type="text/css">
+	 <script src="<%=request.getContextPath()%>/front_end/js/chat/vjUI_fileUpload.js"></script>
+	 <script src="<%=request.getContextPath()%>/front_end/js/chat/chat.js"></script>
+	 <!-- //聊天相關CSS及JS -->
+	 
+	 <!-- 登入才會有的功能(檢舉、送出或接受交友邀請通知)-->
+	 <c:if test="${memberVO != null}">
+	 		<%@ include file="/front_end/personal_area/chatModal_JS.file" %>
+	 </c:if>
+    
+    
+    
 </head>
 
 <body>
+
+
+    <%-- 錯誤表列 --%>
+	<c:if test="${not empty errorMsgs_Ailee}">
+		<div class="modal fade" id="errorModal_Ailee">
+		    <div class="modal-dialog modal-sm" role="dialog">
+		      <div class="modal-content">
+		        <div class="modal-header">
+		          <i class="fas fa-exclamation-triangle"></i>
+		          <span class="modal-title"><h4>&nbsp;注意：</h4></span>
+		        </div>
+		        <div class="modal-body">
+					<c:forEach var="message" items="${errorMsgs_Ailee}">
+						<li style="color:red" type="square">${message}</li>
+					</c:forEach>
+		        </div>
+		        <div class="modal-footer">
+		          <button type="button" class="btn btn-default" data-dismiss="modal">關閉</button>
+		        </div>
+		      </div>
+		    </div>
+		 </div>
+	</c:if>
+	<%-- 錯誤表列 --%>
+
+
     <!-- banner -->
     <div class="banner" style="width: 100%;left:0;">
         <div class="top-banner" style="border-bottom: 0;">
@@ -258,36 +333,13 @@
             
             <c:forEach var="attVO" items="${attSvc.allRandom}">
                 <div class="col-md-3 about-grid">
-                    <div class="about-grid-info effect-1" style="background: url('<%= request.getContextPath()%>/trip/getPicture.do?att_no=${attVO.att_no}') no-repeat 50% 50%;background-size:cover;border-radius:50%">
+                    <div class="about-grid-info effect-1" style="background: url('<%= request.getContextPath()%>/trip/getPicture.do?att_no=${attVO.att_no}') no-repeat 50% 50%;background-size:cover;border-radius:50%;overflow:hidden;white-space: nowrap;">
                         <a href="<%=request.getContextPath()%>/front_end/attractions/attDetail.jsp?att_no=${attVO.att_no}">
                             <h4 style="font-family:'Oswald','Noto Sans TC', sans-serif !important">${attVO.att_name}</h4>
                         </a>
                     </div>
                 </div>
 			</c:forEach>
-<!--                 <div class="col-md-3 about-grid"> -->
-<!--                     <div class="about-grid-info about-grid-info1 effect-1"> -->
-<!--                         <a href="#"> -->
-<!--                             <h4>Maldives</h4> -->
-<!--                         </a> -->
-<!--                     </div> -->
-<!--                 </div> -->
-
-<!--                 <div class="col-md-3 about-grid"> -->
-<!--                     <div class="about-grid-info about-grid-info2 effect-1"> -->
-<!--                         <a href="#"> -->
-<!--                             <h4>Ireland</h4> -->
-<!--                         </a> -->
-<!--                     </div> -->
-<!--                 </div> -->
-
-<!--                 <div class="col-md-3 about-grid"> -->
-<!--                     <div class="about-grid-info about-grid-info3 effect-1"> -->
-<!--                         <a href="#"> -->
-<!--                             <h4>New Zealand</h4> -->
-<!--                         </a> -->
-<!--                     </div> -->
-<!--                 </div> -->
 
                 <div class="clearfix"> </div>
             </div>
@@ -313,7 +365,7 @@
 	                        <div class="news-grid-info-bottom">
 	                            <div class="date-grid">
 	                                <div class="admin" style="line-height: 18px;">
-	                                    <a href="#">
+	                                    <a href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_public.jsp?uId=${blogVO.mem_id}">
 	                                    	<i class="fa fa-user" aria-hidden="true"></i> ${memSvc.findByPrimaryKey(blogVO.mem_id).mem_Name}</a>
 	                                </div>
 	                                <div class="time" style="float:unset">
@@ -340,21 +392,21 @@
     <div class="news">
         <div class="container">
             <div class="news-heading">
-                <h3>Together</h3>
+                <h3>New Together</h3>
             </div>
             <div class="news-grids" style="display:flex">
 				<c:forEach var="grpVO" items="${grpSvc.all}" begin="0" end="3">
 	                <div class="col-md-3 news-grid" style="display:flex">
 	                    <div class="agile-news-grid-info" style="width:100%">
 	                        <div class="news-grid-info-img">
-	                            <a href="#">
+	                            <a href="<%=request.getContextPath()%>/front_end/grp/grp_oneview.jsp?grp_Id=${grpVO.grp_Id}">
 	                            	<img src="<%=request.getContextPath()%>/grpPicReader?grp_Id=${grpVO.grp_Id}" alt="" style="height:179.250px;"/>
 	                            </a>
 	                        </div>
 	                        <div class="news-grid-info-bottom">
 	                            <div class="date-grid">
 	                                <div class="admin" style="line-height: 18px;">
-	                                    <a href="#"><i class="fa fa-user" aria-hidden="true"></i> 
+	                                    <a href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_public.jsp?uId=${grpVO.mem_Id}"><i class="fa fa-user" aria-hidden="true"></i> 
 	                                    	${memSvc.findByPrimaryKey(grpVO.mem_Id).mem_Name}
 	                                    </a>
 	                                </div>
@@ -368,7 +420,7 @@
 	                           	</div>
 	                            <div class="date-grid">
 	                                <div class="admin" style="line-height: 18px;margin-top: 10px;">
-	                                    <a href="#"><i class="fas fa-map-marker-alt"></i>
+	                                    <a href="<%=request.getContextPath()%>/front_end/grp/grp_oneview.jsp?grp_Id=${grpVO.grp_Id}"><i class="fas fa-map-marker-alt"></i>
 	                                    	${grpVO.trip_Locale}
 	                                    </a>
 	                                </div>
@@ -381,7 +433,7 @@
 	                                <div class="clearfix"> </div>
 	                            </div>
 	                            <div class="news-grid-info-bottom-text">
-	                                <a href="#">
+	                                <a href="<%=request.getContextPath()%>/front_end/grp/grp_oneview.jsp?grp_Id=${grpVO.grp_Id}">
 	                                ${grpVO.grp_Title}
 	                                </a>
 	                                <c:set var="trip_Details" value="${grpVO.trip_Details}"/>   

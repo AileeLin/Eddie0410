@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 
 	"<div class='input_chatContainer_select' value='"+openChatRoomID+"'>"+
 		"<div class='input_chatContainer' id='"+openChatRoomID+"' value='"+openChatRoomID+"'>"+

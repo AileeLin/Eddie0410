@@ -55,6 +55,37 @@ boolean login_state = false;
 <jsp:useBean id="qacSvc" scope="page" class="com.qa_classification.model.Qa_classificationService"></jsp:useBean>
 <jsp:useBean id="qaListSvc" scope="page" class="com.qa_list.model.Qa_listService"></jsp:useBean>
 
+
+<%@ page import="com.fri.model.*" %>
+<%@ page import="com.chat.model.*" %>
+<jsp:useBean id="chatRoomSvc" scope="page" class="com.chat.model.ChatRoomService"></jsp:useBean>
+<jsp:useBean id="chatRoomJoinSvc" scope="page" class="com.chat.model.ChatRoom_JoinService"></jsp:useBean>
+<%
+
+	//*****************聊天用：取得登錄者所參與的群組聊天*************/
+	List<ChatRoom_JoinVO> myCRList =chatRoomJoinSvc.getMyChatRoom(memberVO.getMem_Id());
+	Set<ChatRoom_JoinVO> myCRGroup = new HashSet<>(); //裝著我參與的聊天對話為群組聊天時
+	
+	for(ChatRoom_JoinVO myRoom : myCRList){
+		//查詢我參與的那間聊天對話，初始人數是否大於2?? 因為這樣一定就是群組聊天
+		int initJoinCount = chatRoomSvc.getOne_ByChatRoomID(myRoom.getChatRoom_ID()).getChatRoom_InitCNT();
+		if(initJoinCount > 2){
+			myCRGroup.add(myRoom);
+		}
+	}
+	pageContext.setAttribute("myCRList", myCRGroup);
+	
+	/***************聊天用：取出會員的好友******************/
+	FriendService friSvc = new FriendService();
+	List<Friend> myFri = friSvc.findMyFri(memberVO.getMem_Id(),2); //互相為好友的狀態
+	pageContext.setAttribute("myFri",myFri);
+	
+	/**************避免聊天-新增群組重新整理後重複提交********/
+	session.setAttribute("addCR_token",new Date().getTime());
+
+
+%>
+
 <head>
 	<!-- 網頁title -->
 	<title>Travel Maker</title>
@@ -97,9 +128,41 @@ boolean login_state = false;
 	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 	<script src="<%=request.getContextPath()%>/front_end/js/all/index_bootstrap.js"></script>
 
+	<!-- 聊天相關CSS及JS -->
+    <link href="<%=request.getContextPath()%>/front_end/css/chat/chat_style.css" rel="stylesheet" type="text/css">
+    <script src="<%=request.getContextPath()%>/front_end/js/chat/vjUI_fileUpload.js"></script>
+    <script src="<%=request.getContextPath()%>/front_end/js/chat/chat.js"></script>
+    <%@ include file="/front_end/personal_area/chatModal_JS.file" %>
+    <!-- //聊天相關CSS及JS -->
+	
 </head>
 
 <body>
+
+
+	<%-- 錯誤表列 --%>
+	<c:if test="${not empty errorMsgs_Ailee}">
+		<div class="modal fade" id="errorModal_Ailee">
+		    <div class="modal-dialog modal-sm" role="dialog">
+		      <div class="modal-content">
+		        <div class="modal-header">
+		          <i class="fas fa-exclamation-triangle"></i>
+		          <span class="modal-title"><h4>請修正以下錯誤:</h4></span>
+		        </div>
+		        <div class="modal-body">
+					<c:forEach var="message" items="${errorMsgs_Ailee}">
+						<li style="color:red" type="square">${message}</li>
+					</c:forEach>
+		        </div>
+		        <div class="modal-footer">
+		          <button type="button" class="btn btn-default" data-dismiss="modal">關閉</button>
+		        </div>
+		      </div>
+		    </div>
+		 </div>
+	</c:if>
+	<%-- 錯誤表列 --%>
+
 	<!-- banner -->
 	<div class="banner about-bg">
 		<div class="top-banner about-top-banner">
