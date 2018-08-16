@@ -33,7 +33,7 @@ public class AttractionsServlet extends HttpServlet{
 			try {
 			/***************************1.將輸入資料轉為Map**********************************/ 
 			HttpSession session = req.getSession();
-			Map<String, String[]> map =(Map<String, String[]>) session.getAttribute("map");
+			Map<String, String[]> map =(Map<String, String[]>) session.getAttribute("attMap");
 			String keyword = null;
 			if(req.getParameter("keyword")!=null&&!req.getParameter("keyword").trim().isEmpty()) {
 				keyword = req.getParameter("keyword").trim();
@@ -44,7 +44,7 @@ public class AttractionsServlet extends HttpServlet{
 				map1.put("att_name", new String[] {keyword});
 				map1.put("att_address", new String[] {keyword});
 				map1.put("administrative_area", new String[] {keyword});
-				session.setAttribute("map",map1);
+				session.setAttribute("attMap",map1);
 				map = map1;
 			}
 				

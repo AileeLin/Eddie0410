@@ -83,4 +83,8 @@ public class TripService {
 	public void updateByEdit(TripVO tripVO, List<TripDaysVO> tdList, Map<Integer, List<Object>> tripDayMap) {
 		dao.update2(tripVO, tdList, tripDayMap);
 	}
+	
+	public List<TripVO> getAll(Map<String, String[]> map){
+		return dao.getAll(map);
+	}
 }

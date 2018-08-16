@@ -35,7 +35,7 @@ public class TripDAO implements TripDAO_interface {
 	private static final String SQL_QUERY = "select * from TRIP where TRIP_NO = ?";
 	private static final String SQL_QUERY_ALL = "select * from TRIP";
 	private static final String SQL_QUERY_PUB = "select * from TRIP where TRIP_STATUS = 2 order by TRIP_NO DESC";
-	private static final String SQL_QUERY_ORDER_VIEWS = "select * from TRIP where TRIP_STATUS = 2 order by TRIP_VIEWS";
+	private static final String SQL_QUERY_ORDER_VIEWS = "select * from TRIP where TRIP_STATUS = 2 order by TRIP_VIEWS DESC";
 	private static final String SQL_QUERY_MEM = "select * from TRIP where MEM_ID = ? and TRIP_STATUS != 0";
 	private static final String SQL_DELETE_ONLINE = "update TRIP set TRIP_STATUS = 0 where TRIP_NO = ?";
 
@@ -652,6 +652,66 @@ public class TripDAO implements TripDAO_interface {
 				}
 			}
 		}
+	}
+
+	@Override
+	public List<TripVO> getAll(Map<String, String[]> map) {
+		List<TripVO> list = new ArrayList<>();
+		TripVO tripVO = null;
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		try {
+			con = ds.getConnection();
+			String finalSQL = "select * from TRIP "
+					+ jdbcUtil_CompositeQuery_Trip.get_WhereCondition(map)
+					+ "order by TRIP_VIEWS DESC";
+			pstmt = con.prepareStatement(finalSQL);
+			System.out.println("●●finalSQL(by DAO) = "+finalSQL);
+			rs = pstmt.executeQuery();
+			
+
+			while (rs.next()) {
+				tripVO = new TripVO();
+				tripVO.setTrip_no(rs.getString("TRIP_NO"));
+				tripVO.setMem_id(rs.getString("MEM_ID"));
+				tripVO.setTrip_name(rs.getString("TRIP_NAME"));
+				tripVO.setTrip_startDay(rs.getDate("TRIP_STARTDAY"));
+				tripVO.setTrip_days(rs.getInt("TRIP_DAYS"));
+				tripVO.setTrip_views(rs.getInt("TRIP_VIEWS"));
+				tripVO.setTrip_status(rs.getInt("TRIP_STATUS"));
+				
+				list.add(tripVO);
+			}
+			// Handle any driver errors
+		} catch (SQLException se) {
+			throw new RuntimeException("A database error occured. " + se.getMessage());
+
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if (con != null) {
+				try {
+					con.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return list;
 	}
 
 }

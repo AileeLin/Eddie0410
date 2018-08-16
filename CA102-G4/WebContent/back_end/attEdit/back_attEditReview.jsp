@@ -69,82 +69,107 @@
 	<div class="wrapper">
 		<!-- Sidebar  -->
 		<nav id="sidebar" class="navbar-fixed-left">
-			<div class="sidebar-header">
-				<h3>Travel Maker</h3>
-				<strong>TM</strong>
-			</div>
+                <div class="sidebar-header">
+                    <h3>Travel Maker</h3>
+                    <strong>TM</strong>
+                </div>
 
-			<ul class="list-unstyled components">
-				<li class="active"><a
-					href="<%=request.getContextPath()%>/back_end/back_index.jsp"> <i
-						class="fas fa-home"></i> 回首頁
-				</a></li>
+                <ul class="list-unstyled components">
+                    <li class="active">
+                        <a href="<%=request.getContextPath()%>/back_end/back_index.jsp">
+                            <i class="fas fa-home"></i> 回首頁
+                        </a>
+                    </li>
+                    
+                    <li>
+                        <li class="dropdown">
+                            <a href="#auth_Submenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                                <i class="fas fa-users"></i>權限管理
+                            </a>
 
-				<li>
-				<li class="dropdown"><a href="#auth_Submenu"
-					data-toggle="collapse" aria-expanded="false"
-					class="dropdown-toggle"> <i class="fas fa-users"></i> 權限管理
-				</a>
+                            <ul class="dropdown-menu" id="auth_Submenu">
+                                <li>
+                                    <a href="<%=request.getContextPath()%>/back_end/admin/manager_admin.jsp">管理員</a>
+                                </li>
+                                <li>
+                                    <a href="<%=request.getContextPath()%>/back_end/admin/manager_member.jsp">會員</a>
+                                </li>
+                            </ul>
 
-					<ul class="dropdown-menu" id="auth_Submenu">
-						<li><a href="#">管理員</a></li>
-						<li><a href="#">會員</a></li>
-					</ul></li>
+                        </li>
+                        
+                        <li>
+                            <a href="<%=request.getContextPath()%>/back_end/news/news.jsp">
+                                <i class="fas fa-newspaper"></i>最新消息管理
+                            </a>
+                        </li>
+                        
+                        <li>
+                            <a href="<%=request.getContextPath()%>/back_end/attEdit/back_attEdit.jsp">
+                                <i class="fas fa-image"></i>景點管理
+                            </a>
+                        </li>
+                       
+                        <li class="dropdown">
+                            <a href="#category_Submenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                                <i class="fas fa-tag"></i>標籤管理
+                            </a>
+                            <ul class="dropdown-menu" id="category_Submenu">
+                                <li>
+                                    <a href="<%=request.getContextPath()%>/back_end/blog/blog_tag.jsp">旅遊記</a>
+                                </li>
+                                <li>
+                                    <a href="<%=request.getContextPath()%>/back_end/qa_list/qa_list.jsp">問答區</a>
+                                </li>
+                            </ul>
+                        </li>
+                        
+                        <li class="dropdown">
+                            <a href="#report_Submenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle" aria-haspopup="true" >
+                                <i class="fas fa-comment-dots"></i>檢舉管理
+                            </a>
+                            <ul class="dropdown-menu" id="report_Submenu">
+                                <li>
+                                    <a href="<%=request.getContextPath()%>/back_end/member/member_report.jsp">會員檢舉</a>
+                                </li>
+                                <li>
+                                    <a href="<%=request.getContextPath()%>/blog.do?action=blogReportManage">旅遊記檢舉</a>
+                                </li>
+                                <li>
+                                    <a href="<%=request.getContextPath()%>/back_end/qa_report/qa_report.jsp">問答區檢舉</a>
+                                </li>
+                                <li>
+                                    <a href="<%=request.getContextPath()%>/back_end/photo_wall/photo_report.jsp">照片牆檢舉</a>
+                                </li>
+                                <li>
+                                    <a href="<%=request.getContextPath()%>/back_end/store/product_report.jsp">商品檢舉</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="<%=request.getContextPath()%>/back_end/ad/back_ad.jsp">
+                                <i class="fas fa-audio-description"></i>專欄廣告管理
+                            </a>
+                        </li>
+                        
+                        <li class="dropdown">
+                            <a href="#aboutUS_Submenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                                <i class="fas fa-briefcase"></i>關於我們管理
+                                </a>
+                            <ul class="dropdown-menu" id="aboutUS_Submenu">
+                                <li>
+                                    <a href="<%=request.getContextPath()%>/back_end/about_us/about_us.jsp">關於我們</a>
+                                </li>
+                                <li>
+                                    <a href="<%=request.getContextPath()%>/back_end/faq/faq.jsp">FAQ</a>
+                                </li>
+                            </ul>
+                        </li>
 
-				<li><a href="#"> <i class="fas fa-newspaper"></i> 最新消息管理
-				</a></li>
+                    </li>
+                </ul>
 
-				<li><a
-					href="<%=request.getContextPath()%>/back_end/attEdit/back_attEdit.jsp">
-						<i class="fas fa-image"></i> 景點管理
-				</a></li>
-
-				<li class="dropdown"><a href="#category_Submenu"
-					data-toggle="collapse" aria-expanded="false"
-					class="dropdown-toggle"> <i class="fas fa-tag"></i> 標籤管理
-				</a>
-					<ul class="dropdown-menu" id="category_Submenu">
-						<li><a href="Back_TagBlog.html">旅遊記</a></li>
-						<li><a href="#">問答區</a></li>
-					</ul></li>
-
-				<li class="dropdown"><a href="#report_Submenu"
-					data-toggle="collapse" aria-expanded="false"
-					class="dropdown-toggle" aria-haspopup="true"> <i
-						class="fas fa-comment-dots"></i> 檢舉管理
-				</a>
-					<ul class="dropdown-menu" id="report_Submenu">
-						<li><a href="#">會員檢舉</a></li>
-						<li><a href="Back_ReportBlog.html">旅遊記檢舉</a></li>
-						<li><a href="#">問答區檢舉</a></li>
-						<li><a href="#">照片牆檢舉</a></li>
-						<li><a href="#">揪團檢舉</a></li>
-						<li><a href="#">商品檢舉</a></li>
-					</ul></li>
-
-				<li><a href="#"> <i class="fas fa-shopping-cart"></i>
-						交易款項管理
-				</a></li>
-
-				<li><a
-					href="<%=request.getContextPath()%>/back_end/ad/back_ad.jsp"> <i
-						class="fas fa-audio-description"></i> 專欄廣告管理
-				</a></li>
-
-				<li class="dropdown"><a href="#aboutUS_Submenu"
-					data-toggle="collapse" aria-expanded="false"
-					class="dropdown-toggle"> <i class="fas fa-briefcase"></i>
-						關於我們管理
-				</a>
-					<ul class="dropdown-menu" id="aboutUS_Submenu">
-						<li><a href="#">關於我們</a></li>
-						<li><a href="#">FAQ</a></li>
-					</ul></li>
-
-				</li>
-			</ul>
-
-		</nav>
+            </nav>
 
 		<!-- Page Content  -->
 		<div id="content">

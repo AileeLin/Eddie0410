@@ -17,6 +17,8 @@ import com.tripCollect.model.*;
 import com.tripDays.model.*;
 import com.trafficTrip.model.*;
 import com.attTrip.model.*;
+import com.attractions.model.AttractionsService;
+import com.attractions.model.AttractionsVO;
 import com.mem.model.*;
 
 public class TripServlet extends HttpServlet {
@@ -805,6 +807,47 @@ public class TripServlet extends HttpServlet {
 				RequestDispatcher failureView = req.getRequestDispatcher("/front_end/trip/personal_area_trip.jsp");
 				failureView.forward(req, res);
 				System.out.println(e.getMessage());
+				e.printStackTrace();
+			}
+		}
+		
+		if("search".equals(action)) {
+			List<String> errorMsgs = new LinkedList<String>();
+			req.setAttribute("errorMsgs", errorMsgs);
+			
+			try {
+			/***************************1.將輸入資料轉為Map**********************************/ 
+			HttpSession session = req.getSession();
+			Map<String, String[]> map =(Map<String, String[]>) session.getAttribute("tripMap");
+			String keyword = null;
+			if(req.getParameter("keyword")!=null&&!req.getParameter("keyword").trim().isEmpty()) {
+				keyword = req.getParameter("keyword").trim();
+//				System.out.println("keyword:"+keyword);
+			}
+			if(keyword!=null&&!keyword.isEmpty()) {
+				HashMap<String, String[]> map1 = new HashMap<String, String[]>(req.getParameterMap());
+				map1.put("trip_name", new String[] {keyword});
+				session.setAttribute("tripMap",map1);
+				map = map1;
+			}
+				
+			/***************************2.開始複合查詢***************************************/
+			TripService tripSvc = new TripService();
+			List<TripVO> list;
+			if(map==null) {
+				list = tripSvc.getPublish();
+			}else {
+				list = tripSvc.getAll(map);
+			}
+			/***************************3.查詢完成,準備轉交(Send the Success view)************/
+			req.setAttribute("list", list);
+			RequestDispatcher successView = req.getRequestDispatcher("/front_end/trip/trip.jsp");
+			successView.forward(req, res);
+			/***************************其他可能的錯誤處理**********************************/
+			}catch(Exception e) {
+				errorMsgs.add(e.getMessage());
+//				RequestDispatcher failureView = req.getRequestDispatcher("/front_end/attractions/att.jsp");
+//				failureView.forward(req, res);
 				e.printStackTrace();
 			}
 		}

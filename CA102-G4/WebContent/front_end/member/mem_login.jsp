@@ -212,7 +212,7 @@ margin:80px auto;
 
         <!-- Start Sign In Form -->
         <div class="row_login">
-            <form method="post" action="/CA102G4/front_end/member/member.do" class="fh5co-form animate-box" data-animate-effect="fadeIn">
+            <form method="post" action="<%=request.getContextPath()%>/front_end/member/member.do" class="fh5co-form animate-box" data-animate-effect="fadeIn">
                 <h2>Welcome</h2>
                 
                 <div class="form-group">
@@ -376,7 +376,7 @@ margin:80px auto;
 
         <!-- Modal Register content-->
        <div background-color="lightblue;">
-            <form METHOD="post" ACTION="/CA102G4/front_end/member/member.do" name="form1" class="fh5co-form animate-box-modal" data-animate-effect="fadeIn" onsubmit="return chk();">
+            <form METHOD="post" ACTION="<%=request.getContextPath()%>/front_end/member/member.do" name="form1" class="fh5co-form animate-box-modal" data-animate-effect="fadeIn" onsubmit="return chk();">
                 <h2>Sign Up</h2>
 
                 <div class="form-group">

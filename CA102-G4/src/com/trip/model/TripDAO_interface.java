@@ -23,4 +23,6 @@ public interface TripDAO_interface {
 	public int deleteOnline(String trip_no);
 	
 	public List<TripVO> getPublishOrderViews();
+	
+	public List<TripVO> getAll(Map<String,String[]> map);
 }

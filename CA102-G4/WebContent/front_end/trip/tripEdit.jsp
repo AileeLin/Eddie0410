@@ -24,7 +24,7 @@
 	
 	if(login_state!=true){
 		session.setAttribute("location", request.getRequestURI());
-		response.sendRedirect("/CA102G4/front_end/member/mem_login.jsp");
+		response.sendRedirect(request.getContextPath()+"/front_end/member/mem_login.jsp");
 		return;
 	}
 	

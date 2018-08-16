@@ -18,8 +18,8 @@
 	}
 	
 	if(login_state!=true){
-		session.setAttribute("location", "/CA102G4/front_end/attractions/attDetail.jsp");
-		response.sendRedirect("/CA102G4/front_end/member/mem_login.jsp");
+		session.setAttribute("location", request.getContextPath()+"/front_end/attractions/attDetail.jsp");
+		response.sendRedirect(request.getContextPath()+"/front_end/member/mem_login.jsp");
 		return;
 	}
 	

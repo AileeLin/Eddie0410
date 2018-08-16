@@ -175,11 +175,6 @@
 
 		 <!-- //store 自定義的css -->
 
-	
-	    <!-- store 自定義的js -->
- 	    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
- 	    <!-- //store 自定義的js -->
-	
 		<style>
 			p{
 				color:#555;

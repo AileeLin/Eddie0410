@@ -228,8 +228,8 @@
  
     /***********************頁面準備好時，連線WS***********************/
     $(document).ready(function(){
-	    connect();
-	    $('#errorModal_Ailee').modal();		
+	    connect();		
+	    $('#errorModal_Ailee').modal();
 	 });
 	/***********************若有錯誤訊息時，就會跳出視窗***********************/
    	

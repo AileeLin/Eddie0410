@@ -37,7 +37,7 @@
 	}
 	
 	if(request.getParameter("att_no")==null){
-		response.sendRedirect("/CA102G4/front_end/attractions/att.jsp");
+		response.sendRedirect(request.getContextPath()+"/front_end/attractions/att.jsp");
 		return;
 	}
 	AttractionsService attSvc = new AttractionsService();

@@ -29,13 +29,31 @@
 	}
 	pageContext.setAttribute("total_items",total_items);
 	
+	//行程用
+	TripService tripSvc = new TripService();
 	List<TripVO> list;
 	list = (List<TripVO>)request.getAttribute("list");
-	if(list==null){
-		TripService tripSvc = new TripService();
-		list = tripSvc.getPublish();
+	String orderType=null;
+	orderType = request.getParameter("orderType");
+	System.out.println(orderType);
+	if(orderType!=null){
+		if("view".equals(orderType)){
+			list = tripSvc.getPublishOrderViews();
+		}else if("new".equals(orderType)){
+			list = tripSvc.getPublish();
+		}else{
+			list = tripSvc.getPublish();
+		}
 	}
-	System.out.println(list.size());
+	if(list==null){
+		if("view".equals(orderType)){
+			list = tripSvc.getPublishOrderViews();
+		}else if("new".equals(orderType)){
+			list = tripSvc.getPublish();
+		}else{
+			list = tripSvc.getPublish();
+		}
+	}
 	request.setAttribute("list", list);
 %>
 
@@ -110,6 +128,9 @@
 <link
 	href="<%=request.getContextPath()%>/front_end/css/trip/trip_list.css"
 	rel="stylesheet">
+<link
+	href="<%=request.getContextPath()%>/front_end/css/attractions/att_style.css"
+	rel="stylesheet" type="text/css" media="all" />
 <!-- //css -->
 
 <!-- font-awesome icons -->
@@ -297,23 +318,34 @@
 				<%@ include file="/front_end/trip/include/page1.file"%>
 			</p>
 		</h1>
-		<form method="post" action="#">
+		<form method="post" action="<%=request.getContextPath()%>/trip/trip.do">
 			<div
 				class="col-lg-4 col-md-4 col-sm-5 col-6 col-lg-offset-8 col-md-offset-8 col-sm-offset-7 col-offset-6">
 				<div class="input-group">
-					<input type="text" class="form-control" placeholder="Search..."
-						name="keyword"> <span class="input-group-btn">
+					<input type="hidden" name="action" value="search">
+					<input type="text" class="form-control" placeholder="輸入關鍵字..." name="keyword"> 
+					<div class="input-group-append">
 						<button class="btn btn-default " type="submit">
-							<i class="fas fa-search"></i>
+							&nbsp;<i class="fas fa-search"></i>&nbsp;
 						</button>
-					</span>
+					</div>
 				</div>
 			</div>
 		</form>
 		<ul class="nav nav-tabs">
-			<li role="presentation" class="active"><a href="<%=request.getContextPath()%>/front_end/trip/trip.jsp">最新建立</a></li>
-			<li role="presentation"><a href="#">最多瀏覽</a></li>
+		<%if("view".equals(orderType)){%>
+			<li role="presentation"><a href="<%=request.getContextPath()%>/front_end/trip/trip.jsp?orderType=new">最新建立</a></li>
+			<li role="presentation" class="active"><a href="<%=request.getContextPath()%>/front_end/trip/trip.jsp?orderType=view">最多瀏覽</a></li>
 			<li role="presentation"><a href="<%=request.getContextPath()%>/front_end/trip/personal_area_trip.jsp">我的行程</a></li>
+		<%}else if("new".equals(orderType)){%>
+			<li role="presentation" class="active"><a href="<%=request.getContextPath()%>/front_end/trip/trip.jsp?orderType=new">最新建立</a></li>
+			<li role="presentation"><a href="<%=request.getContextPath()%>/front_end/trip/trip.jsp?orderType=view">最多瀏覽</a></li>
+			<li role="presentation"><a href="<%=request.getContextPath()%>/front_end/trip/personal_area_trip.jsp">我的行程</a></li>
+		<%}else{%>
+			<li role="presentation" class="active"><a href="<%=request.getContextPath()%>/front_end/trip/trip.jsp?orderType=new">最新建立</a></li>
+			<li role="presentation"><a href="<%=request.getContextPath()%>/front_end/trip/trip.jsp?orderType=view">最多瀏覽</a></li>
+			<li role="presentation"><a href="<%=request.getContextPath()%>/front_end/trip/personal_area_trip.jsp">我的行程</a></li>
+		<%}%>
 		</ul>
 
 

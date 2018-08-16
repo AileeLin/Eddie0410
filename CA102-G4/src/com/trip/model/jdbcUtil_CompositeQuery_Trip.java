@@ -15,12 +15,8 @@ public class jdbcUtil_CompositeQuery_Trip {
 
 		String aCondition = null;
 
-		if ("empno".equals(columnName) || "sal".equals(columnName) || "comm".equals(columnName) || "deptno".equals(columnName)) // 用於其他
-			aCondition = columnName + "=" + value;
-		else if ("ename".equals(columnName) || "job".equals(columnName)) // 用於varchar
-			aCondition = columnName + " like '%" + value + "%'";
-		else if ("hiredate".equals(columnName))                          // 用於Oracle的date
-			aCondition = "to_char(" + columnName + ",'yyyy-mm-dd')='" + value + "'";
+		if ("trip_name".equals(columnName)) // 用於varchar
+			aCondition = "upper(" + columnName + ")" + " like upper('%" + value + "%')";
 
 		return aCondition + " ";
 	}
@@ -31,7 +27,8 @@ public class jdbcUtil_CompositeQuery_Trip {
 		int count = 0;
 		for (String key : keys) {
 			String value = map.get(key)[0];
-			if (value != null && value.trim().length() != 0	&& !"action".equals(key)) {
+			if (value != null && value.trim().length() != 0 && !"action".equals(key) && !"whichPage".equals(key)
+					&& !"keyword".equals(key) && !"orderType".equals(key)) {
 				count++;
 				String aCondition = get_aCondition_For_Oracle(key, value.trim());
 
