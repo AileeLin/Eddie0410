@@ -511,8 +511,8 @@ public class MemberServlet extends HttpServlet {
 		//////////////////////////////////////// 新增會員檢舉資料以及審核會員資格////////////////////////////////////
 		if ("reportMember".equals(action)) {
 
-			List<String> errorMsgs = new LinkedList<String>();
-			req.setAttribute("errorMsgs", errorMsgs);
+			List<String> errorMsgs_Ailee = new LinkedList<String>();
+			req.setAttribute("errorMsgs_Ailee", errorMsgs_Ailee);
 			String mem_Id_reported = null;
 			/*************************** 2.接收請求參數 ***************************************/
 
@@ -520,26 +520,26 @@ public class MemberServlet extends HttpServlet {
 				// 檢舉人MemId
 				String mem_Id_report = req.getParameter("mem_Id_report");
 				if (mem_Id_report == null || (mem_Id_report.trim().length()) == 0) {
-					errorMsgs.add("未取到檢舉人的MemId");
+					errorMsgs_Ailee.add("未取到檢舉人的MemId");
 				}
 
 				// 被檢舉人MemId
 				mem_Id_reported = req.getParameter("mem_Id_reported");
 				if (mem_Id_reported == null || (mem_Id_reported.trim().length()) == 0) {
-					errorMsgs.add("未取到被檢舉人的MemId");
+					errorMsgs_Ailee.add("未取到被檢舉人的MemId");
 				}
 
 				// 被檢舉理由
 				String report_Reason = req.getParameter("report_Reason");
 				if (report_Reason == null || (report_Reason.trim().length()) == 0) {
-					errorMsgs.add("檢舉理由：請勿空白");
+					errorMsgs_Ailee.add("檢舉理由：請勿空白");
 				}
 
 				// 設定送出的會員檢舉處理狀態，2為未處理
 				Integer mem_Rep_Sta = 2;
 
 				// 先擋下萬一檢舉理由或檢舉人或被檢舉人是空值的狀況
-				if (!errorMsgs.isEmpty()) {
+				if (!errorMsgs_Ailee.isEmpty()) {
 					RequestDispatcher failureView = req.getRequestDispatcher(
 							"/front_end/personal_area/personal_area_public.jsp?uId=" + mem_Id_reported);
 					failureView.forward(req, res);
@@ -559,15 +559,15 @@ public class MemberServlet extends HttpServlet {
 				System.out.println("有新增嗎");
 
 				if (Member_reportVO != null) {
-					errorMsgs.add("您已檢舉過此會員，請勿重複檢舉!");
+					errorMsgs_Ailee.add("您已檢舉過此會員，請勿重複檢舉!");
 				} else {
 					member_reportSvc.addmemberreport(mem_Id_report, mem_Id_reported, report_Reason, mem_Rep_Sta);
-					errorMsgs.add("提交檢舉成功!");
+					errorMsgs_Ailee.add("提交檢舉成功!");
 					System.out.println("提交檢舉成功!!");
 				}
 
 				// 直接轉交 errorMsgs 告知使用者提交成功或失敗
-				if (!errorMsgs.isEmpty()) {
+				if (!errorMsgs_Ailee.isEmpty()) {
 					RequestDispatcher failureView = req.getRequestDispatcher(
 							"/front_end/personal_area/personal_area_public.jsp?uId=" + mem_Id_reported);
 					failureView.forward(req, res);
@@ -576,7 +576,7 @@ public class MemberServlet extends HttpServlet {
 
 				/*************************** 其他可能的錯誤處理 **********************************/
 			} catch (Exception e) {
-				errorMsgs.add("檢舉失敗:" + e.getMessage());
+				errorMsgs_Ailee.add("檢舉失敗:" + e.getMessage());
 				RequestDispatcher failureView = req.getRequestDispatcher(
 						"/front_end/personal_area/personal_area_public.jsp?uId=" + mem_Id_reported);
 				failureView.forward(req, res);
