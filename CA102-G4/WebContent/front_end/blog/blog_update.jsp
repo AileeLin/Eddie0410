@@ -136,7 +136,9 @@
     <!-- //blog 自定義的css -->
 
     <!-- blog 自定義的js-->
-    <script src="<%=request.getContextPath()%>/front_end/js/blog/blog_semantic.min.js"></script>
+	<script src="<%=request.getContextPath()%>/front_end/js/blog/blog_popup.min.js"></script>
+	<script src="<%=request.getContextPath()%>/back_end/js/blog/UI-Transition-master/transition.min.js"></script>
+	<script src="<%=request.getContextPath()%>/back_end/js/blog/UI-Dropdown-master/dropdown.min.js"></script>
     <script src="<%=request.getContextPath()%>/front_end/js/blog/blog_add.js"></script>
     <script src="<%=request.getContextPath()%>/front_end/blog_ckeditor/ckeditor.js"></script>
     <!-- //blog 自定義的js -->

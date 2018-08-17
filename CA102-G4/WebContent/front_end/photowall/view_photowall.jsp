@@ -29,6 +29,12 @@
 	}
 	
 	/***************取出登入者會員資訊******************/
+	if(memberVO == null){
+	  //如果沒取到某會員的ID，先讓他導向到照片牆首頁
+	  response.sendRedirect(request.getContextPath()+"/front_end/photowall/photo_wall.jsp");
+	  return;
+	 }
+	
 	String memId = ((MemberVO)session.getAttribute("memberVO")).getMem_Id();
 	
 	String photo_No = request.getParameter("photo_No");
@@ -49,24 +55,29 @@
 	List<Photo_tag_listVO> list = photo_tag_listSvc.getAll_Photo_No(photo_No);
 	pageContext.setAttribute("list", list);
 	
-	
-	String mem_Id = request.getParameter("mem_Id");
-
 	MemberVO memVO = memSvc.findByPrimaryKey(photo_wallVO.getMem_Id());
-// 	 	System.out.println(memVO.getEncoded());   //檢查照片是否有編碼	
-//	 	System.out.println(memVO.getMem_Id()); 	  //取得照片牆的發文者
+	// 	 	System.out.println(memVO.getEncoded());   //檢查照片是否有編碼	
+	//	 	System.out.println(memVO.getMem_Id()); 	  //取得照片牆的發文者
 	
 	pageContext.setAttribute("memVO", memVO);
 
 	photo_wall_likeService photo_wall_likeSvc = new photo_wall_likeService();
 
 	// 紀錄喜歡資料表裡面是否有此筆資料 ，有的話代表被喜歡過
-	int cnt = photo_wall_likeSvc.findByPrimaryKey(mem_Id, photo_wallVO.getPhoto_No());
-
-	// 取得被收藏次數
+	 int cnt = photo_wall_likeSvc.findByPrimaryKey(memId, photo_wallVO.getPhoto_No());
+	 System.out.println("cnt="+memId);							//取得喜歡過的memId
+	 System.out.println("cnt="+photo_wallVO.getPhoto_No());		//取得喜歡過的Photo_No
 
 %>
-
+<%
+	//取得購物車商品數量
+	Object total_items_temp = session.getAttribute("total_items");
+	int total_items = 0;
+	if(total_items_temp != null ){
+		total_items= (Integer) total_items_temp;
+	}
+	pageContext.setAttribute("total_items",total_items);
+%>
 <jsp:useBean id="memberSvc" scope="page" class="com.mem.model.MemberService" />
 <jsp:useBean id="photo_tagSvc" scope="page" class="com.photo_tag.model.Photo_tagService" />
 
@@ -169,9 +180,6 @@
 <!-- //photowall 自定義的css -->
 
 <!-- modal_report_photowall 自定義的css -->
-<link
-	href="<%=request.getContextPath()%>/front_end/css/photo_wall/login_style.css"
-	rel="stylesheet" type="text/css">
 <link
 	href="<%=request.getContextPath()%>/front_end/css/photo_wall/login.css"
 	rel="stylesheet" type="text/css">
@@ -307,8 +315,7 @@
                          </li>
                          
                         <li style="<%= logout %>"><a class="top_banner" href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_home.jsp"><i class="fa fa-user" aria-hidden="true"></i></a></li>
-                        
-						<li><a class="top_banner" href="<%=request.getContextPath()%>/front_end/store/store_cart.jsp"><i class="fa fa-shopping-cart" aria-hidden="true"></i></a></li>
+						<li><a class="top_banner" href="<%=request.getContextPath()%>/front_end/store/store_cart.jsp"><i class="fa fa-shopping-cart shopping-cart" aria-hidden="true"></i><span class="badge">${total_items}</span></a></li>
 						<li><a class="top_banner" href="#"><i class="fa fa-envelope" aria-hidden="true"></i></a></li>
 					</ul>
 				</div>
@@ -533,7 +540,7 @@
 								
 				<input type="hidden" name="photo_No" id="reportPhotoNo" value="${photo_wallVO.photo_No}"> 
 				
-				<input type="hidden" name="mem_Id" value="${mem_Id}"> 
+				<input type="hidden" name="mem_Id" value="<%=memberVO.getMem_Id()%>"> 
 				
 				<input type="hidden" name="action" value="reportPhoto">
 				
@@ -558,7 +565,7 @@ $(document).ready(function () {
       $("#collect").click(function(){
        var action = "collect";
        var photo_No = "<%=photo_wallVO.getPhoto_No()%>";
-	   var mem_Id = "${mem_Id}";
+	   var mem_Id = "<%=memberVO.getMem_Id()%>";
 	   var collectMessage = document.getElementById("collectMessage");
 				$.ajax({
 					url : "<%=request.getContextPath()%>/photo_wall.do",

@@ -96,6 +96,20 @@ private static final String getAll_member =
 	// 刪除宅配地址 第三個
 	private static final String MEM_Delete_HOME3 = "UPDATE MEMBER SET DELIVERY_ADDRESS_3=null WHERE MEM_ID=?";
 	
+	//世銘打的--全站搜尋用--根據會員姓名or會員介紹or旅遊記標題or旅遊記內容or旅遊記標籤類別or旅遊記標籤名稱or揪團目的地or揪團詳情or揪團標題...搜尋
+	private static final String SEARCH_ALL = "SELECT M.MEM_ID,M.MEM_NAME,M.MEM_PROFILE,M.MEM_REG_DATE,M.MEM_PHOTO " + 
+			"FROM (SELECT DISTINCT M.MEM_ID " + 
+			"FROM (MEMBER M LEFT OUTER JOIN GRP G ON M.MEM_ID = G.MEM_ID) LEFT OUTER JOIN ((BLOG B LEFT OUTER JOIN BLOG_TAG BT ON B.BLOG_ID = BT.BLOG_ID) LEFT OUTER JOIN BLOG_TAG_NAME BTN ON BT.BTN_ID = BTN.BTN_ID) ON M.MEM_ID = B.MEM_ID " + 
+			"WHERE (M.MEM_STATE = 1 AND UPPER(M.MEM_NAME) LIKE UPPER(?)) " + 
+			"OR (M.MEM_STATE = 1 AND UPPER(M.MEM_PROFILE) LIKE UPPER(?)) " + 
+			"OR (M.MEM_STATE = 1 AND B.BLOG_STATUS  = 0 AND UPPER(B.BLOG_TITLE) LIKE UPPER(?)) " + 
+			"OR (M.MEM_STATE = 1 AND B.BLOG_STATUS  = 0 AND UPPER(B.BLOG_CONTENT) LIKE UPPER(?)) " + 
+			"OR (M.MEM_STATE = 1 AND B.BLOG_STATUS  = 0 AND UPPER(BTN.BTN_CLASS) LIKE UPPER(?)) " + 
+			"OR (M.MEM_STATE = 1 AND B.BLOG_STATUS  = 0 AND UPPER(BTN.BTN_NAME) LIKE UPPER(?)) " + 
+			"OR (M.MEM_STATE = 1 AND UPPER(G.TRIP_LOCALE) LIKE UPPER(?)) " + 
+			"OR (M.MEM_STATE = 1 AND UPPER(G.TRIP_DETAILS) LIKE UPPER(?)) " + 
+			"OR (M.MEM_STATE = 1 AND UPPER(G.GRP_TITLE) LIKE UPPER(?))) R, MEMBER M " + 
+			"WHERE R.MEM_ID = M.MEM_ID";
 	@Override
 	public void insert(MemberVO memberVO) {
 		
@@ -1198,7 +1212,68 @@ private static final String getAll_member =
 			}
 		}
 	
+		//世銘打的--全站搜尋用--根據會員姓名or會員介紹or旅遊記標題or旅遊記內容or旅遊記標籤類別or旅遊記標籤名稱or揪團目的地or揪團詳情or揪團標題...搜尋
+		@Override
+		public List<MemberVO> SearchAll(String keyword) {
+			List<MemberVO> list = new ArrayList<MemberVO>();
+			MemberVO memberVO = null;
+			
+			Connection con = null;
+			PreparedStatement pstmt = null;
+			ResultSet rs = null;
 
+			try {
+				con = ds.getConnection();
+				pstmt = con.prepareStatement(SEARCH_ALL);
+				pstmt.setString(1, "%" + keyword + "%");
+				pstmt.setString(2, "%" + keyword + "%");
+				pstmt.setString(3, "%" + keyword + "%");
+				pstmt.setString(4, "%" + keyword + "%");
+				pstmt.setString(5, "%" + keyword + "%");
+				pstmt.setString(6, "%" + keyword + "%");
+				pstmt.setString(7, "%" + keyword + "%");
+				pstmt.setString(8, "%" + keyword + "%");
+				pstmt.setString(9, "%" + keyword + "%");
+				rs = pstmt.executeQuery();
+
+				while (rs.next()) {
+					memberVO = new MemberVO();
+					memberVO.setMem_Id(rs.getString("MEM_ID"));
+					memberVO.setMem_Name(rs.getString("MEM_NAME"));
+					memberVO.setMem_Profile(rs.getString("MEM_PROFILE"));
+					memberVO.setMem_Photo(rs.getBytes("MEM_PHOTO"));
+					memberVO.setMem_Reg_Date(rs.getDate("MEM_REG_DATE"));
+					
+					list.add(memberVO); // Store the row in the list
+				}
+
+			} catch (SQLException se) {
+				throw new RuntimeException("A database error occured. " + se.getMessage());
+			} finally {
+				if (rs != null) {
+					try {
+						rs.close();
+					} catch (SQLException se) {
+						se.printStackTrace(System.err);
+					}
+				}
+				if (pstmt != null) {
+					try {
+						pstmt.close();
+					} catch (SQLException se) {
+						se.printStackTrace(System.err);
+					}
+				}
+				if (con != null) {
+					try {
+						con.close();
+					} catch (Exception e) {
+						e.printStackTrace(System.err);
+					}
+				}
+			}
+			return list;
+		}
 }
 //@Override
 //public MemberVO login_Member(MemberVO memberVO) {

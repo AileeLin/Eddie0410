@@ -134,7 +134,7 @@
     <link rel="stylesheet" href="<%=request.getContextPath()%>/front_end/css/search/search_blog.css">
     <!-- //search 自定義的css -->
     <!-- blog 自定義的js -->
-    <script src="<%=request.getContextPath()%>/front_end/js/blog/blog_semantic.min.js"></script>
+<%--     <script src="<%=request.getContextPath()%>/front_end/js/blog/blog_semantic.min.js"></script> --%>
     <script src="<%=request.getContextPath()%>/front_end/js/search/search.js"></script>
     <!-- //blog 自定義的js -->
 
@@ -201,6 +201,17 @@
                 </div>
                 <div class="top-banner-right">
                     <ul>
+                        <li>
+                        	<!-- 判斷是否登入，若有登入將會出現登出按鈕 -->
+                         <c:choose>
+                          <c:when test="<%=login_state %>">
+                           <a href="<%= request.getContextPath()%>/front_end/member/member.do?action=logout"><span class=" top_banner"><i class=" fas fa-sign-out-alt" aria-hidden="true"></i></span></a>
+                          </c:when>
+                          <c:otherwise>
+                           <a href="<%= request.getContextPath()%>/front_end/member/mem_login.jsp"><span class="top_banner"><i class=" fa fa-user" aria-hidden="true"></i></span></a>
+                          </c:otherwise>
+                         </c:choose>
+                         </li>
                         <li style="<%= logout %>"><a class="top_banner" href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_home.jsp"><i class="fa fa-user" aria-hidden="true"></i></a></li>
                         <li><a class="top_banner" href="<%=request.getContextPath()%>/front_end/store/store_cart.jsp"><i class="fa fa-shopping-cart shopping-cart" aria-hidden="true"></i><span class="badge">${total_items}</span></a></li>
                         <li><a class="top_banner" href="#"><i class="fa fa-envelope" aria-hidden="true"></i></a></li>

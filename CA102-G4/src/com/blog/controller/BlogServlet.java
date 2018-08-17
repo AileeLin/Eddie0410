@@ -1273,7 +1273,7 @@ public class BlogServlet extends HttpServlet {
 			}
 		}
 
-		/*************************** 修改旅遊記留言檢舉狀態 ********************************/
+		/*************************** 全站搜尋-全部 ********************************/
 
 		if ("searchAll".equals(action)) {
 			List<String> errorMsgs = new LinkedList<String>();

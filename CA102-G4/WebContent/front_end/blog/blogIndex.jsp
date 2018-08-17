@@ -148,7 +148,8 @@
 <!-- //blog 自定義的css -->
 <!-- blog 自定義的js -->
 <script src="<%=request.getContextPath()%>/front_end/js/blog/blog.js"></script>
-<script src="<%=request.getContextPath()%>/front_end/js/blog/blog_semantic.min.js"></script>
+<script src="<%=request.getContextPath()%>/front_end/js/blog/blog_popup.min.js"></script>
+<script src="<%=request.getContextPath()%>/back_end/js/blog/UI-Transition-master/transition.min.js"></script>
 <!-- //blog 自定義的js -->
 <!-- LogoIcon -->
 <link href="<%=request.getContextPath()%>/front_end/images/all/Logo_Black_use.png" rel="icon" type="image/png">

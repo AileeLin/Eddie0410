@@ -116,6 +116,7 @@
 		session.setAttribute("addCR_token",new Date().getTime());
 
 	}
+
 %>
 
 <!DOCTYPE html>
@@ -174,7 +175,9 @@
 		<link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/front_end/css/store/store_product.css" media="all" />
 
 		 <!-- //store 自定義的css -->
-
+	    <!-- LogoIcon -->
+	    <link href="<%=request.getContextPath()%>/front_end/images/all/Logo_Black_use.png" rel="icon" type="image/png">
+	    <!-- //LogoIcon -->
 		<style>
 			p{
 				color:#555;
@@ -422,10 +425,10 @@
 								</c:if>
 							</div>
 							<div class="host p-t-30">
-									<a href="agnes" target="_blank" class="photo" style="background-image:url(<%=request.getContextPath()%>/front_end/readPic?action=member&id=${productVO.product_mem_id})">
+									<a href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_public_sell.jsp?uId=${productVO.product_mem_id}" target="_blank" class="photo" style="background-image:url(<%=request.getContextPath()%>/front_end/readPic?action=member&id=${productVO.product_mem_id})">
 									</a>
 									<span class="text" style="display:inline-block;height: 10px;position: absolute;bottom: 160px;right: 310px;letter-spacing: 2px;">	
-										<a href="agnes" target="_blank" style="display:inline-block">${memSvc.getOneMember(productVO.product_mem_id).mem_Name}</a>	
+										<a href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_public_sell.jsp?uId=${productVO.product_mem_id}" target="_blank" style="display:inline-block">${memSvc.getOneMember(productVO.product_mem_id).mem_Name}</a>	
 									</span>
 									<span class="star" style="display:inline-block ;position: absolute;height: 10px;bottom: 135px;right: 265px;">	
 										<ul class="list-inline" data-rating="0" title="Average Rating -0">
@@ -481,7 +484,6 @@
 							<c:if test="${productVO.product_mem_id != memId}">
 							    <!-- 如果不是登入者自己賣的商品時，會出現聊聊跟檢舉按鈕 -->
 								<form class="chat p-t-50" method="post"  onSubmit="return checkIsLogin('${memId}','${productVO.product_mem_id}');">
-									
 									<button type="submit" name="chat-to-seller" class="flex-c-m size1 bg4 hov4 s-text1 trans-0-4 chat-to-seller-btn"><i class="fa fa-comments" aria-hidden="true"></i>聊聊</button>
 								</form>
 								<div class="report p-t-50" style='display:inline;'> 
@@ -741,6 +743,7 @@
 		}
   
 </script>
+
 
 <!--聊聊-->
 <script>

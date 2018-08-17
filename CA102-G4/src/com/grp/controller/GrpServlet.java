@@ -59,8 +59,9 @@ public class GrpServlet extends HttpServlet {
   			
   		   	System.out.println("有進來新增喔");
 
-  			List<String> errorMsgs = new LinkedList<String>();
+  			Map<String,String> errorMsgs = new LinkedHashMap<String,String>();
   			req.setAttribute("errorMsgs",errorMsgs);
+  			
   			Timestamp pre_grp_End = null;
 			Timestamp pre_trip_Strat = null;
 			Timestamp pre_trip_End = null;
@@ -74,15 +75,15 @@ public class GrpServlet extends HttpServlet {
   				String grp_Title = req.getParameter("grp_Title");
   				
   				if(grp_Title == null || grp_Title.trim().length() == 0) {
-  					errorMsgs.add("名字：請勿空白。");
+  					errorMsgs.put("grp_Title","團名：請勿空白。");
   				}else if(grp_Title.trim().length()<2||grp_Title.trim().length()>30){
-  					errorMsgs.add("名字：請輸入2~6個字。");
+  					errorMsgs.put("grp_Title","團名：請輸入2~6個字。");
   				}
 				System.out.println(grp_Title);
 
   				String trip_Locale = req.getParameter("trip_Locale");
   				if(trip_Locale == null || trip_Locale.trim().length() == 0) {
-  					errorMsgs.add("地點：請勿空白。");
+  					errorMsgs.put("trip_Locale","地點：請勿空白。");
   				}
 				System.out.println(trip_Locale);
 
@@ -92,7 +93,7 @@ public class GrpServlet extends HttpServlet {
 				System.out.println("我在這1"+grp_End);
 
 				if(grp_End == null || grp_End.trim().length() == 0){
-					errorMsgs.add("揪團結束時間，請勿空白");
+					errorMsgs.put("grp_End","揪團結束時間，請勿空白");
 					
 					System.out.println("我在這2");
 
@@ -113,7 +114,7 @@ public class GrpServlet extends HttpServlet {
 				
 				String trip_Strat = req.getParameter("trip_Strat");
 				if(trip_Strat == null || trip_Strat.trim().length() == 0){
-					errorMsgs.add("行程開始時間，請勿空白");
+					errorMsgs.put("trip_Strat","行程開始時間，請勿空白");
 				}else {
 					Date temp_trip_Start = time_format.parse(trip_Strat);
 					pre_trip_Strat = new Timestamp(temp_trip_Start.getTime());
@@ -123,7 +124,7 @@ public class GrpServlet extends HttpServlet {
 				
 				String trip_End = req.getParameter("trip_End");
 				if(trip_End == null || trip_End.trim().length() == 0){
-					errorMsgs.add("行程結束時間，請勿空白");
+					errorMsgs.put("trip_End","行程結束時間，請勿空白");
 				}else {
 					Date temp_trip_End = time_format.parse(trip_End);
 					pre_trip_End = new Timestamp(temp_trip_End.getTime());
@@ -133,14 +134,27 @@ public class GrpServlet extends HttpServlet {
 				Integer grp_Status = 1 ;
 				
 				String grp_Price = req.getParameter("grp_Price");
+				if(grp_Price == null || grp_Price.trim().length() == 0){
+					errorMsgs.put("grp_Price","預算，請勿空白");
+				}
   				
+  				Integer grp_Cnt = null;
+  				try {
+  					grp_Cnt = Integer.parseInt(req.getParameter("grp_Cnt").trim());
+				}catch(NumberFormatException e) {
+					grp_Cnt = 1;
+					errorMsgs.put("grp_Cnt","請輸入報名人數");
+				}
   				
-  				Integer grp_Cnt = Integer.valueOf(req.getParameter("grp_Cnt"));
+  				Integer grp_Acpt = null;
+  				try {
+  					grp_Acpt = Integer.parseInt(req.getParameter("grp_Acpt").trim());
+				}catch(NumberFormatException e) {
+					grp_Acpt = 1;
+					errorMsgs.put("grp_Acpt","請輸入出團人數");
+				}
   				
-  				
-  				Integer grp_Acpt = Integer.valueOf(req.getParameter("grp_Acpt"));
-  				
-  				File grpPhoto = new File(req.getRealPath("/front_end/images/all/grp_no.jpg"));
+  				File grpPhoto = new File(req.getRealPath("/front_end/images/all/aegean_Sea_2.png"));
 			    BufferedImage profilepicImage = ImageIO.read(grpPhoto);
 			    ByteArrayOutputStream profilepicBaos = new ByteArrayOutputStream();
 			    ImageIO.write(profilepicImage, "png", profilepicBaos);
@@ -163,7 +177,7 @@ public class GrpServlet extends HttpServlet {
   				//若以上驗證有錯誤訊息的話，將會於頁面顯示出錯誤部分
   				if(!errorMsgs.isEmpty()) {
   					req.setAttribute("grpVO", grpVO);
-  					RequestDispatcher failureView = req.getRequestDispatcher("/front_end/grp/grpIndex.jsp");
+  					RequestDispatcher failureView = req.getRequestDispatcher("/front_end/grp/addgrp.jsp");
   					failureView.forward(req, res);
   					return;
   				}
@@ -180,9 +194,11 @@ public class GrpServlet extends HttpServlet {
   				successView.forward(req, res);
   	
   			}catch(Exception e) {
-  				errorMsgs.add(e.getMessage());
-  				RequestDispatcher filureView = req.getRequestDispatcher("/front_end/grp/grpIndex.jsp");
+				errorMsgs.put("errorMsgs",e.getMessage());
+  				RequestDispatcher filureView = req.getRequestDispatcher("/front_end/grp/addgrp.jsp");
   				filureView.forward(req, res);
+  				System.out.println(e.getMessage());
+				e.printStackTrace();
   			}
   			
   		}

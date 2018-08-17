@@ -28,10 +28,6 @@
 	
 	List<blogVO> blogList = (List)request.getAttribute("blogList");
 	request.setAttribute("blogList", blogList);
-		
-	//MemberService memberSvc = new MemberService();育萱註解，用javaBean寫法
-	List<MemberVO> memberVOList = (List)memberSvc.getAll();
-	request.setAttribute("memberVOList", memberVOList);
 %>
 <%
 	//取得購物車商品數量
@@ -138,7 +134,7 @@
     <link rel="stylesheet" href="<%=request.getContextPath()%>/front_end/css/search/search_blog.css">
     <!-- //search 自定義的css -->
     <!-- blog 自定義的js -->
-    <script src="<%=request.getContextPath()%>/front_end/js/blog/blog_semantic.min.js"></script>
+<%--     <script src="<%=request.getContextPath()%>/front_end/js/blog/blog_semantic.min.js"></script> --%>
     <script src="<%=request.getContextPath()%>/front_end/js/search/search.js"></script>
     <!-- //blog 自定義的js -->
 
@@ -204,8 +200,6 @@
                     </ul>
                 </div>
                 <div class="top-banner-right">
-                		
-                		<!-- 暫時登出用的 -->
                      <ul>
                         <li>
                         	<!-- 判斷是否登入，若有登入將會出現登出按鈕 -->
@@ -382,31 +376,38 @@
             <!-- //搜尋的結果左邊 -->
             <!-- 搜尋的結果右邊 -->
             <div class="column area_result center aligned">
-                <div class="swiper-container2">
-                    <div class="swiper-wrapper userSwiper-wrapper">
-                    	<c:forEach var="memVO" items="${memberVOList}">
-	                        <a class="swiper-slide swiperCard" href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_public.jsp?uId=${memVO.mem_Id}" target="_blank" style="height:500px">
-	                            <div class="userImage" style="background-image:url(<%=request.getContextPath()%>/front_end/readPic?action=member&id=${memVO.mem_Id})">
-	                            </div>
-	                            <div class="userInfo">
-	                                <div class="userInfoHeader">
-	                                    ${memVO.mem_Name}
-	                                </div>
-	                                <div class="userInfoJoindate">
-	                                    Joined in ${memVO.mem_Reg_Date}
-	                                </div>
-	                                <div class="userInfoDescription">
-	                                    ${memVO.mem_Profile}
-	                                </div>
-	                            </div>
-	                            <div class="userExtra">
-	                                <i class="fas fa-user userIcon"></i>
-	                                ${friSvc.findMyFri(memVO.mem_Id,2).size()} Friends
-	                            </div>
-	                        </a>
-                         </c:forEach>                    
-                    </div>
-                </div>
+            	<c:if test="${not empty memberSvc.SearchAll(param.keyword) && param.action!=null}">
+	                <div class="swiper-container2">
+	                    <div class="swiper-wrapper userSwiper-wrapper">
+	                    	<c:forEach var="memVO" items="${memberSvc.SearchAll(param.keyword)}">
+		                        <a class="swiper-slide swiperCard" href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_public.jsp?uId=${memVO.mem_Id}" target="_blank" style="height:500px">
+		                            <div class="userImage" style="background-image:url(<%=request.getContextPath()%>/front_end/readPic?action=member&id=${memVO.mem_Id})">
+		                            </div>
+		                            <div class="userInfo">
+		                                <div class="userInfoHeader">
+		                                    ${memVO.mem_Name}
+		                                </div>
+		                                <div class="userInfoJoindate">
+		                                    Joined in ${memVO.mem_Reg_Date}
+		                                </div>
+		                                <div class="userInfoDescription">
+		                                    ${memVO.mem_Profile}
+		                                </div>
+		                            </div>
+		                            <div class="userExtra">
+		                                <i class="fas fa-user userIcon"></i>
+		                                ${friSvc.findMyFri(memVO.mem_Id,2).size()} Friends
+		                            </div>
+		                        </a>
+	                         </c:forEach>                    
+	                    </div>
+	                </div>
+                </c:if>
+                <c:if test="${param.action==null}">
+					<div class="ui left aligned search_results empty" style="text-align:center;height:546px;border:1px solid lightgray">
+						<p style="color:darkgray;height:100%;line-height:546px;font-size:40px">請輸入關鍵字查詢!!</p>
+					</div>
+				</c:if>
             </div>
             <!-- //搜尋的結果右邊 -->
         </div>

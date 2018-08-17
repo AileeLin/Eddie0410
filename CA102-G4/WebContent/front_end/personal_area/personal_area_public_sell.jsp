@@ -5,14 +5,18 @@
 <%@ page import="com.photo_wall.model.*" %>
 <%@ page import="com.blog.model.*" %>
 <%@ page import="java.util.*" %>
+<%@ page import="com.fri.model.*" %>
 <%@ page import="com.trip.model.*" %>
 <%@ page import="com.grp.model.*" %>
 <%@ page import="com.question.model.*" %>
+<%@ page import="com.product.model.*" %>
+<%@ page import="com.ord.model.*"%>
+<jsp:useBean id="friSvc" scope="page" class="com.fri.model.FriendService"></jsp:useBean>
 <jsp:useBean id="tripSvc" scope="page" class="com.trip.model.TripService"></jsp:useBean>
 <jsp:useBean id="grpSvc" scope="page" class="com.grp.model.GrpService"></jsp:useBean>
 <jsp:useBean id="qaSvc" scope="page" class="com.question.model.QuestionService"></jsp:useBean>
-<jsp:useBean id="memberSvc" scope="page" class="com.mem.model.MemberService"></jsp:useBean>
-
+<jsp:useBean id="prodSvc" scope="page" class="com.product.model.ProductService"></jsp:useBean>
+<jsp:useBean id="productWishlistSvc" scope="page" class="com.productWishlist.model.ProductWishlistService" />
 <%	 
 	//因為沒有登入也可以查看他人的個人頁面，但無法顯示加入好友的按鈕
 	MemberVO memberVO = (MemberVO)session.getAttribute("memberVO");
@@ -71,14 +75,8 @@
 	List<blogVO> blogList=blogSvc.findByMemId(uId);//動態從session取得會員ID
 	pageContext.setAttribute("blogList", blogList);
 	
-	//取出uId的行程且狀態不為0的 -----  又分1未發表 2已發表(0814在改)
-	List<TripVO> alluTripList =tripSvc.getByMem_id(uId);
-	List<TripVO> uTripList = new ArrayList<>();
-	for(TripVO tripVO : alluTripList){
-		if(tripVO.getTrip_status() == 2){
-			uTripList.add(tripVO);		
-		}
-	}
+	//取出uId的行程且狀態不為0的
+	List<TripVO> uTripList =tripSvc.getByMem_id(uId);
 	pageContext.setAttribute("uTripList",uTripList);
 	
 	/***************取出uId的發起的揪團(僅撈出1成團中的)******************/
@@ -109,37 +107,40 @@
 		total_items= (Integer) total_items_temp;
 	}
 	pageContext.setAttribute("total_items",total_items);
-	pageContext.setAttribute("uId",uId);
-%>
+	
+	/***************取出查詢會員銷售商品******************/
+	ProductService productSvc = new ProductService();
+    Set<ProductVO> list2 = productSvc.getSellerProducts(uId);
+    List<ProductVO> list = new ArrayList<ProductVO>();
+    for(ProductVO productVO:list2){
+    	if(productVO.getProduct_status() == 1){
+    		list.add(productVO);
+    	}
+    }
+    pageContext.setAttribute("list",list);
+    pageContext.setAttribute("login_state",login_state);
+	pageContext.setAttribute("memId",uId);
+	session.setAttribute("location", request.getRequestURI()+"?uId="+uId);
+	System.out.println(request.getRequestURI()+"?uId="+uId);
+	
+	//取得賣家購買清單
+  	OrdService ordSvc = new OrdService();
 
-<%@ page import="com.fri.model.*,com.chat.model.*" %>
-<jsp:useBean id="chatRoomSvc" scope="page" class="com.chat.model.ChatRoomService"></jsp:useBean>
-<jsp:useBean id="chatRoomJoinSvc" scope="page" class="com.chat.model.ChatRoom_JoinService"></jsp:useBean>
-<jsp:useBean id="friSvc" scope="page" class="com.fri.model.FriendService"></jsp:useBean>
-<%
-	if(memberVO != null){
-		//*****************聊天用：取得登錄者所參與的群組聊天*************/
-		List<ChatRoom_JoinVO> myCRList =chatRoomJoinSvc.getMyChatRoom(memberVO.getMem_Id());
-		Set<ChatRoom_JoinVO> myCRGroup = new HashSet<>(); //裝著我參與的聊天對話為群組聊天時
-		
-		for(ChatRoom_JoinVO myRoom : myCRList){
-			//查詢我參與的那間聊天對話，初始人數是否大於2?? 因為這樣一定就是群組聊天
-			int initJoinCount = chatRoomSvc.getOne_ByChatRoomID(myRoom.getChatRoom_ID()).getChatRoom_InitCNT();
-			if(initJoinCount > 2){
-				myCRGroup.add(myRoom);
-			}
-		}
-		pageContext.setAttribute("myCRList", myCRGroup);
-		
-		/***************聊天用：取出會員的好友******************/
-		List<Friend> myFri = friSvc.findMyFri(memberVO.getMem_Id(),2); //互相為好友的狀態
-		pageContext.setAttribute("myFri",myFri);
-		
-		/**************避免聊天-新增群組重新整理後重複提交********/
-		session.setAttribute("addCR_token",new Date().getTime());
+	List<OrdVO> sellList = ordSvc.getForAllSell(uId);
+	
+	//有買家評價的  賣家訂單
+	List<OrdVO> ratingList = new ArrayList<OrdVO>();
+	
+	 for(int i = 0 ;i<sellList.size();i++){
+		 
+	    	if(sellList.get(i).getBtos_rating()!=0){
+	    		ratingList.add(sellList.get(i));
+	    	}
 
-	}
+	 }
 
+	pageContext.setAttribute("memSvc",memSvc); 
+	pageContext.setAttribute("ratingList",ratingList);
 %>
 
 <!DOCTYPE html>
@@ -174,7 +175,7 @@
     <!-- JQUERY -->
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <!-- //JQUERY -->
-
+    
     <!-- bootstrap css及JS檔案 -->
     <link href="<%=request.getContextPath()%>/front_end/css/all/index_bootstrap.css" rel="stylesheet" type="text/css" media="all" />
     <script src="<%=request.getContextPath()%>/front_end/js/all/index_bootstrap.js"></script>
@@ -196,7 +197,7 @@
     <link href='https://fonts.googleapis.com/css?family=Oswald:400,700,300' rel='stylesheet' type='text/css'>
     <link href='https://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css'>
     <!-- //font字體 -->
-        
+    
     <!-- AD_Page/personal_area_public相關CSS及JS -->
     <link href="<%=request.getContextPath()%>/front_end/css/ad/ad_page.css" rel="stylesheet" type="text/css"><!--共用頁籤及頁尾style-->
     <link href="<%=request.getContextPath()%>/front_end/css/personal/personal_area_home.css" rel="stylesheet" type="text/css"><!--共用個人首頁上方會員資訊塊style-->
@@ -204,68 +205,75 @@
     <script type="text/javascript" src="<%=request.getContextPath()%>/front_end/js/personal/personal_area_public.js"></script>
     <!-- //AD_Page相關CSS及JS -->
     
-	<!-- 會員檢舉使用到的jQuery Dialog -->
+    <!-- 會員檢舉使用到的jQuery Dialog -->
     <link href="<%=request.getContextPath()%>/front_end/jquery-ui-1.12.1/jquery-ui.css" rel="stylesheet">
-    <script src="<%=request.getContextPath()%>/front_end/js/personal/jquery-ui.js"></script>
+    <script src="<%=request.getContextPath()%>/front_end/jquery-ui-1.12.1/jquery-ui.js"></script>
     <!-- //會員檢舉使用到的jQuery Dialog -->
+    
     
     <!-- 聊天相關CSS及JS -->
     <link href="<%=request.getContextPath()%>/front_end/css/chat/chat_style.css" rel="stylesheet" type="text/css">
     <script src="<%=request.getContextPath()%>/front_end/js/chat/vjUI_fileUpload.js"></script>
     <script src="<%=request.getContextPath()%>/front_end/js/chat/chat.js"></script>
     <!-- //聊天相關CSS及JS -->
-    
-	<!-- 登入才會有的功能(檢舉、送出或接受交友邀請通知)-->
-	<c:if test="${memberVO != null}">
-		<script>
-			/**再送出好友邀請時，先比對是否傳遞的參數都有出去**/
-			function checkSendFriendMessage(me_id,fri_id){
-				var checkRelationShip = "<%=friSvc.findRelationship(memId,uId)%>";
-				
-				if(me_id.trim() == "" || fri_id.trim() == "" || checkRelationShip != "null"){
-					alert("未取到登入者或對方的會員ID");
-					return false;
-				}
-				
-				var jsonObj = {
-					"title"		:"好友邀請",
-				  	"sender"	: me_id,
-				 	"receiver"	: fri_id,
-				 	"message"	:"您有一筆好友邀請待確認"
-				};
-				webSocket.send(JSON.stringify(jsonObj));
-				
-				return true;
+
+    <!-- 賣場相關CSS及JS -->
+   	<link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/front_end/css/store/util.css">
+	<link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/front_end/css/store/main.css">
+	<link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/front_end/css/store/seller_prod_mgt.css">
+	<link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/front_end/css/store/store_order_mgt.css">
+	
+	<!-- LogoIcon -->
+    <link href="<%=request.getContextPath()%>/front_end/images/all/Logo_Black_use.png" rel="icon" type="image/png">
+    <!-- //LogoIcon -->
+	
+	<style>
+		.mem_ind_topbar {
+		    height: 17.2718%;
+		    width: 100%;
+		}
+		
+		p {
+		    font-family: 'Oswald','Noto Sans TC', sans-serif !important;
+		    color: #333;
+		}
+
+		.block2-img {
+				width: 270px;
+				height: 270px;
+				max-width: 100%;
+				display: flex;
+				align-items: center;
+				justify-content: center;
 			}
 			
-			/**再送出好友邀請時，先比對是否傳遞的參數都有出去**/
-			function comfirmBeFriMessage(me_id,fri_id){
-				console.log("有送出確認好友邀請");
-				if(me_id.trim() == "" || fri_id.trim() == ""){
-					alert("未取到登入者或對方的會員ID");
-					return false;
-				}
-				
-				var jsonObj = {
-					"title"		:"好友關係確認",
-				  	"sender"	: me_id,
-				 	"receiver"	: fri_id,
-				 	"message"	:"您與${memberVO.mem_Name}已成為好友"
-				};
-				webSocket.send(JSON.stringify(jsonObj));
-				
-				return true;
+			.row:not(.sell){
+				margin-top: unset;
+			    height: unset;
+			    margin-bottom: unset;
+			    margin: unset;
+			    position: unset;
+    			z-index: unset;
 			}
-		</script>
-		
-		<%@ include file="/front_end/personal_area/chatModal_JS.file" %>
-		
-	</c:if>
-	  
-    
-    
-	<script>
 
+			a {
+			    color: #111;
+			    text-decoration: none;
+			}
+			
+			a:hover, a:focus {
+			    color: #aaa;
+			    text-decoration: none;
+			}
+
+	</style>
+    
+</head>
+
+    <body>
+    
+    	<script>
+    	
     	$(document).ready(function(){
     		/*若沒登錄，根本不用去確認與該會員是否為好友?*/
     		if(<%=memId != null%>){
@@ -278,7 +286,7 @@
 	    				
 	    				if(data == 0){
 	    					$("#mem_ind_name_friBtn").html(
-		    						"<a class='ui inverted green button mini' onclick='return checkSendFriendMessage(\"<%=(String)memId%>\",\"<%=uId%>\");' href='<%=request.getContextPath()%>/fri.do?action=insertFri&meId=<%=(String)memId%>&friId=<%=uId%>&local=public_area'>"+
+		    						"<a class='ui inverted green button mini' href='<%=request.getContextPath()%>/fri.do?action=insertFri&meId=<%=(String)memId%>&friId=<%=uId%>&local=public_area'>"+
 		    							"<i class='icon plus'></i>加入好友"+
 		    						"</a>");	
 	    				}else if(data == 1){
@@ -302,7 +310,7 @@
 	    					//對方有送給我好友邀請，要顯示確認或刪除邀請
 	    					$("#mem_ind_name_friBtn").html(
 		    						"&nbsp;&nbsp;<div class='ui buttons mini'>"+
-			    						"<a class='ui green button mini' href='<%=request.getContextPath()%>/fri.do?action=becomeFri&meId=<%=(String)memId%>&friId=<%=uId%>&local=public_area' onclick='return comfirmBeFriMessage(\"<%=(String)memId%>\",\"<%=uId%>\");'>"+
+			    						"<a class='ui green button mini' href='<%=request.getContextPath()%>/fri.do?action=becomeFri&meId=<%=(String)memId%>&friId=<%=uId%>&local=public_area' onclick=''>"+
 			    						"<i class='fas fa-check-circle'></i>&nbsp確認</a>"+
 		    						  "<div class='or'></div>"+
 			    						"<a class='ui button mini' href='<%=request.getContextPath()%>/fri.do?action=reject&meId=<%=(String)memId%>&friId=<%=uId%>&local=public_area' onclick=''>"+
@@ -323,17 +331,9 @@
     	
     	</script>
     	
-    	
-    	
-    	
-</head>
-
-    <body>
-    
-
     	<%-- 錯誤表列 --%>
-		<c:if test="${not empty errorMsgs_Ailee}">
-			<div class="modal fade" id="errorModal_Ailee">
+		<c:if test="${not empty errorMsgs}">
+			<div class="modal fade" id="errorModal">
 			    <div class="modal-dialog modal-sm" role="dialog">
 			      <div class="modal-content">
 			        <div class="modal-header">
@@ -341,7 +341,7 @@
 			          <span class="modal-title"><h4>&nbsp;注意：</h4></span>
 			        </div>
 			        <div class="modal-body">
-						<c:forEach var="message" items="${errorMsgs_Ailee}">
+						<c:forEach var="message" items="${errorMsgs}">
 							<li style="color:red" type="square">${message}</li>
 						</c:forEach>
 			        </div>
@@ -471,393 +471,239 @@
             </div>
             <!--//會員個人頁面標頭-->
             <!--會員個人頁面-首頁內容-->
-            <div class="mem_ind_content">
+            <div class="mem_ind_content" id="mem_ind_content">
               <!-- 頁籤項目 -->
               <ul class="nav nav-tabs">
-                <li class="nav-item active">
-                  <a href="#home_right" data-toggle="tab">
+                <li class="nav-item">
+                  <a href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_public.jsp?uId=${memId}">
                       <i class="fas fa-home"></i>首頁
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a href="#blog"  data-toggle="tab">
+                  <a href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_public.jsp?uId=${memId}">
                       <i class="fab fa-blogger"></i>旅遊記
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a href="#trip" data-toggle="tab">
+                  <a href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_public.jsp?uId=${memId}">
                       <i class="fas fa-map"></i>行程
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a href="#grp" data-toggle="tab">
+                  <a href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_public.jsp?uId=${memId}">
                       <i class="fas fa-bullhorn"></i>揪團
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a href="#question" data-toggle="tab">
+                  <a href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_public.jsp?uId=${memId}">
                       <i class="question circle icon"></i>問答
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a href="#gallery" data-toggle="tab">
+                  <a href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_public.jsp?uId=${memId}">
                       <i class="image icon"></i>相片
                   </a>
                 </li>
-                 <li class="nav-item">
-                  <a href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_public_sell.jsp?uId=${uId}">
-                      <i class="image icon"></i>銷售
-                  </a>
-                </li>
+                
+                <li class="nav-item active">
+	              <a href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_public_sell.jsp?uId=${memId}">
+	                  <i class="money bill alternate icon"></i>銷售
+	              </a>
+	            </li>
               </ul>
               <!-- //頁籤項目 -->
               <!-- 頁籤項目-首頁內容 -->
               <div class="tab-content">
-                <!--首頁右半邊-個人首頁-->
-                <div id="home_right" class="tab-pane fade in active">
-                   <!--首頁我的照片列表-->
-                   <div class="u_ind_item">
-                      <div class="u_title">
-                          <strong>${otherUser_memVO.mem_Name}的照片</strong>
-                          <a href="#gallery"  data-toggle="tab">
-                          	<i class="angle double right icon"></i>更多
-                          </a>
-                          <div>
-                              <span>${photoList.size()}</span>
-                              <span>張照片</span>
-                          </div>
-                      </div>
-                      <div class="mem_ind_item_photo">
-						  <c:choose>
-		                  	<c:when test="${not empty photoList}">
-		                      <div class="flex">
-								<c:forEach var="photovo" items="${photoList}" begin="0" end="4">
-									<div class="item">
-								    	<a href="<%=request.getContextPath()%>/front_end/photowall/view_photowall.jsp?photo_No=${photovo.photo_No}">
-								        	<img src="<%=request.getContextPath()%>/front_end/readPic?action=photowall&id=${photovo.photo_No}">
-								    	</a>
-									</div>
-								</c:forEach>
-		                      </div>
-		                     </c:when>
-		                     <c:otherwise>
-		                     	<img src="<%=request.getContextPath()%>/front_end/images/all/nothing.png" class="nothing">&nbsp; 尚未發表
-		                     </c:otherwise>
-		                  </c:choose>
-                      </div>
-					  <!--  <br>  -->
+				<div id="sell_management" style="height:50px">
+                   <div style="width: 70%;float: left">
+                       <ul class="nav nav-tabs" id="sell_tab" style="float: left;padding-left: 30px;">
+                          <li id="store_public" class="active"><a data-toggle="tab" href="#store_mgt" onclick="checkActiveTab();">賣場</a></li>
+                          <li id="store_rating"><a data-toggle="tab" href="#rating_sell" onclick="checkActiveTab();">賣場評價</a></li>
+                        </ul>
                    </div>
-                   <hr>
-                   <!--首頁我的旅遊記列表-->
-                   <div class="u_ind_item">
-                      <div class="u_title">
-                          <strong>${otherUser_memVO.mem_Name}的旅遊記</strong>
-                          <a href="#blog" data-toggle="tab"><i class="angle double right icon"></i>更多</a>
-                          <div>
-                              <span>${blogList.size()}</span>
-                              <span>篇遊記</span>
-                          </div>
-                      </div>
-                      <div class="mem_ind_item_blog">
-                         <div class="ui items">
-	                        <c:choose>
-	                     	  <c:when test="${not empty blogList}">
-	                     		<c:forEach var="blogvo" items="${blogList}" begin="0" end="2">
-		                      	  <!-- 部落格區塊 -->
-			                      <div class="item col-12">
-			                        <div class="ui small image ">
-			                          <a href="<%=request.getContextPath()%>/blog.do?action=article&blogID=${blogvo.blog_id}">
-			                              <img src="<%=request.getContextPath()%>/blogPicReader?blog_id=${blogvo.blog_id}"/>
-			                          </a>
-			                        </div>
-			                        <div class="content ">
-			                          <div class="text-truncate header">${blogvo.blog_title}</div>
-			                          <div class="meta">
-			                            <span class="stay">
-			                            	<i class="fas fa-calendar-alt"></i>
-			                            		${blogvo.travel_date}
-			                            </span>
-			                          </div>
-			                          <div class="description">
-			                          	<i class="fas fa-align-justify"></i>
-			                            <span class="_shortText">
-			                                <i class="fas fa-map-marker-alt"></i>
-			                                <c:set var="blog_content" value="${blogvo.blog_content}"/>
-											<%= ((String)pageContext.getAttribute("blog_content")).replaceAll("<[^>]*>","").trim()%>
-			                            </span>
-			                          </div>
-			                        </div>
-			                      </div>
-			                    </c:forEach>
-		                      	  <!-- 部落格區塊 -->
-		                       </c:when>
-		                       <c:otherwise>
-		                       		<img src="<%=request.getContextPath()%>/front_end/images/all/nothing.png" class="nothing">&nbsp;尚未發表
-		                       </c:otherwise>
-		                     </c:choose>
-                         </div>  
-                      </div>
-                   </div>
-                   <hr>
-                   <!--首頁我的行程列表-->
-	               <div class="u_ind_item">
-	                  <div class="u_title">
-	                      <strong>我的行程</strong>
-	                      <a href="#trip" data-toggle="tab"><i class="angle double right icon"></i>更多</a>
-	                      <div>
-	                          <span>${uTripList.size()}</span>
-	                          <span>篇行程</span>
-	                      </div>
-	                  </div>
-	                  <div class="mem_ind_item_plan">
-	                     <div class="ui items">
-	                      <c:choose>
-		                      <c:when test="${not empty uTripList}">
-			                      <c:forEach var="tripvo" items="${uTripList}" begin="0" end="2">
-				                      <div class="item">
-				                        <div class="ui small image">
-				                         <a href="<%=request.getContextPath()%>/front_end/trip/tripDetail.jsp?trip_no=${tripvo.trip_no}">
-				                         	<img src="<%=request.getContextPath()%>/front_end/readPic?action=trip&id=${tripvo.trip_no}">
-				                         </a>
-				                        </div>
-				                        <div class="content">
-				                          <div class="header">${tripvo.trip_name}</div>
-				                          <div class="meta">
-				                            <span class="stay"><i class="fas fa-play-circle"></i>出發日期：${tripvo.trip_startDay}</span>
-				                          </div>
-				                          <div class="description">
-				                          	<span class="stay"><i class="fas fa-clock"></i>&nbsp;${tripvo.trip_days}天</span>
-				                            <p>
-												<!-- 本來要放行程有幾個景點<i class="fas fa-map-marker-alt"></i> -->
-				                            </p>
-				                          </div>
-				                        </div>
-				                      </div>
-			                      </c:forEach>
-		                      </c:when>
-	 						  <c:otherwise>
-								<img src="<%=request.getContextPath()%>/front_end/images/all/nothing.png" class="nothing">尚未發表
-						      </c:otherwise>
-	                      </c:choose>
-	                     </div>  
-	                  </div>
-	               </div>
-                   <br>
                 </div>
-                <!--//首頁右半邊-個人首頁-->
-       
-                <!--//相片頁面-->
-                <div id="gallery" class="tab-pane fade">
-                	<div class='row'>
-                	
-                		 <c:choose>
-		                  	<c:when test="${not empty photoList}">
-			                  	<div class="ui three stackable cards">
-									<c:forEach var="photovo" items="${photoList}">
-									<div class="card">
-										<div class="image">
-										<a href="<%=request.getContextPath()%>/front_end/photowall/view_photowall.jsp?photo_No=${photovo.photo_No}">
-									    	<img src="<%=request.getContextPath()%>/front_end/readPic?action=photowall&id=${photovo.photo_No}">
-									    </a>	
+                
+                <div class="tab-content">
+                  <!--賣場-->
+                 <div id="store_mgt" class="tab-pane fade in active"> 
+                	<div class='row sell'>
+                	 <!--內容-->  
+                    <div class="main" style="min-height: 1px;">
+                    	<section class="bgwhite">
+							<div class="container">
+								<div class="row sell"  style="margin-bottom:0px">
+							<div class="col-sm-6 col-md-8 col-lg-11 p-b-50">
+								<div class="row"  style="margin-bottom:0px">
+									<div class="col-sm-10 col-md-10 col-lg-12">
+										<%@ include file="page1.file" %>
+										<div class="page-top flex-sb-m flex-w p-b-35 p-t-40" style="display: inline-block;">
+											<span class="s-text8 p-t-5 p-b-5">
+												第<%=whichPage%>/<%=pageNumber%>頁  共<span id="rowno"><%=rowNumber%></span>筆
+											</span>
 										</div>
 									</div>
+								</div>
+								<!-- Product -->
+								<div class="row sell">
+								<c:forEach var="productVO" items="${list}" begin="<%=pageIndex%>" end="<%=pageIndex+rowsPerPage-1%>">
+										<div class="col-sm-12 col-md-6 col-lg-4 p-b-50">
+											<!-- Block2 -->
+											<div class="block2">
+												<div class="block2-img wrap-pic-w of-hidden pos-relative" style="height:16rem;width: 100%;">
+													<img class="prod-img" src="data:image/jpeg;base64,${productVO.product_photo_1_base}" onerror="this.src='<%=request.getContextPath()%>/front_end/images/store/no-image-icon-15.png'"  alt="IMG-PRODUCT">
+													<div class="block2-overlay trans-0-4" style="width: 100%;">
+														<div class="block2-btn-addcart w-size1 trans-0-4">
+															<button type="button" onclick="addById(this,'${productVO.product_id}','${productVO.product_name}','${productVO.product_mem_id}','${productVO.product_price}','${login_state}')" class="add-to-cart add-prod-btn flex-c-m size1 bg4 hov1 s-text1 trans-0-4">
+																加入購物車
+															</button>											
+														</div>
+													</div>
+												</div>
+				
+												<div class="block2-txt p-t-20">
+													<a href="<%=request.getContextPath()%>/front_end/store/store_product.jsp?prod_id=${productVO.product_id}" class="block2-name dis-block s-text3 p-b-5 prod-title">
+														${productVO.product_name}
+													</a>
+													<div class="p-t-10">
+													<!-- 用登入會員id+商品id findpk，若有回傳商品vo，表示此會員有收藏此商品，則讓愛心為紅色，class wish-add-btn 加上 added && 此商品賣家會員id不等於登入會員id-->
+													<c:if test="${productWishlistSvc.getOneProductWishlist(productVO.product_id,memId)!=null && productVO.product_mem_id != memId}">
+														<span class="wish-add m-text6 p-r-5 p-l-5" style="float: lefft;">
+															<a href="#" class="wish-add-btn added" data-login_state="${login_state}" data-memId="${memId}" data-prodId="${productVO.product_id}">
+															<i class="far fa-heart" aria-hidden="true"></i>
+															<i class="fas fa-heart dis-none" aria-hidden="true"></i></a>
+														</span>
+													</c:if>
+													<!-- 用登入會員id+商品id findpk，若沒有回傳商品vo，表示此會員沒有收藏此商品，則讓愛心為白色 && 此商品賣家會員id不等於登入會員id-->
+													<c:if test="${productWishlistSvc.getOneProductWishlist(productVO.product_id,memId)==null && productVO.product_mem_id != memId}">
+														<span class="wish-add m-text6 p-r-5 p-l-5" style="float: lefft;">
+															<a href="#" class="wish-add-btn" data-login_state="${login_state}" data-memId="${memId}" data-prodId="${productVO.product_id}">
+															<i class="far fa-heart" aria-hidden="true"></i>
+															<i class="fas fa-heart dis-none" aria-hidden="true"></i></a>
+														</span>
+													</c:if>
+													<!-- 登入會員無法收藏自己的商品 class 添加 disabled-->
+													<c:if test="${productVO.product_mem_id == memId}">
+														<span class="wish-add m-text6 p-r-5 p-l-5" style="float: lefft;">
+															<a href="#" class="wish-add-btn disabled" data-login_state="${login_state}" data-memId="${memId}" data-prodId="${productVO.product_id}">
+															<i class="far fa-heart" aria-hidden="true"></i>
+															<i class="fas fa-heart dis-none" aria-hidden="true"></i></a>
+														</span>
+													</c:if>
+														<span class="wish-like-text m-text6 p-r-5" id="wish-${productVO.product_id}" style="float: lefft;">
+															${productWishlistSvc.getLikesByProductid(productVO.product_id).size()}
+														</span>
+														<span class="block2-price m-text6 p-r-5" style="float: right;">
+															$ ${productVO.product_price}
+														</span>
+													</div>
+												</div>
+											</div>
+										</div>
 									</c:forEach>
-								 </div>
-		                     </c:when>
-		                     <c:otherwise>
-			                     <div style="text-align:center">
-			                     	<img src="<%=request.getContextPath()%>/front_end/images/all/nothing.png" class="nothing">&nbsp; 尚未發表
-			                     </div>	
-		                     </c:otherwise>
-		                  </c:choose>
-	 				
-	 				</div>
-                </div>
-                <!--//相片頁面-->
-                
-                <!--部落格頁面-->
-                <div id="blog" class="tab-pane fade">
-                	<div class='row'>
-	 				
-	 				  <c:choose>
-		               <c:when test="${not empty blogList}">
-		               <div class="ui link cards">
-						<c:forEach var="blogvo" items="${blogList}">
-							<div class="ui card">
-							  <div class="image">
-						 		<a href="<%=request.getContextPath()%>/blog.do?action=article&blogID=${blogvo.blog_id}">
-							    	<img src="<%=request.getContextPath()%>/blogPicReader?blog_id=${blogvo.blog_id}">
-								</a>
-							  </div>
-						  	  <div class="content">
-								<a href="<%=request.getContextPath()%>/blog.do?action=article&blogID=${blogvo.blog_id}" class="header">
-									${blogvo.blog_title}
-								</a>
-								<div class="meta">
-									<span class="date">
-										旅行日期：${blogvo.travel_date}
-									</span>
 								</div>
-								<div class="description">
-								 <!-- 這裡可以看內文 -->	
+								<!-- //Product -->
+								
+								<div class="row sell" style="margin-bottom: 0px">
+									<div class="col-sm-12 col-md-6 col-lg-12 p-b-50">
+										<nav aria-label="Page navigation">
+											  <ul class="pagination" name="whichPage">
+											  <%if (rowsPerPage<rowNumber) {%>
+											      <%if(pageIndex>=rowsPerPage){%> 
+											       <li><a href="<%=request.getRequestURI()%>?whichPage=<%=whichPage-1%>" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+											    <%}%>
+											      <%}%> 
+											  
+											    
+										  		  <%if (pageNumber>=1) {%>
+											         <%for (int i=1; i<=pageNumber; i++){%>
+													         <%if(pageIndex==(i*rowsPerPage-rowsPerPage)){%>
+													          <li class="active"><a href="<%=request.getRequestURI()%>?whichPage=<%=i%>"><%=i%></a></li>
+													         <%}else{%>
+												            	<li><a href="<%=request.getRequestURI()%>?whichPage=<%=i%>"><%=i%></a></li>
+												         	<%}%> 
+											         	 <%}%> 
+													  <%}%>
+													  
+												 <%if (rowsPerPage<rowNumber) {%>
+													 
+													    <%if(pageIndex<pageIndexArray[pageNumber-1]){%>
+													        <li><a href="<%=request.getRequestURI()%>?whichPage=<%=whichPage+1%>" aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>
+													    <%}%>
+												  <%}%>  
+											  </ul>
+										</nav>
 								</div>
-						  	  </div>
-						  	  <div class="extra content">
-						   		<a>
-						      	  <i class="eye icon"></i>${blogvo.blog_views}
-						    	</a>
-						  	  </div>
-						  	 </div>
-					  	</c:forEach>
-					  	</div>
-		               </c:when>
-                       <c:otherwise>
-                       	<div style="text-align:center">
-                     	 	<img src="<%=request.getContextPath()%>/front_end/images/all/nothing.png" class="nothing">&nbsp; 尚未發表
-                     	</div>
-                       </c:otherwise>
-		              </c:choose>
-
-	 				</div>
-                </div>
-                <!--部落格頁面-->
-                
-                <!--行程頁面-->
-                <div id="trip" class="tab-pane fade">
-                	<div class='row'>
-	 				
-	 				  <c:choose>
-		               <c:when test="${not empty uTripList}">
-		               <div class="ui link cards">
-						<c:forEach var="tripvo" items="${uTripList}">
-							<div class="ui card">
-							  <div class="image">
-						 		<a href="<%=request.getContextPath()%>/front_end/trip/tripDetail.jsp?trip_no=${tripvo.trip_no}">
-							    	<img src="<%=request.getContextPath()%>/front_end/readPic?action=trip&id=${tripvo.trip_no}">
-								</a>
-							  </div>
-						  	  <div class="content">
-								<a href="<%=request.getContextPath()%>/front_end/trip/tripDetail.jsp?trip_no=${tripvo.trip_no}" class="header">
-									${tripvo.trip_name}
-								</a>
-								<div class="meta">
-									<span class="date">
-										出發日期：${tripvo.trip_startDay}
-									</span>
-								</div>
-								<div class="description">
-								 <!-- 這裡可以看內文 -->	
-								</div>
-						  	  </div>
-						  	  <div class="extra content">
-						   		<a>
-						      	  <i class="fas fa-clock"></i>${tripvo.trip_days}天
-						    	</a>
-						  	  </div>
-						  	 </div>
-					  	</c:forEach>
-					  	</div>
-		               </c:when>
-                       <c:otherwise>
-                       	<div style="text-align:center">
-                     	 	<img src="<%=request.getContextPath()%>/front_end/images/all/nothing.png" class="nothing">&nbsp; 尚未發表
-                     	</div>
-                       </c:otherwise>
-		              </c:choose>
-
-	 				</div>
-                </div>
-                <!--行程頁面-->
-                     
-                <!--揪團頁面-->
-                <div id="grp" class="tab-pane fade">
-                	<div class='row'>
-	 				
-	 				  <c:choose>
-		               <c:when test="${not empty uGrpList}">
-		               <div class="ui link cards">
-						<c:forEach var="grpvo" items="${uGrpList}">
-							<div class="ui card">
-							  <div class="image">
-						 		<a href="<%=request.getContextPath()%>/front_end/grp/grp_oneview.jsp?grp_Id=${grpvo.grp_Id}">
-							    	<img src="<%=request.getContextPath()%>/front_end/readPic?action=grp&id=${grpvo.grp_Id}">
-								</a>
-							  </div>
-						  	  <div class="content">
-								<a href="<%=request.getContextPath()%>/front_end/grp/grp_oneview.jsp?grp_Id=${grpvo.grp_Id}" class="header">
-									${grpvo.grp_Title}
-									<c:if test="${grpvo.grp_Status == 1}">
-										<br><span style="color:red">(揪團中)</span>
-									</c:if>
-								</a>
-								<div class="meta">
-									<span class="date">
-										揪團開始日期：<fmt:formatDate value="${grpvo.grp_Start}" pattern="yyyy-MM-dd kk:mm"/><br>
-										揪團結束日期：<fmt:formatDate value="${grpvo.grp_End}" pattern="yyyy-MM-dd kk:mm"/>
-									</span>
-								</div>
-								<div class="description">
-								 <!-- 這裡可以看內文 -->	
-								</div>
-						  	  </div>
-						  	  <div class="extra content">
-						   		<a>
-						      	  <i class="fas fa-map-marker-alt"></i>${grpvo.trip_Locale}
-						    	</a>
-						  	  </div>
-						  	 </div>
-					  	</c:forEach>
-					  	</div>
-		               </c:when>
-                       <c:otherwise>
-                       	<div style="text-align:center">
-                     	 	<img src="<%=request.getContextPath()%>/front_end/images/all/nothing.png" class="nothing">&nbsp; 尚未發表
-                     	</div>
-                       </c:otherwise>
-		              </c:choose>
-
-	 				</div>
-                </div>
-                <!--部落格頁面-->
-                
-                
-                <!--問答頁面-->
-                <div id="question" class="tab-pane fade">
-                	<div class='row'>
-                	 <strong style="font-size: 1.5em;">發起的問答</strong>
-	 				  <c:choose>
-		               <c:when test="${not empty uQAList}">
-		               <div class="ui link cards">
-						<c:forEach var="qavo" items="${uQAList}">
-							<div class="ui link card">
-							  <div class="content">
-							    <div class="header">
-							      <a href="<%=request.getContextPath()%>/front_end/qa_reply/qa_reply.jsp?question_id=${qavo.question_id}">
-							      	<p>${qavo.question_content}</p>
-							      </a>
-							    </div>
-							  </div>
-							  <div class="extra content">
-							    <div class="right floated author">
-							      <i class="far fa-calendar-alt"></i>發文日期：${qavo.build_date}
-							    </div>
-							  </div>
 							</div>
-					  	</c:forEach>
-					  	</div>
-		               </c:when>
-                       <c:otherwise>
-                       	<div style="text-align:center">
-                     	 	<img src="<%=request.getContextPath()%>/front_end/images/all/nothing.png" class="nothing">&nbsp; 尚未發表
-                     	</div>
-                       </c:otherwise>
-		              </c:choose>
-
+							</div>
+						</div>
+					 </div>
+					</section>
+                    </div>
+                    <!--內容--> 
 	 				</div>
                 </div>
-                <!--部落格頁面-->
+                <!--//賣場-->
                 
+                 <!--賣場的評價-->
+                  <div id="rating_sell" class="tab-pane fade">
+                  		<div class="container">
+						<div class="row sell" style="height: 470px;">	
+							<div class="col-md-10 col-lg-10"  style="padding-top:20px;padding-bottom: 100px;">
+							<c:forEach var="ordVO" items="${ratingList}">
+							<div class="host p-t-20">
+								<a href="#" target="_blank" class="photo" style="background-image: url(<%=request.getContextPath()%>/front_end/readPic?action=member&id=${ordVO.buyer_mem_id})">
+								</a>
+								<span class="text" style="display:inline-block">	
+									<a href="#" target="_blank" style="display:inline-block">${memSvc.getOneMember(ordVO.buyer_mem_id).mem_Name}</a>	
+								</span>
+							</div>
+							<div class="text order_id">訂單編號： ${ordVO.order_id}</div>
+							<hr class="divider-w pt-20">
+								<div class="star">	
+										<ul class="list-inline" data-rating="0" title="Average Rating -0">
+											<c:if test="${ordVO.btos_rating >= 1}">
+												<li title="1" id="6-1" data-index="1" data-business_id="6" data-rating="0" style="color: rgb(255, 204, 0); font-size: 28px;">★</li>
+											</c:if>
+											<c:if test="${ordVO.btos_rating < 1}">
+												<li title="1" id="6-1" data-index="1" data-business_id="6" data-rating="0" style="color: rgb(204, 204, 204); font-size: 28px;">★</li>
+											</c:if>
+											
+											<c:if test="${ordVO.btos_rating >= 2}">
+												<li title="2" id="6-2" data-index="2" data-business_id="6" data-rating="0" style="color: rgb(255, 204, 0); font-size: 28px;">★</li>
+											</c:if>
+											<c:if test="${ordVO.btos_rating < 2}">
+												<li title="2" id="6-2" data-index="2" data-business_id="6" data-rating="0" style="color: rgb(204, 204, 204); font-size: 28px;">★</li>
+											</c:if>
+											<c:if test="${ordVO.btos_rating >= 3}">
+												<li title="3" id="6-3" data-index="3" data-business_id="6" data-rating="0" style="color: rgb(255, 204, 0); font-size: 28px;">★</li>
+											</c:if>
+											<c:if test="${ordVO.btos_rating < 3}">
+												<li title="3" id="6-3" data-index="3" data-business_id="6" data-rating="0" style="color: rgb(204, 204, 204); font-size: 28px;">★</li>
+											</c:if>
+												<c:if test="${ordVO.btos_rating >= 4}">
+												<li title="4" id="6-4" data-index="4" data-business_id="6" data-rating="0" style="color: rgb(255, 204, 0); font-size: 28px;">★</li>
+											</c:if>
+											<c:if test="${ordVO.btos_rating < 4}">
+												<li title="4" id="6-4" data-index="4" data-business_id="6" data-rating="0" style="color: rgb(204, 204, 204); font-size: 28px;">★</li>
+											</c:if>
+												<c:if test="${ordVO.btos_rating >= 5}">
+												<li title="5" id="6-5" data-index="5" data-business_id="6" data-rating="0" style="color: rgb(255, 204, 0); font-size: 28px;">★</li>
+											</c:if>
+											<c:if test="${ordVO.btos_rating < 5}">
+												<li title="5" id="6-5" data-index="5" data-business_id="6" data-rating="0" style="color: rgb(204, 204, 204); font-size: 28px;">★</li>
+											</c:if>
+										</ul>
+									</div>
+									<div class="p-b-30 p-t-30">${ordVO.btos_rating_descr}</div>
+							<hr class="divider-w p-t-10" style="border-color:#313438">
+							</c:forEach>
+							</div>
+						</div>
+					</div>
+                  </div>
+                  <!--//賣場的評價-->
                 
+         		 </div>
               </div>
               <!--頁籤項目-首頁內容-->
             </div>
@@ -927,24 +773,144 @@
             </div>
         </div>
         <!-- //footer -->
+<!--========================收藏商品=======================================================================-->
+
+<script>
+
+	  	$('.wish-add-btn').on('click', function(e) {
+		  e.preventDefault();
+			var memId = $(this).attr("data-memId");
+			var prodId = $(this).attr("data-prodId");
+			var login_state = $(this).attr("data-login_state");
+			console.log(login_state=="true");
+			
+	     if(login_state=="true"){
+			 if($(this).hasClass('added')){
+				 $(this).removeClass('added');
+				 var action = "delete";
+				 $.ajax({
+					 url:"${pageContext.request.contextPath}/front_end/store/productWishlist.do",
+					 method:"POST",
+					 data:{wishlist_mem_id:memId, action:action,wishlist_product_id:prodId,login_state:login_state},
+					 success:function(data){
+						// alert("刪除成功!");
+						$("#wish-"+prodId).html(data.wishlikesize);
+						console.log(data.wishlikesize);
+					 }
+				 })
+				}else if($(this).hasClass('disabled')!= true){
+				 $(this).addClass('added');
+				 var action = "insert";
+				 $.ajax({
+					 url:"${pageContext.request.contextPath}/front_end/store/productWishlist.do",
+					 method:"POST",
+					 data:{wishlist_mem_id:memId, action:action,wishlist_product_id:prodId,login_state:login_state},
+					 success:function(data){
+						 //alert("新增成功!");
+						 $("#wish-"+prodId).html(data.wishlikesize);
+						 console.log(data.wishlikesize);
+						 var oldrowno = $('#rowno').html();
+							$('#rowno').html(oldrowno-1);
+					 }
+				 })
+			 }else{
+				//do nothing;
+				 
+			 }
+			}else{
+				 window.location = '<%=request.getContextPath()%>/front_end/member/mem_login.jsp';
+			}
+		});
+
+</script>
+<!--========================購物車動畫=======================================================================-->
+<script src="https://static.codepen.io/assets/common/stopExecutionOnTimeout-41c52890748cd7143004e05d3c5f786c66b19939c4500ce446314d1748483e13.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
+
+	<script>
+	$(document).ready(function () {
+	$('.add-to-cart').on('click', function () {
+        var cart = $('.shopping-cart');
+        console.log(cart.offset())
+        var imgtodrag = $(this).parent().parent().parent().find("img").eq(0);
+        if (imgtodrag) {
+            var imgclone = imgtodrag.clone()
+                .offset({
+                top: imgtodrag.offset().top,
+                left: imgtodrag.offset().left
+            }).css({
+					'opacity': '0.5',
+                    'position': 'absolute',
+                    'height': '150px',
+                    'width': '150px',
+                    'z-index': '100'
+            }).appendTo($('body'))
+            .animate({
+               		'top': cart.offset().top + 10,
+                    'left': cart.offset().left + 10,
+                    'width': 75,
+                    'height': 75
+            }, 1000, 'easeInOutExpo');
+            
+            
+
+            imgclone.animate({
+                'width': 0,
+                    'height': 0
+            }, function () {
+                $(this).detach()
+            });
+        }
+    });
+	
+	});
+</script>	
+<!--===============================================================================================-->
+<!--加入購物車-->
+<script>
+		function addById(e, product_id,product_name,product_mem_id,product_price,login_state){
+			var action = "ADD";
+			$.ajax({ 
+				url:"${pageContext.request.contextPath}/front_end/store/shopping.do",
+				method:"POST",
+				data:{action:action,product_id:product_id,product_name:product_name,product_mem_id:product_mem_id,product_price:product_price,quantity:"1",login_state:login_state},
+				success:function(data){
+					if(data === 'not log in'){
+						console.log("轉跳!");
+						window.location.replace("${pageContext.request.contextPath}/front_end/member/mem_login.jsp");
+					}else{
+						console.log("添加成功!");
+						$('.badge').text(data);
+					}
+					
+				} 
+			})
 		
-		<!-- 按下檢舉會員，會出現的輸入框 -->
-		<div id="reportMemberDialog">
-    		<div class="reportContent">
-    		<div class="reportContentTitle">檢舉理由：</div>
-    			<form class="ui report form" METHOD="POST" ACTION="<%=request.getContextPath()%>/front_end/member/member.do">
-    				<textarea class="reportReasonContent" name="report_Reason" maxlength="90"></textarea>
-    				<input type="hidden" name="action" value="reportMember">
-    				<input type="hidden" name="mem_Id_report" value="${memberVO.mem_Id}">
-    				<input type="hidden" name="mem_Id_reported" value="<%=uId%>">
-    			</form>
-    		</div>
-    	</div>
+		}
+  
+</script>
+<!--===============================================================================================-->
+<script>
+function checkActiveTab() {
+	var store = $('#store_public');
+	var rating = $('#store_rating');
+	var content = $('#mem_ind_content');
+	if(rating.hasClass("active")){
+		console.log('store active:'+store.hasClass("active"));
+		content.css("margin-top", "0px");
 		
-		
-		
-		
-		
+	}else if(store.hasClass("active")){
+		console.log('rating active:'+rating.hasClass("active"));
+		content.css("margin-top", "220px");
+	}
+}
+
+</script>
+
+
+
+
+
     </body>
 
 </html>

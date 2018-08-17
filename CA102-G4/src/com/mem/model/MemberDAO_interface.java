@@ -66,8 +66,9 @@ public interface MemberDAO_interface {
 	//刪除宅配地址 第三個
 	public void Mem_Delete_Home3(String mem_Id);
 
+	//世銘打的--全站搜尋用--根據會員姓名or會員介紹or旅遊記標題or旅遊記內容or旅遊記標籤類別or旅遊記標籤名稱or揪團目的地or揪團詳情or揪團標題...搜尋
+	public List<MemberVO> SearchAll(String keyword);
 	
-		
 //	public void Mem_Forget_Password(String mem_Account,String mem_Password);
 //
 //	public Set<Grp_memVO>getGrp_memByMem_Id(String mem_Id);

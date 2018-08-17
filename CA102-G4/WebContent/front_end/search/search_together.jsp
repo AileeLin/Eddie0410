@@ -132,7 +132,7 @@
     <!-- //search 自定義的css -->
     
     <!-- blog 自定義的js -->
-    <script src="<%=request.getContextPath()%>/front_end/js/blog/blog_semantic.min.js"></script>
+<%--     <script src="<%=request.getContextPath()%>/front_end/js/blog/blog_semantic.min.js"></script> --%>
     <script src="<%=request.getContextPath()%>/front_end/js/search/search.js"></script>
     <!-- //blog 自定義的js -->
 

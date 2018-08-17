@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+
 <%@ page import="com.photo_wall.model.*"%>
 <%@ page import="com.photo_tag.model.*"%>
 <%@ page import="com.mem.model.*"%>
@@ -8,12 +9,15 @@
 <%@ page import="java.util.*"%>
 
 <%	
+//清快取
 	response.setHeader("Pragma","no-cache"); 
 	response.setHeader("Cache-Control","no-store"); 
 	response.setDateHeader("Expires", 0);
-
-	MemberVO memberVO = (MemberVO)request.getAttribute("memberVO");
 	
+	MemberVO memberVO = (MemberVO) session.getAttribute("memberVO"); 
+	if(memberVO == null){
+		memberVO = (MemberVO)session.getAttribute("memberVO");
+	}	
 	String login,logout;
 	if(memberVO != null){		
 		login = "display:none;";
@@ -28,16 +32,31 @@
 	if(login_state_temp!=null){
 		login_state=(boolean)login_state_temp;
 	}
+			
+	//若登入狀態為不是true，紀錄當前頁面並重導到登入畫面。
+	if( login_state != true){
+		session.setAttribute("location", request.getRequestURI());
+		response.sendRedirect(request.getContextPath()+"/front_end/member/mem_login.jsp");
+		return;
+	}
+	
+	//從memberVO取會員ID
 	
 	GrpService grpSvc = new GrpService();
- 	List<GrpVO> list = grpSvc.getAll();
- 	pageContext.setAttribute("list", list);
- 	
- 	System.out.print("list="+list);
- 	
+	List<GrpVO> list = grpSvc.getAll();
+	pageContext.setAttribute("list", list);
+	
 	
 %>
-
+<%
+	//取得購物車商品數量
+	Object total_items_temp = session.getAttribute("total_items");
+	int total_items = 0;
+	if(total_items_temp != null ){
+		total_items= (Integer) total_items_temp;
+	}
+	pageContext.setAttribute("total_items",total_items);
+%>
 <!DOCTYPE html>
 <html>
 
@@ -67,6 +86,12 @@
     </script>
     <!-- //隱藏iPhone Safari位址列的網頁 -->
     
+    <!-- JQUERY -->
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="https://code.jquery.com/jquery.js"></script>
+    <!-- //JQUERY -->
+    
     <!-- Bootstrap -->
 	<link href="<%=request.getContextPath()%>/front_end/css/all/index_bootstrap.css" rel="stylesheet" type="text/css" media="all" />
 	<script src="<%=request.getContextPath()%>/front_end/js/all/index_bootstrap.js"></script>
@@ -76,11 +101,6 @@
     <link href='https://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css'>
     <!-- //font字體 -->
    
-    <!-- JQUERY -->
-    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
-    <script src="https://code.jquery.com/jquery.js"></script>
-    <!-- //JQUERY -->
 
     <!-- 套首頁herder和footer css -->
     <link href="<%=request.getContextPath()%>/front_end/css/all/index_style_header_footer.css" rel="stylesheet" type="text/css" media="all" />
@@ -134,22 +154,20 @@
                  <div class="top-banner-right">
                         
                      <ul>
-                         <li>
-                        	<!-- 判斷是否登入，若有登入將會出現登出按鈕 -->
+                        <li>
+                      	 <!-- 判斷是否登入，若有登入將會出現登出按鈕 -->
                          <c:choose>
                           <c:when test="<%=login_state %>">
-                           <a href="<%= request.getContextPath()%>/front_end/member/member.do?action=logout"><span class=" top_banner"><i class=" fas fa-sign-out-alt" aria-hidden="true"></i></span></a>
+                           	<a href="<%= request.getContextPath()%>/front_end/member/member.do?action=logout"><span class=" top_banner"><i class=" fas fa-sign-out-alt" aria-hidden="true"></i></span></a>
                           </c:when>
                           <c:otherwise>
-                           <a href="<%= request.getContextPath()%>/front_end/member/mem_login.jsp"><span class="top_banner"><i class=" fa fa-user" aria-hidden="true"></i></span></a>
+                           	<a href="<%= request.getContextPath()%>/front_end/member/mem_login.jsp"><span class="top_banner"><i class=" fa fa-user" aria-hidden="true"></i></span></a>
                           </c:otherwise>
                          </c:choose>
-                         </li>
-                         
-                        <li style="<%= logout %>"><a class="top_banner" href="<%=request.getContextPath()%>/front_end/personal_area_home.html"><i class="fa fa-user" aria-hidden="true"></i></a></li>
-                        
-                        <li><a class="top_banner" href="#"><i class="fa fa-shopping-cart" aria-hidden="true"></i></a></li>
-                        <li><a class="top_banner" href="#"><i class="fa fa-envelope" aria-hidden="true"></i></a></li>
+	                    </li>
+                    	<li style="<%= logout %>"><a class="top_banner" href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_home.jsp"><i class="fa fa-user" aria-hidden="true"></i></a></li>          	
+                        <li><a class="top_banner" href="<%=request.getContextPath()%>/front_end/store/store_cart.jsp"><i class="fa fa-shopping-cart shopping-cart" aria-hidden="true"></i><span class="badge">${total_items}</span></a></li>
+						<li><a class="top_banner" href="#"><i class="fa fa-envelope" aria-hidden="true"></i></a></li>
                     </ul>
                 </div>
                 <div class="clearfix"> </div>
@@ -192,85 +210,90 @@
     </div>
 	<!-- //banner -->
 
-<FORM METHOD="post" ACTION="<%=request.getContextPath()%>/grp.do" name="form1">
-
-        <!--  search  -->
-    <div class="flight-engine">
-        <div class="container">
-            <div class="tabing">
-                <ul>
-                    <li>
-                        <a class="active" href="#1"><i class="fa fa-plane" aria-hidden="true"></i> 找揪團</a>
-                    </li>
-                </ul>
-                
-                <div class="tab-content">
-                    <div id="1" class="tab1 active">
-                    
-                        <div class="flight-tab row">
-                            <div class="persent-one">
-                                <i class="fa fa-map-marker" aria-hidden="true"></i>
-                                <input type="text" name="TRIP_LOCALE" class="textboxstyle" id="arival" placeholder="請輸入地點">
-                            </div>
-                            <div class="persent-one less-per">
-                                <i class="fa fa-calendar" aria-hidden="true"></i>
-                                <input type="text" name="GRP_START"  class="textboxstyle datepicker" placeholder="揪團開始日期">
-                            </div>
-                            <div class="persent-one less-per">
-                                <i class="fa fa-calendar" aria-hidden="true"></i>
-                                <input type="text" name="GRP_END" class="textboxstyle datepicker" placeholder="揪團結束日期">
-                            </div>
-                            <div class="persent-one less-btn">
-                                <input type="Submit" value="Search" class="btn cst-btn" id="srch">
-                                <input type="hidden" name="action" value="listEmps_ByCompositeQuery">
-                            </div>
-                        </div>
-                        
+	<!-- 主圖區 -->
+    <div>
+        <div class="carousel-inner">
+            <div class="carousel-images">
+                <img src="<%=request.getContextPath()%>/front_end/images/all/aegean_Sea_2.png" style="width:100% ;height:auto;" alt="">
+                <div class="">
+                    <div class="carousel-caption">											
                     </div>
-
                 </div>
             </div>
-
         </div>
-
-    </div>
-</FORM>    
-    
-    <div class="ui container">
-
-            <div id="cards" class="ui four stackable cards"  >
-
-                <c:forEach var="GrpVO" items="${list}">
-				<c:if test="${GrpVO.grp_Status == 1 }">
-				<a class="fluid card" href="" style="margin-top:30px;">
-					<div class="image">
-						<div class="ui image pic" style="height:220px; background-size:cover;">
-						<img style="height:100%;width:100%" src="<%=request.getContextPath()%>/grpPicReader?grp_Id=${GrpVO.grp_Id}">
+    </div>  
+   
+    <div class="container" style="height: 1500px; margin-top:50px">
+    	<div class="row" style="width:530px;height:20px;margin:0 auto;">
+			<div class="col-offset-6 col-md-10 col-md-offset-6" style="width:530px;height:20px;margin:0 auto;">
+				<div class="panel panel-login" style="border: solid 0.5px;border-color:#C8C8C8;">
+					<div class="panel-heading">
+						<div class="row" >
+							<h2 style="text-align:center;">開始計畫新的揪團</h2>
+						</div>
+						<hr>
+					</div>
+					<div class="panel-body">
+						<div class="row">
+							<div class="col-lg-12">
+								<form action="<%=request.getContextPath()%>/grp.do" method="post" role="form" style="">
+									<div class="form-group">
+										<p><i class="fas fa-edit" style="color:gray;"></i>&nbsp;幫揪團取個名字吧</p>
+										<font style="color:red">&nbsp;${errorMsgs.grp_Title}</font>
+										<input type="text" name="grp_Title" class="form-control" placeholder="團名" value="${param.grp_Title}">
+									</div>
+									<div class="form-group">
+										<p><i class="fas fa-map-marker-alt" style="color:red;"></i>&nbsp;想去哪裡呢</p>
+										<font style="color:red">&nbsp;${errorMsgs.trip_Locale}</font>
+										<input type="text" name="trip_Locale" class="form-control" placeholder="地點" value="${param.trip_Locale}">
+									</div>
+									<div class="form-group">
+										<p><i class="fas fa-dollar-sign" style="color:red;"></i>&nbsp;大概預算</p>
+										<font style="color:red">&nbsp;${errorMsgs.grp_Price}</font>
+										<input type="text" name="grp_Price" class="form-control" placeholder="預算" value="${param.grp_Price}">
+									</div>
+									<div class="form-group">
+										<p><i class="fas fa-users" style="color:#483D8B;"></i>&nbsp;報名人數</p>
+										<font style="color:red">&nbsp;${errorMsgs.grp_Cnt}</font>
+										<input type="number" name="grp_Cnt" value="${param.grp_Cnt}" min="1" max="99" size="5" tabindex="2" class="form-control" placeholder="預計報名人數">
+									</div>
+									<div class="form-group">
+										<p><i class="fas fa-users" style="color:#483D8B;"></i>&nbsp;出團人數</p>
+										<font style="color:red">&nbsp;${errorMsgs.grp_Acpt}</font>
+										<input type="number" name="grp_Acpt" value="${param.grp_Acpt}" min="1" max="99" size="5" tabindex="2"  class="form-control" placeholder="成團出發人數">
+									</div>
+									<div class="form-group">
+										<p><i class="fas fa-calendar-alt" style="color:#778899;"></i>&nbsp;揪團結束的日期</p>
+										<font style="color:red">&nbsp;${errorMsgs.grp_End}</font>
+										<input type="text" name="grp_End" value="${param.grp_End}" id="datepicker_grp_end" class="form-control" placeholder="請選擇揪團結束日期">
+									</div>
+									<div class="form-group">
+										<p><i class="fas fa-calendar-alt" style="color:#778899;"></i>&nbsp;啟程日期</p>
+										<font style="color:red">&nbsp;${errorMsgs.trip_Strat}</font>
+										<input type="text" name="trip_Strat" value="${param.trip_Strat}" id="datepicker_trip_start" class="form-control" placeholder="請選擇行程起程日期">
+									</div>
+									<div class="form-group">
+										<p><i class="fas fa-calendar-alt" style="color:#778899;"></i>&nbsp;回程日期</p>
+										<font style="color:red">&nbsp;${errorMsgs.trip_End}</font>
+										<input type="text" name="trip_End" value="${param.trip_End}" id="datepicker_trip_end" class="form-control" placeholder="請選擇行程結束日期">
+									</div>
+									<div class="form-group">
+										<div class="row">
+											<div class="col-sm-6 col-sm-offset-3">
+												<input type="hidden" name="mem_Id" value="${memberVO.mem_Id}"> 
+                								<input type="hidden" name="action" value="insert" class="btn btn-primary">
+												<input type="submit"  class="form-control btn btn" style="border-color:#C8C8C8;" value="創建揪團">
+											</div>
+										</div>
+									</div>
+								</form>
+							</div>
 						</div>
 					</div>
-					<div class="content">
-                        <div class="header">
-                           <img id="user-group" src="<%=request.getContextPath()%>/front_end/readPic?action=member&id=${GrpVO.mem_Id}">
-                            <span class="font-f">${memberSvc.findByPrimaryKey(GrpVO.mem_Id).mem_Name}</span>
-                            <p class="font-f">${GrpVO.grp_Title}</p>
-                        </div>
-                    <hr class="card-hr">
-                    <div class="con-group">
-                    <p class="far fa-calendar-alt con-group font-f">                
-                    <fmt:formatDate pattern="YYYY年MM月dd日  HH:mm" value="${GrpVO.grp_Start}" />
-                    </p><br>                                       
-                    <p class="fas fa-map-marker-alt con-group font-f">&nbsp;${GrpVO.trip_Locale}</p><br>
-                    <p class="fas fa-dollar-sign con-group font-f" >&nbsp;${GrpVO.grp_Price}</p><br>
-                    </div>
-                    </div>
-				</a>
-				</c:if>
-			</c:forEach>
-                
-              
-            </div>    
-    </div>
-
+				</div>
+			</div>
+		</div>
+	</div>
 
     <!--  //search  -->
 
@@ -333,16 +356,31 @@
             </div>
         </div>
     </div>	
-
+ 
 <script>
   $(function() {
-   $( ".datepicker" ).datepicker({
+   $( "#datepicker_grp_end" ).datepicker({
       showAnim: "slideDown",
       dateFormat : "yy-mm-dd"
     });
   });
  </script>
-
+<script>
+  $(function() {
+   $( "#datepicker_trip_start" ).datepicker({
+      showAnim: "slideDown",
+      dateFormat : "yy-mm-dd"
+    });
+  });
+ </script>
+ <script>
+  $(function() {
+   $( "#datepicker_trip_end" ).datepicker({
+      showAnim: "slideDown",
+      dateFormat : "yy-mm-dd"
+    });
+  });
+ </script>
 </body>
 
 </html>

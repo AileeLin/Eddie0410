@@ -39,7 +39,15 @@
  	
 	
 %>
-
+<%
+	//取得購物車商品數量
+	Object total_items_temp = session.getAttribute("total_items");
+	int total_items = 0;
+	if(total_items_temp != null ){
+		total_items= (Integer) total_items_temp;
+	}
+	pageContext.setAttribute("total_items",total_items);
+%>
 <!DOCTYPE html>
 <html>
 
@@ -169,7 +177,6 @@
 	</style>
 
 	 <!-- 聊天相關CSS及JS -->
-	 <link href="<%=request.getContextPath()%>/front_end/css/ad/ad_semantic.min.css" rel="stylesheet" type="text/css">
 	 <link href="<%=request.getContextPath()%>/front_end/css/chat/chat_style.css" rel="stylesheet" type="text/css">
 	 <script src="<%=request.getContextPath()%>/front_end/js/chat/vjUI_fileUpload.js"></script>
 	 <script src="<%=request.getContextPath()%>/front_end/js/chat/chat.js"></script>
@@ -234,11 +241,7 @@
 		                         </c:choose>
 		                    </li>
 	                    	<li style="<%= logout %>"><a class="top_banner" href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_home.jsp"><i class="fa fa-user" aria-hidden="true"></i></a></li>          	
-                           	<li>
-								<a class="top_banner" href="<%=request.getContextPath()%>/front_end/store/store_cart.jsp">
-									<i class="fa fa-shopping-cart shopping-cart" aria-hidden="true"></i><span class="badge">${total_items}</span>
-								</a>
-							</li>
+							<li><a class="top_banner" href="<%=request.getContextPath()%>/front_end/store/store_cart.jsp"><i class="fa fa-shopping-cart shopping-cart" aria-hidden="true"></i><span class="badge">${total_items}</span></a></li>
 							<li><a class="top_banner" href="#"><i class="fa fa-envelope" aria-hidden="true"></i></a></li>
                     </ul>
                 </div>
@@ -291,8 +294,10 @@
                     <div class="carousel-caption">
                         <h1>揪個合適的夥伴一起旅行</h1>
                         <p>你揪過了嗎？</p>						
-                    <button class="btn btn-lg btn-primary-grp" type="button" data-toggle="modal" data-target="#myModal" style="border:0;">
-                      	 開始我的揪團</button>						
+                     <a href="<%=request.getContextPath()%>/front_end/grp/addgrp.jsp">
+                     <button class="btn btn-lg btn-primary-grp" type="button" style="border:0;">
+                      	 開始我的揪團</button>
+                      </a>						
                     </div>
                 </div>
             </div>
@@ -461,107 +466,107 @@
   });
  </script>
 
-<!-- 燈箱 Register 開始 -->
-<!-- Modal Register -->
-<div class="modal fade" id="myModal" role="dialog">
-    <div class="modal-dialog">
+<!-- <!-- 燈箱 Register 開始 --> -->
+<!-- <!-- Modal Register --> -->
+<!-- <div class="modal fade" id="myModal" role="dialog"> -->
+<!--     <div class="modal-dialog"> -->
     
-    <c:if test="${not empty errorMsgs}">
-    	<div id="myModal">
-    		<div class="messageContent">
-    			<c:forEach var="message" items="${errorMsgs}">
-    			${message}
-    			</c:forEach>
-    		</div>
-    	</div>
-    	</c:if>
+<%--     <c:if test="${not empty errorMsgs}"> --%>
+<!--     	<div id="myModal"> -->
+<!--     		<div class="messageContent"> -->
+<%--     			<c:forEach var="message" items="${errorMsgs}"> --%>
+<%--     			${message} --%>
+<%--     			</c:forEach> --%>
+<!--     		</div> -->
+<!--     	</div> -->
+<%--     	</c:if> --%>
     
-        <!-- Modal Register content-->
-       <div background-color="lightblue;">
-            <form METHOD="post" ACTION="<%=request.getContextPath()%>/grp.do" name="form1" class="fh5co-form animate-box-modal" data-animate-effect="fadeIn" onsubmit="return chk();">
-                <h2>開始計畫新的揪團</h2>
-                <div class="form-group">
-                	<th>幫揪團取個名字吧</th>
-                    <td><input name="grp_Title" size="45" type="text" class="form-control" placeholder="團名" autocomplete="off">
-                	</td>                	
-                </div>
-                <div class="form-group">
-                	<table>
-                	<th style="font-weight:normal;">去哪裡呢&nbsp;</th>
-					<td><input name="trip_Locale" size="20" type="text" class="form-control"  placeholder="地點" autocomplete="off" >
-                	</td>
-                	<th style="font-weight:normal;">大概預算&nbsp;</th>
-					<td><input name="grp_Price" size="20" type="text" class="form-control"  placeholder="金額" autocomplete="off" >
-                	</td>
-                	</table>
-                </div>
-                <div class="form-group">
-                	<table>
-                	<th style="font-weight:normal;">報名人數&nbsp;</th>
-                    <td><input name="grp_Cnt" size="20" type="text" class="form-control"  placeholder="預計報名人數" autocomplete="off">
-                	</td>
-                	<th style="font-weight:normal;">出團人數&nbsp;</th>
-                    <td><input name="grp_Acpt" size="20" type="text" class="form-control"  placeholder="成團出發人數" autocomplete="off">
-                	</td>
-                	</table>
-                </div>
-                <div class="form-group">
-                    <th>揪團結束的時間</th>
-                    <label for="start" class="sr-only"></label>
-                    <input name="grp_End"  size="45" type="text" class="form-control" id="datepicker_grp_end"  placeholder="請選擇揪團結束時間" autocomplete="off">
-                </div>
-                <div class="form-group">
-                    <table>
-                    <th style="font-weight:normal;">啟程時間&nbsp;</th>
-                   	<td><input name="trip_Strat"  size="20" type="text" class="form-control" id="datepicker_trip_start"  placeholder="請選擇行程起程時間" autocomplete="off">
-                   	</td>
-                    <th style="font-weight:normal;">回程時間&nbsp;</th>
-                    <td><input name="trip_End"    size="20" type="text" class="form-control" id="datepicker_trip_end"  placeholder="請選擇行程結束時間" autocomplete="off">
-                	</td>
-                	</table>
-                </div>
+<!--         Modal Register content -->
+<!--        <div background-color="lightblue;"> -->
+<%--             <form METHOD="post" ACTION="<%=request.getContextPath()%>/grp.do" name="form1" class="fh5co-form animate-box-modal" data-animate-effect="fadeIn" onsubmit="return chk();"> --%>
+<!--                 <h2>開始計畫新的揪團</h2> -->
+<!--                 <div class="form-group"> -->
+<!--                 	<th>幫揪團取個名字吧</th> -->
+<!--                     <td><input name="grp_Title" size="45" type="text" class="form-control" placeholder="團名" autocomplete="off"> -->
+<!--                 	</td>                	 -->
+<!--                 </div> -->
+<!--                 <div class="form-group"> -->
+<!--                 	<table> -->
+<!--                 	<th style="font-weight:normal;">去哪裡呢&nbsp;</th> -->
+<!-- 					<td><input name="trip_Locale" size="20" type="text" class="form-control"  placeholder="地點" autocomplete="off" > -->
+<!--                 	</td> -->
+<!--                 	<th style="font-weight:normal;">大概預算&nbsp;</th> -->
+<!-- 					<td><input name="grp_Price" size="20" type="text" class="form-control"  placeholder="金額" autocomplete="off" > -->
+<!--                 	</td> -->
+<!--                 	</table> -->
+<!--                 </div> -->
+<!--                 <div class="form-group"> -->
+<!--                 	<table> -->
+<!--                 	<th style="font-weight:normal;">報名人數&nbsp;</th> -->
+<!--                     <td><input name="grp_Cnt" size="20" type="text" class="form-control"  placeholder="預計報名人數" autocomplete="off"> -->
+<!--                 	</td> -->
+<!--                 	<th style="font-weight:normal;">出團人數&nbsp;</th> -->
+<!--                     <td><input name="grp_Acpt" size="20" type="text" class="form-control"  placeholder="成團出發人數" autocomplete="off"> -->
+<!--                 	</td> -->
+<!--                 	</table> -->
+<!--                 </div> -->
+<!--                 <div class="form-group"> -->
+<!--                     <th>揪團結束的時間</th> -->
+<!--                     <label for="start" class="sr-only"></label> -->
+<!--                     <input name="grp_End"  size="45" type="text" class="form-control" id="datepicker_grp_end"  placeholder="請選擇揪團結束時間" autocomplete="off"> -->
+<!--                 </div> -->
+<!--                 <div class="form-group"> -->
+<!--                     <table> -->
+<!--                     <th style="font-weight:normal;">啟程時間&nbsp;</th> -->
+<!--                    	<td><input name="trip_Strat"  size="20" type="text" class="form-control" id="datepicker_trip_start"  placeholder="請選擇行程起程時間" autocomplete="off"> -->
+<!--                    	</td> -->
+<!--                     <th style="font-weight:normal;">回程時間&nbsp;</th> -->
+<!--                     <td><input name="trip_End"    size="20" type="text" class="form-control" id="datepicker_trip_end"  placeholder="請選擇行程結束時間" autocomplete="off"> -->
+<!--                 	</td> -->
+<!--                 	</table> -->
+<!--                 </div> -->
 
-                <div class="form_btn">               
-                    </div>
-                <div class="form-group">
-					<input type="hidden" name="mem_Id" value="${memberVO.mem_Id}"> 
-                	<input type="hidden" name="action" value="insert" class="btn btn-primary">
-                    <input type="submit" value="送出" class="btn btn-primary">  
-                    <input type="button" value="取消" onclick="javascript:location.href='grpIndex.jsp'" class="btn btn-primary" >
-                </div>
-            </form>
+<!--                 <div class="form_btn">                -->
+<!--                     </div> -->
+<!--                 <div class="form-group"> -->
+<%-- 					<input type="hidden" name="mem_Id" value="${memberVO.mem_Id}">  --%>
+<!--                 	<input type="hidden" name="action" value="insert" class="btn btn-primary"> -->
+<!--                     <input type="submit" value="送出" class="btn btn-primary">   -->
+<!--                     <input type="button" value="取消" onclick="javascript:location.href='grpIndex.jsp'" class="btn btn-primary" > -->
+<!--                 </div> -->
+<!--             </form> -->
             
-        </div>
-        <!-- //Modal Register content-->
+<!--         </div> -->
+<!--         //Modal Register content -->
 
-    </div>
+<!--     </div> -->
 
-</div>
-<!-- 燈箱 Register 結束 -->
-<script>
-  $(function() {
-   $( "#datepicker_grp_end" ).datepicker({
-      showAnim: "slideDown",
-      dateFormat : "yy-mm-dd"
-    });
-  });
- </script>
-<script>
-  $(function() {
-   $( "#datepicker_trip_start" ).datepicker({
-      showAnim: "slideDown",
-      dateFormat : "yy-mm-dd"
-    });
-  });
- </script>
- <script>
-  $(function() {
-   $( "#datepicker_trip_end" ).datepicker({
-      showAnim: "slideDown",
-      dateFormat : "yy-mm-dd"
-    });
-  });
- </script>
+<!-- </div> -->
+<!-- <!-- 燈箱 Register 結束 --> -->
+<!-- <script> -->
+//   $(function() {
+//    $( "#datepicker_grp_end" ).datepicker({
+//       showAnim: "slideDown",
+//       dateFormat : "yy-mm-dd"
+//     });
+//   });
+<!--  </script> -->
+<!-- <script> -->
+//   $(function() {
+//    $( "#datepicker_trip_start" ).datepicker({
+//       showAnim: "slideDown",
+//       dateFormat : "yy-mm-dd"
+//     });
+//   });
+<!--  </script> -->
+<!--  <script> -->
+//   $(function() {
+//    $( "#datepicker_trip_end" ).datepicker({
+//       showAnim: "slideDown",
+//       dateFormat : "yy-mm-dd"
+//     });
+//   });
+<!--  </script> -->
 
 </body>
 
