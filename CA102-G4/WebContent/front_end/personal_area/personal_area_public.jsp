@@ -231,7 +231,8 @@
 					"title"		:"好友邀請",
 				  	"sender"	: me_id,
 				 	"receiver"	: fri_id,
-				 	"message"	:"您有一筆好友邀請待確認"
+				 	"message"	:"您有一筆好友邀請待確認",
+				 	"link"	:"need"
 				};
 				webSocket.send(JSON.stringify(jsonObj));
 				
@@ -250,7 +251,8 @@
 					"title"		:"好友關係確認",
 				  	"sender"	: me_id,
 				 	"receiver"	: fri_id,
-				 	"message"	:"您與${memberVO.mem_Name}已成為好友"
+				 	"message"	:"您與${memberVO.mem_Name}已成為好友",
+				 	"link"	:"need"
 				};
 				webSocket.send(JSON.stringify(jsonObj));
 				
