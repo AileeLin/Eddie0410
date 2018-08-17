@@ -291,7 +291,7 @@ if(login_state_backEnd!=true){
 					<div class="col-lg-6 col-md-6 col-sm-6 col-6">
 						<div class="polaroid">
 							<img
-								src="<%= request.getContextPath()%>/trip/getPicture.do?att_no=${attEditVO.att_no}"
+								src="<%= request.getContextPath()%>/trip/getPicture.do?attEdit_no=${attEditVO.attEdit_no}"
 								alt="${attEditVO.att_name}" style="width: 100%">
 						</div>
 					</div>

@@ -244,7 +244,7 @@ public class MemberServlet extends HttpServlet {
 				failureView.forward(req, res);
 			}
 		}
-
+		//修改會員有將修改後的VO再存回session裡
 		if ("UPDATE_MEMBER".equals(action)) {
 			System.out.println("修改有進來");
 			List<String> errorMsgs = new LinkedList<String>();
@@ -360,9 +360,12 @@ public class MemberServlet extends HttpServlet {
 
 				/*************************** 3.修改完成,準備轉交(Send the Success view) *************/
 				System.out.println("****資料庫新增成功 ......後");
+				
 				req.setAttribute("memberVO", memberVO); // 資料庫update成功後,正確的的memberVO物件,存入req
 				session.setAttribute("memberVO", memberVO);//更新session的值~~~ 育萱加的為了要更新session存的vo，避免更新後資料還是舊的
+				
 				System.out.println(memberVO);
+				
 				String url = "/front_end/member/update_mem_profile.jsp";
 				RequestDispatcher successView = req.getRequestDispatcher(url); // 修改成功後,轉交listOneEmp.jsp
 				successView.forward(req, res);
@@ -415,13 +418,13 @@ public class MemberServlet extends HttpServlet {
 				/*************************** 3.修改完成,準備轉交(Send the Success view) *************/
 				req.setAttribute("MemberVO", memberVO); // 資料庫update成功後,正確的的memberVO物件,存入req
 				String url = "/front_end/index.jsp";
-				RequestDispatcher successView = req.getRequestDispatcher("/front_end/member/mem_login.jsp"); // 修改成功後,轉交listOneEmp.jsp
+				RequestDispatcher successView = req.getRequestDispatcher("/front_end/index.jsp"); // 修改成功後,轉交listOneEmp.jsp
 				successView.forward(req, res);
 				System.out.println("大師兄的密碼回來了");
 				/*************************** 其他可能的錯誤處理 *************************************/
 			} catch (Exception e) {
 				errorMsgs.add("修改資料失敗:" + e.getMessage());
-				RequestDispatcher failureView = req.getRequestDispatcher("/front_end/member/mem_login.jsp");
+				RequestDispatcher failureView = req.getRequestDispatcher("/front_end/index.jsp");
 				failureView.forward(req, res);
 			}
 		}

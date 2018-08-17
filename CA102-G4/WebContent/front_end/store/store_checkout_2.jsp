@@ -60,7 +60,7 @@
 
 String storeName = (String)request.getAttribute("storeName");
 String addr = (String)request.getAttribute("addr");
-Integer shipMethod = (Integer)request.getAttribute("shipMethod");
+Integer shipMethod = (Integer)session.getAttribute("shipMethod");
 String productIdListStr = (String)request.getAttribute("productIdListStr");
 String sellerListStr = (String)request.getAttribute("sellerListStr");
 //給結帳按鈕用的token
@@ -613,17 +613,17 @@ media="all" />
 			    	
 			    	
 					if ($(this).attr("id") == "cash") {
-			            $(".credit-row").hide('fast');
-			            $('#credit-check').find('#card-input-block').hide('fast');
+			            $(".credit-row").hide('slow');
+			            $('#credit-check').find('#card-input-block').hide('slow');
 			        }
 			  
 			          if ($(this).attr("id") == "credit") {
 			          console.log($('#credit-check').find('.card-no-input').length);
 			            if( $('#credit-check').find('.card-no-input').length >=1){
-			            	$(".credit-row").hide('fast');
-			            	$('#credit-check').find('#card-input-block').show('fast');
+			            	$(".credit-row").hide('slow');
+			            	$('#credit-check').find('#card-input-block').show('slow');
 				         }else{
-				        	 $(".credit-row").show('fast');
+				        	 $(".credit-row").show('slow');
 				         }
 			        }
 			    });
