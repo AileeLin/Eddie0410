@@ -435,6 +435,7 @@
                   <div class="mem_ind_item_blog">
                   	<!--我參加的揪團列表 start  -->
                      <div class="ui items">
+                     		<%if(grp_memList.size() != 0){ %>
                             <c:forEach var="GrpVO" items="${grp_memList}">
 	                      	  <!-- 揪團區塊 -->
 		                      <div class="item col-12">
@@ -460,6 +461,11 @@
 		                      </div>
 		                     
 		                    </c:forEach>
+		                    <% }else{ %>
+		                    <br>
+	                    	<h3>快點參加一個揪團出去玩吧</h3>
+	                    	<br>
+		                    <% } %>
                      </div>
                      <br>  
                      <!--我的揪團列表 end  -->

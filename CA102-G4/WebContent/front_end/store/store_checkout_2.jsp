@@ -613,17 +613,17 @@ media="all" />
 			    	
 			    	
 					if ($(this).attr("id") == "cash") {
-			            $(".credit-row").hide('slow');
-			            $('#credit-check').find('#card-input-block').hide('slow');
+			            $(".credit-row").hide('fast');
+			            $('#credit-check').find('#card-input-block').hide('fast');
 			        }
 			  
 			          if ($(this).attr("id") == "credit") {
 			          console.log($('#credit-check').find('.card-no-input').length);
 			            if( $('#credit-check').find('.card-no-input').length >=1){
-			            	$(".credit-row").hide('slow');
-			            	$('#credit-check').find('#card-input-block').show('slow');
+			            	$(".credit-row").hide('fast');
+			            	$('#credit-check').find('#card-input-block').show('fast');
 				         }else{
-				        	 $(".credit-row").show('slow');
+				        	 $(".credit-row").show('fast');
 				         }
 			        }
 			    });

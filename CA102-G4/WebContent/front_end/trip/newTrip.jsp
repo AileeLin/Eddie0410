@@ -90,11 +90,13 @@
 
 </script>
 <!-- //隱藏iPhone Safari位址列的網頁 -->
-
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <!-- bootstrap-css -->
 <link
 	href="<%=request.getContextPath()%>/front_end/css/all/index_bootstrap.css"
 	rel="stylesheet" type="text/css" media="all" />
+	<script
+	src="<%=request.getContextPath()%>/front_end/js/all/index_bootstrap.js"></script>
 <!-- //bootstrap-css -->
 
 <!-- css -->
@@ -124,9 +126,8 @@
 <link href="<%=request.getContextPath()%>/front_end/images/all/Logo_Black_use.png" rel="icon" type="image/png">
 <!-- //LogoIcon -->
 
-<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-<script
-	src="<%=request.getContextPath()%>/front_end/js/all/index_bootstrap.js"></script>
+
+
 	
 	<!-- 聊天相關CSS及JS -->
     <link href="<%=request.getContextPath()%>/front_end/css/chat/chat_style.css" rel="stylesheet" type="text/css">

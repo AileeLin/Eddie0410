@@ -116,11 +116,19 @@
 </script>
 <!-- //隱藏iPhone Safari位址列的網頁 -->
 
-<!-- bootstrap-css -->
-<link
-	href="<%=request.getContextPath()%>/front_end/css/all/index_bootstrap.css"
-	rel="stylesheet" type="text/css" media="all" />
-<!-- //bootstrap-css -->
+    <!-- JQUERY -->
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <!-- //JQUERY -->
+
+    <!-- bootstrap css及JS檔案 -->
+    <link href="<%=request.getContextPath()%>/front_end/css/all/index_bootstrap.css" rel="stylesheet" type="text/css" media="all" />
+    <script src="<%=request.getContextPath()%>/front_end/js/all/index_bootstrap.js"></script>
+    <!-- //bootstrap-css -->
+
+
+
+
+
 
 <!-- css -->
 <link
@@ -157,9 +165,8 @@
 	rel='stylesheet' type='text/css'>
 <!-- //font字體 -->
 
-<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-<script
-	src="<%=request.getContextPath()%>/front_end/js/all/index_bootstrap.js"></script>
+
+
 <style>
 	#attTable tr, #attTable th, #attTable td {
 		padding: 5px !important;
@@ -170,7 +177,7 @@
     <link href="<%=request.getContextPath()%>/front_end/css/chat/chat_style.css" rel="stylesheet" type="text/css">
     <script src="<%=request.getContextPath()%>/front_end/js/chat/vjUI_fileUpload.js"></script>
     <script src="<%=request.getContextPath()%>/front_end/js/chat/chat.js"></script>
-    <%@ include file="/front_end/personal_area/chatModal_JS.file" %>
+    
     <!-- //聊天相關CSS及JS -->
 
 </head>
@@ -1361,6 +1368,7 @@
 <!-- 		</div> -->
 <!-- 	</div> -->
 	<!-- //footer -->
+	<%@ include file="/front_end/personal_area/chatModal_JS.file" %>
 </body>
 
 <!-- =========================================以下為 datetimepicker 之相關設定========================================== -->
@@ -1377,7 +1385,7 @@
 	href="<%=request.getContextPath()%>/front_end/trip/datetimepicker/jquery.datetimepicker.css" />
 <script
 	src="<%=request.getContextPath()%>/front_end/trip/datetimepicker/jquery.js"></script>
-<script
+<script -->
 	src="<%=request.getContextPath()%>/front_end/trip/datetimepicker/jquery.datetimepicker.full.js"></script>
 
 <style>
@@ -1517,5 +1525,9 @@
 	    	 $(this).stop().animate({right: "-38.5rem"});
 	    }, 800);
 	});
+	
+	
+	
 </script>
+
 </html>

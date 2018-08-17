@@ -396,44 +396,44 @@
         <!--會員個人頁面-首頁內容-->
         <div class="mem_ind_content">
           <!-- 頁籤項目 -->
-          <ul class="nav nav-tabs" role="tablist">
+        <ul class="nav nav-tabs" role="tablist">
             <li class="nav-item">
               <a href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_home.jsp">
                   <i class="fas fa-home"></i>首頁
               </a>
             </li>
-            <li class="nav-item">
-              <a href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_friend.html">
+            <li class="nav-item  active">
+              <a href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_friend.jsp">
                   <i class="fas fa-user-friends"></i>好友
               </a>
             </li>
             <li class="nav-item">
-              <a href="personal_area_blog.html">
+              <a href="<%=request.getContextPath()%>/blog.do?action=myBlog&mem_id=${memberVO.mem_Id}">
                   <i class="fab fa-blogger"></i>旅遊記
               </a>
             </li>
             <li class="nav-item">
-              <a href="#trip">
+              <a href="<%=request.getContextPath()%>/front_end/trip/personal_area_trip.jsp">
                   <i class="fas fa-map"></i>行程
               </a>
             </li>
             <li class="nav-item">
-              <a href="#together">
+              <a href="<%=request.getContextPath()%>/front_end/grp/personal_area_grp.jsp">
                   <i class="fas fa-bullhorn"></i>揪團
               </a>
             </li>
             <li class="nav-item">
-              <a href="#question">
+              <a href="<%=request.getContextPath()%>/front_end/personal/personal_area_question.jsp">
                   <i class="question circle icon"></i>問答
               </a>
             </li>
             <li class="nav-item">
-              <a href="#gallery">
+              <a href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_photoWall.jsp">
                   <i class="image icon"></i>相片
               </a>
             </li>
             
-             <li class="nav-item active">
+             <li class="nav-item">
               <a href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_sell.jsp">
                   <i class="money bill alternate icon"></i>銷售
               </a>
@@ -446,7 +446,7 @@
             </li>
 
             <li class="nav-item" style="float: right">
-              <a href="<%=request.getContextPath()%>/front_end/member/member.do?action=getOne_For_Display&mem_Id=${memberVO.mem_Id}">
+              <a href="<%=request.getContextPath()%>/front_end/member/update_mem_profile.jsp">
                   <i class="cog icon"></i>設置
               </a>
             </li>

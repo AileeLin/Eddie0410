@@ -28,7 +28,7 @@
 	//取出會員相關資料
 	MemberService memSvc = new MemberService();
 	MemberVO memVO=memSvc.getOneMember((String)memId);//動態從session取得會員ID
-// 	MemberVO memVO=memSvc.getOneMember("M000001");
+//  	MemberVO memVO=memSvc.getOneMember("M000001");
 	pageContext.setAttribute("memvo",memVO);
 	
 	

@@ -268,7 +268,7 @@
   <!--container-->
     <div class="ui container">
         <!--會員個人頁面標頭-->
-        <div class="mem_ind_topbar">
+        <div class="mem_ind_topbar" style="margin-top:0px">
             <!--會員封面-->
             <div class="mem_ind_banner">
                 <img src="<%=request.getContextPath()%>/front_end/images/all/person_bar.jpg">

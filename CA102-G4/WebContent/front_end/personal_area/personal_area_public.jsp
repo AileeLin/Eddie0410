@@ -251,8 +251,7 @@
 					"title"		:"好友關係確認",
 				  	"sender"	: me_id,
 				 	"receiver"	: fri_id,
-				 	"message"	:"您與${memberVO.mem_Name}已成為好友",
-				 	"link"	:"need"
+				 	"message"	:"您與${memberVO.mem_Name}已成為好友"
 				};
 				webSocket.send(JSON.stringify(jsonObj));
 				
