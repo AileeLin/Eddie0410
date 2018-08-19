@@ -698,4 +698,36 @@ public class TripJDBCDAO implements TripDAO_interface {
 		return list;
 	}
 	
+	@Override
+	public void updateViews(String trip_no) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+
+		try {
+			con = DriverManager.getConnection(URL, USER, PASSWORD);
+			pstmt = con.prepareStatement(SQL_UPDATE);
+			pstmt.setString(1, trip_no);
+			pstmt.executeUpdate();
+			// Handle any driver errors
+		} catch (SQLException se) {
+			throw new RuntimeException("A database error occured. " + se.getMessage());
+
+		} finally {
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if (con != null) {
+				try {
+					con.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	
 }

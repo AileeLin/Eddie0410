@@ -417,5 +417,57 @@ public class Photo_wallDAO implements Photo_wallDAO_interface {
 		}
 		return count;
 	}
+	
+	//老大哥的
+	@Override
+	public byte[] getImage(String id) {
+		byte[] picture = null;
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+
+		try {
+
+			con = ds.getConnection();
+			//  依不同dao 去挑
+			pstmt = con.prepareStatement("SELECT PHOTO FROM PHOTO_WALL WHERE PHOTO_NO = ?"); //照片牆
+
+			pstmt.setString(1, id);
+
+			rs = pstmt.executeQuery();
+
+			if (rs.next()) {
+			//  依不同dao 去挑
+				picture = rs.getBytes("PHOTO");//照片牆
+			}
+			// Handle any driver errors
+		} catch (SQLException se) {
+			throw new RuntimeException("A database error occured. " + se.getMessage());
+			// Clean up JDBC resources
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (con != null) {
+				try {
+					con.close();
+				} catch (Exception e) {
+					e.printStackTrace(System.err);
+				}
+			}
+		}
+		return picture;
+	}
 
 }

@@ -224,10 +224,7 @@ NewsVO newsVO = (NewsVO) request.getAttribute("newsVO");
 						<td>消息名稱:</td>
 						<td><input type="TEXT" name="news_name" size="200" value="<%=newsVO.getNews_name()%>"></td>
 					</tr>
-					<tr>
-						<td>消息日期:</td>
-						<td><input type="TEXT" name="news_date" size="200" value="<%=newsVO.getNews_date()%>"></td>
-					</tr>
+
 					<tr>
 					<td>消息內容:</td>
 						<td><input type="TEXT" name="news_con" size="200" value="<%=newsVO.getNews_con()%>"></td>

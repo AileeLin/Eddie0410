@@ -234,9 +234,6 @@
             	消息名稱:
                         <input type="TEXT" name="news_name"  class="form-control f1" value="${news.news_name}">
                     <br>
-            	消息日期: 
-                        <input type="TEXT" name="news_date"  class="form-control f1" value="${news.news_date}">
-                    <br>
             	消息內容:                  
                        <textarea  name="news_con" style="width:615px;height:120px" class="form-control f1"  ${news.news_con}></textarea>
                     <br>

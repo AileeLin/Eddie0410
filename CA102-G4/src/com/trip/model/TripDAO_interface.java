@@ -25,4 +25,6 @@ public interface TripDAO_interface {
 	public List<TripVO> getPublishOrderViews();
 	
 	public List<TripVO> getAll(Map<String,String[]> map);
+	
+	public void updateViews(String trip_no);
 }

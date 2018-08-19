@@ -41,14 +41,7 @@ public class NewsServlet extends HttpServlet {
 					errorMsgs.add("消息名稱請勿空白");
 				}
 				
-				java.sql.Date news_date = null;
-				try {
-					news_date = java.sql.Date.valueOf(req.getParameter("news_date").trim());
-				} catch (IllegalArgumentException e) {
-						errorMsgs.add("請輸入日期!");
-				} catch (NullPointerException e) {
-					errorMsgs.add("請輸入日期!");
-				}
+				java.sql.Date news_date =new java.sql.Date(System.currentTimeMillis());
 				
 				String news_con = req.getParameter("news_con");
 				if (news_con == null || news_con.trim().length() == 0) {
@@ -97,13 +90,8 @@ public class NewsServlet extends HttpServlet {
 					errorMsgs.add("消息名稱請勿空白");
 				}
 				
-				java.sql.Date news_date = null;
-				try {
-					news_date = java.sql.Date.valueOf(req.getParameter("news_date").trim());
-				} catch (IllegalArgumentException e) {
-					news_date=new java.sql.Date(System.currentTimeMillis());
-					errorMsgs.add("請輸入想要日期!");
-				}
+				java.sql.Date news_date = new java.sql.Date(System.currentTimeMillis());
+
 				
 				String news_con = req.getParameter("news_con");
 				if (news_con == null || news_con.trim().length() == 0) {

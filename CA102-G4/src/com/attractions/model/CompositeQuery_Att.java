@@ -28,7 +28,7 @@ public class CompositeQuery_Att {
 			String value = map.get(key)[0];
 			System.out.println("key:" + key);
 			if (value != null && value.trim().length() != 0 && !"action".equals(key) && !"whichPage".equals(key)
-					&& !"keyword".equals(key) && !"changePage".equals(key)) {
+					&& !"keyword".equals(key) && !"changePage".equals(key)&& !"searchTrigger".equals(key)) {
 				count++;
 				String aCondition = get_aCondition_For_Oracle(key, value.trim());
 

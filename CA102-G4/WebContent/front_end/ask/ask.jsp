@@ -30,6 +30,9 @@
 		  	response.sendRedirect("/CA102G4/front_end/member/mem_login.jsp");
 		  	return;
 		 }
+		 
+			long token=System.currentTimeMillis();
+			session.setAttribute("token", token);
 %>
 <%
 	//取得購物車商品數量
@@ -239,7 +242,7 @@
             <textarea name="question_content" id="content" rows="10" cols="80"></textarea>
  	
             <input type="hidden" name="action" value="insert">
-            
+            <input type="hidden" name="token" value="${token}">
             <h4>標籤選擇</h4>
  
             <c:forEach var="qa_listVO" items="${list}" > 
@@ -261,6 +264,7 @@
 			removePlugins: 'resize',
 			removeDialogTabs: 'image:advanced;link:advanced',
 			height:500
+			
 		});
 	</script>
 	

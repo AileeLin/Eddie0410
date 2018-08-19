@@ -28,7 +28,7 @@ public class jdbcUtil_CompositeQuery_Trip {
 		for (String key : keys) {
 			String value = map.get(key)[0];
 			if (value != null && value.trim().length() != 0 && !"action".equals(key) && !"whichPage".equals(key)
-					&& !"keyword".equals(key) && !"orderType".equals(key)) {
+					&& !"keyword".equals(key) && !"orderType".equals(key)&& !"searchTrigger".equals(key)) {
 				count++;
 				String aCondition = get_aCondition_For_Oracle(key, value.trim());
 

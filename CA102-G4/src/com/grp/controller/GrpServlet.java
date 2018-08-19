@@ -71,7 +71,11 @@ public class GrpServlet extends HttpServlet {
 				String mem_Id = req.getParameter("mem_Id");
 				
 				System.out.println(mem_Id);
+				
+				String trip_no = req.getParameter("trip_no");
 
+				System.out.println(trip_no);
+				
   				String grp_Title = req.getParameter("grp_Title");
   				
   				if(grp_Title == null || grp_Title.trim().length() == 0) {
@@ -154,6 +158,12 @@ public class GrpServlet extends HttpServlet {
 					errorMsgs.put("grp_Acpt","請輸入出團人數");
 				}
   				
+  				String trip_Details = req.getParameter("trip_Details");
+				if (trip_Details == null || trip_Details.trim().length() == 0) {
+					errorMsgs.put("trip_Details","行程內容請勿空白");
+					}
+				System.out.println("行程內容有");
+  				
   				File grpPhoto = new File(req.getRealPath("/front_end/images/all/aegean_Sea_2.png"));
 			    BufferedImage profilepicImage = ImageIO.read(grpPhoto);
 			    ByteArrayOutputStream profilepicBaos = new ByteArrayOutputStream();
@@ -166,12 +176,14 @@ public class GrpServlet extends HttpServlet {
   				GrpVO grpVO = new GrpVO();
   				
   				grpVO.setMem_Id(mem_Id);
+	  			grpVO.setTrip_No(trip_no);
 	  			grpVO.setGrp_Title(grp_Title);
 	  			grpVO.setTrip_Locale(trip_Locale);
 	  			grpVO.setGrp_Status(grp_Status);
 	  			grpVO.setGrp_Price(grp_Price);
 	  			grpVO.setGrp_Cnt(grp_Cnt);
 	  			grpVO.setGrp_Acpt(grp_Acpt);
+				grpVO.setTrip_Details(trip_Details);
 	  			grpVO.setGrp_Photo(grp_Photo);
 
   				//若以上驗證有錯誤訊息的話，將會於頁面顯示出錯誤部分
@@ -184,7 +196,7 @@ public class GrpServlet extends HttpServlet {
   				
   				//************************第二步：新增資料**************************//
   				GrpService grpSvc = new GrpService();
-  				grpSvc.addGrp(mem_Id,grp_Title,trip_Locale,pre_grp_End,pre_trip_Strat,pre_trip_End,grp_Status,grp_Price,grp_Cnt,grp_Acpt,grp_Photo);
+  				grpSvc.addGrp(mem_Id,trip_no,grp_Title,trip_Locale,pre_grp_End,pre_trip_Strat,pre_trip_End,grp_Status,grp_Price,grp_Cnt,grp_Acpt,trip_Details,grp_Photo);
 
   				//************************第三步：新增完成，準備提交**************************
   				System.out.println("有轉交嗎");

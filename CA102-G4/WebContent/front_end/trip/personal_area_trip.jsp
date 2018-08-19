@@ -26,17 +26,15 @@
 	pageContext.setAttribute("total_items",total_items);
 	
 	//取出會員相關資料
-	MemberService memSvc = new MemberService();
-	MemberVO memVO=memSvc.getOneMember((String)memId);//動態從session取得會員ID
-//  	MemberVO memVO=memSvc.getOneMember("M000001");
-	pageContext.setAttribute("memvo",memVO);
+	MemberVO memberVO=(MemberVO)session.getAttribute("memberVO");//動態從session取得會員ID
+	pageContext.setAttribute("memberVO",memberVO);
 	
-	
+	System.out.println(memberVO);
 	TripService tripSvc = new TripService();
-	List<TripVO> tripList = tripSvc.getByMem_id(memVO.getMem_Id());
+	List<TripVO> tripList = tripSvc.getByMem_id(memberVO.getMem_Id());
 	pageContext.setAttribute("tripList", tripList);
 	
-	List<TripVO> colList = tripSvc.getOneMemCollection(memVO.getMem_Id());
+	List<TripVO> colList = tripSvc.getOneMemCollection(memberVO.getMem_Id());
 	pageContext.setAttribute("colList", colList);
 %>
 
@@ -48,7 +46,6 @@
 <%
 
 	//*****************聊天用：取得登錄者所參與的群組聊天*************/
-	MemberVO memberVO = (MemberVO)session.getAttribute("memberVO");
 	List<ChatRoom_JoinVO> myCRList =chatRoomJoinSvc.getMyChatRoom(memberVO.getMem_Id());
 	Set<ChatRoom_JoinVO> myCRGroup = new HashSet<>(); //裝著我參與的聊天對話為群組聊天時
 	
@@ -154,15 +151,15 @@
     	heigh:50px;
     }
     
+    </style>
+        
     <!-- 聊天相關CSS及JS -->
     <link href="<%=request.getContextPath()%>/front_end/css/chat/chat_style.css" rel="stylesheet" type="text/css">
     <script src="<%=request.getContextPath()%>/front_end/js/chat/vjUI_fileUpload.js"></script>
     <script src="<%=request.getContextPath()%>/front_end/js/chat/chat.js"></script>
     <%@ include file="/front_end/personal_area/chatModal_JS.file" %>
     <!-- //聊天相關CSS及JS -->
-    
-    
-    </style>
+
 </head>
 
 <body>
@@ -259,19 +256,19 @@
             <!--會員訊息--> 
             <div class="mem_ind_info"> 
                 <div class="mem_ind_img">
-                    <img src="<%=request.getContextPath()%>/front_end/readPic?action=member&id=${memvo.mem_Id}">
+                    <img src="<%=request.getContextPath()%>/front_end/readPic?action=member&id=${memberVO.mem_Id}">
                 </div>
                 <div class="mem_ind_name">
-                    <p>${memvo.mem_Name}
-                    	<c:if test="${memvo.mem_Sex == 1}">
+                    <p>${memberVO.mem_Name}
+                    	<c:if test="${memberVO.mem_Sex == 1}">
        						<i class='fas fa-male' style='color:#4E9EE2'></i>
       					</c:if>
-      					<c:if test="${memvo.mem_Sex == 2}">
+      					<c:if test="${memberVO.mem_Sex == 2}">
        						<i class='fas fa-female' style='color:#EC7555'></i>
      					</c:if>
                     </p>
                     <p class="text-truncate" style="font-size:0.9em;padding-top:10px;max-height:110px">
-					   ${memvo.mem_Profile}
+					   ${memberVO.mem_Profile}
                     </p>
                 </div>
             </div> 
@@ -394,7 +391,7 @@
 										<div class="right floated author nowrap">
 											<img class="ui avatar image"
 												src="<%= request.getContextPath()%>/trip/getPicture.do?mem_id=${tripVO.mem_id}">
-											${memvo.mem_Name}
+											${memberVO.mem_Name}
 										</div>
 									</div>
 								</a>
@@ -410,7 +407,17 @@
 									    });
 									    $("#btn-delete-${tripVO.trip_no}").click(function(event){
 									    	event.stopPropagation();
-									    	$("#form-delete-${tripVO.trip_no}").submit();
+									    	swal({
+												  title: "您確定要刪除嗎?",
+												  text: "刪除後將無法復原資料",
+												  icon: "warning",
+												  buttons: true,
+												  dangerMode: true,
+												}).then((willDelete) => {
+												if (willDelete) {
+													$("#form-delete-${tripVO.trip_no}").submit();
+												} 
+											});
 									    });
 									});
 								</script>
@@ -458,7 +465,7 @@
 										<div class="right floated author nowrap">
 											<img class="ui avatar image"
 												src="<%= request.getContextPath()%>/trip/getPicture.do?mem_id=${tripVO.mem_id}">
-											${memSvc.getOneMember(tripVO.mem_id).mem_Name}
+											${memberSvc.getOneMember(tripVO.mem_id).mem_Name}
 										</div>
 									</div>
 								</a>
@@ -500,39 +507,8 @@
 				</div>
 			
             <!--//首頁左半邊-個人首頁-->
-          </div>
-          <!--頁籤項目-首頁內容-->
-<!--           首頁右半邊                 -->
-<!--           <div style="width:25%;float:left"> -->
-<!--                 <div class="add_Div"> -->
-<!--                     <a href="blog_add.jsp" class="adddiv_a"> -->
-<!--                         <div style="color:rgb(93,187,133)"> -->
-<!--                             <i class="fas fa-edit"></i><br> -->
-<!--                             寫旅遊記 -->
-<!--                         </div>         -->
-<!--                     </a> -->
-<!--                     <a href="" class="adddiv_a"> -->
-<!--                         <div style="color:rgb(245,177,0)"> -->
-<!--                             <i class="far fa-calendar-check"></i><br> -->
-<!--                             規劃行程 -->
-<!--                         </div>   -->
-<!--                     </a> -->
-<!--                     <a href="" class="adddiv_a"> -->
-<!--                         <div style="color:rgb(242,102,34)"> -->
-<!--                         <i class="fas fa-bullhorn"></i><br> -->
-<!--                         揪旅伴去 -->
-<!--                         </div>   -->
-<!--                     </a> -->
-<!--                     <a href="" class="adddiv_a"> -->
-<!--                         <div style="color:rgb(81,167,219)"> -->
-<!--                             <i class="fas fa-comment-dots"></i><br> -->
-<!--                             提問題去 -->
-<!--                         </div>  -->
-<!--                     </a> -->
-
-<!--                 </div> -->
-<!--             </div> -->
-<!--           //首頁右半邊  -->
+		</div>
+ 
         </div>
         <!-- //會員個人頁面內容 -->
     </div>

@@ -47,14 +47,19 @@ public class AttractionsServlet extends HttpServlet{
 				session.setAttribute("attMap",map1);
 				map = map1;
 			}
-				
+			String searchTrigger = null;
+			searchTrigger = req.getParameter("searchTrigger");
 			/***************************2.開始複合查詢***************************************/
 			AttractionsService attSvc = new AttractionsService();
 			List<AttractionsVO> list;
 			if(map==null) {
 				list = attSvc.getAll();
 			}else {
-				list = attSvc.getAll(map);
+				if(searchTrigger!=null&&"true".equals(searchTrigger)&&keyword==null) {
+					list = attSvc.getAll();
+				}else {
+					list = attSvc.getAll(map);
+				}
 			}
 			/***************************3.查詢完成,準備轉交(Send the Success view)************/
 			req.setAttribute("list", list);
@@ -91,14 +96,19 @@ public class AttractionsServlet extends HttpServlet{
 					session.setAttribute("map_tripEdit",map1);
 					map = map1;
 				}
-				
+				String searchTrigger = null;
+				searchTrigger = req.getParameter("searchTrigger");
 				/***************************2.開始複合查詢***************************************/
 				AttractionsService attSvc = new AttractionsService();
 				List<AttractionsVO> list;
 				if(map==null) {
 					list = attSvc.getAll();
 				}else {
-					list = attSvc.getAll(map);
+					if(searchTrigger!=null&&"true".equals(searchTrigger)&&keyword==null) {
+						list = attSvc.getAll();
+					}else {
+						list = attSvc.getAll(map);
+					}
 				}
 				/***************************3.查詢完成,準備轉交(Send the Success view)************/
 				req.setAttribute("list", list);

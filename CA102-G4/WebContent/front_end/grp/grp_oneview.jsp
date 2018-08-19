@@ -9,7 +9,7 @@
 <%@ page import="java.util.*"%>
 
 <jsp:useBean id="memberSvc" scope="page" class="com.mem.model.MemberService" />
-
+<jsp:useBean id="tripSvc" scope="page" class="com.trip.model.TripService"></jsp:useBean>
 
 <%	
 	//清快取
@@ -341,7 +341,7 @@
                     <br>                
             </div>
             
-			<!--文章的編號-->
+
             <div class="col-xs-5">
                <div class="list-group-title-right">
                    <ul class="icon-bth">
@@ -350,8 +350,19 @@
                
                 <div class="thumbnail">
                     <div class="caption">
-                        <h2 style="font-size:24px; color:red; width: 100%;">可報名人數：<span id="joinCount">${grpVO.grp_Cnt}</span></h2>
-<%--                         <h2 style="font-size:24px; color:red; width: 100%;">預計出團人數：${grpVO.grp_Acpt}</h2> --%>
+                        <h2 style="font-size:24px; color:red; width: 100%;">可報名人數：<span id="joinCount">${grpVO.grp_Cnt}</span>
+						<!-- 連到品儒的行程 -->
+                        <c:if test="${grpVO.trip_No != null}">
+                        <a href="<%=request.getContextPath()%>/front_end/trip/tripDetail.jsp?trip_no=${grpVO.trip_No}">
+                        <span style="color:black;font-size:17px;float:right;line-height:26px;">
+                        <i class="fas fa-info-circle" style="color:gray;"></i>行程詳細</span>
+                        </a>
+                        </c:if>
+                        <!-- //連到品儒的行程 -->
+                        </h2>
+                       
+						
+<%--                    <h2 style="font-size:24px; color:red; width: 100%;">預計出團人數：${grpVO.grp_Acpt}</h2> --%>
                         
                         <p>結束報名時間：
                         <fmt:formatDate pattern="YYYY年MM月dd日 " value="${grpVO.grp_End}" />
@@ -494,11 +505,20 @@
 	       var grp_Id = "${grpVO.grp_Id}";
 	   	   var mem_Id = "${memberVO.mem_Id}";
 		   var grp_Cnt = "${grpVO.grp_Cnt}";
+		   
 		   if($("#join_grp").text() == "取消參加"){
 		    	//.text的內容都會轉型成字串再用parseInt轉成整數在.text送到SERVLET
 		    	  $("#joinCount").text( parseInt($("#joinCount").text())-1);
+		    	  var jsonObj = {
+				 			"title"     :"有人來參加囉",		 
+				 			"sender"    :mem_Id,
+				 			"receiver"  :"${grpVO.mem_Id}",
+				 			"message"	:"${memberVO.mem_Name}，來參加你的揪團囉，請查看。"
+				 		 };
+				 		 webSocket.send(JSON.stringify(jsonObj));
 		    }else if($("#join_grp").text() == "我要參加"){
-		 		 $("#joinCount").text( parseInt($("#joinCount").text())+1)
+		 		 $("#joinCount").text( parseInt($("#joinCount").text())+1);
+		 		 
 		     }
 		  
 	    $.ajax({

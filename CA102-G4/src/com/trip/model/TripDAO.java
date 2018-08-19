@@ -31,6 +31,7 @@ public class TripDAO implements TripDAO_interface {
 			+ "MEM_ID = ?,TRIP_NAME = ?,TRIP_STARTDAY = ?,TRIP_DAYS = ?,TRIP_VIEWS = ?,TRIP_STATUS = ?"
 			+ " where TRIP_NO = ?";
 	private static final String SQL_UPDATE2 = "update TRIP set TRIP_NAME = ?,TRIP_STARTDAY = ? where TRIP_NO = ?";
+	private static final String SQL_UPDATE_VIEWS = "update TRIP set TRIP_VIEWS = TRIP_VIEWS+1 where TRIP_NO = ?";
 	private static final String SQL_DELETE = "delete from TRIP where TRIP_NO = ?";
 	private static final String SQL_QUERY = "select * from TRIP where TRIP_NO = ?";
 	private static final String SQL_QUERY_ALL = "select * from TRIP";
@@ -712,6 +713,38 @@ public class TripDAO implements TripDAO_interface {
 			}
 		}
 		return list;
+	}
+
+	@Override
+	public void updateViews(String trip_no) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+
+		try {
+			con = ds.getConnection();
+			pstmt = con.prepareStatement(SQL_UPDATE_VIEWS);
+			pstmt.setString(1, trip_no);
+			pstmt.executeUpdate();
+			// Handle any driver errors
+		} catch (SQLException se) {
+			throw new RuntimeException("A database error occured. " + se.getMessage());
+
+		} finally {
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if (con != null) {
+				try {
+					con.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 
 }

@@ -47,6 +47,7 @@
 	pageContext.setAttribute("list", list);
 	
 	
+	
 %>
 <%
 	//取得購物車商品數量
@@ -61,6 +62,7 @@
 <html>
 
 <jsp:useBean id="memberSvc" scope="page" class="com.mem.model.MemberService" />
+<jsp:useBean id="tripSvc" scope="page" class="com.trip.model.TripService"></jsp:useBean>
 
 <head>
     <!-- 網頁title -->
@@ -198,7 +200,6 @@
                                 <li><a href="<%=request.getContextPath()%>/front_end/grp/grpIndex.jsp">揪團</a></li>
                                 <li><a href="<%=request.getContextPath()%>/front_end/store/store.jsp">交易平台</a></li>
                                 <li><a href="<%=request.getContextPath()%>/front_end/ad/ad.jsp">專欄</a></li>
-
                                 <div class="clearfix"> </div>
                             </ul>
                         </div>
@@ -237,45 +238,60 @@
 						<div class="row">
 							<div class="col-lg-12">
 								<form action="<%=request.getContextPath()%>/grp.do" method="post" role="form" style="">
+									<c:if test="${not empty tripSvc.getByMem_id(memberVO.mem_Id)}">
+									<select name="trip_no" style="boder:0px">
+									   <option>選擇行程標題</option>
+									   <c:forEach var="trip" items="${tripSvc.getByMem_id(memberVO.mem_Id)}">
+							           <option value="${trip.trip_no}">${trip.trip_name}</option>
+							           </c:forEach>
+									</select>
+									<br>
+									<br>
+									</c:if>					
 									<div class="form-group">
 										<p><i class="fas fa-edit" style="color:gray;"></i>&nbsp;幫揪團取個名字吧</p>
-										<font style="color:red">&nbsp;${errorMsgs.grp_Title}</font>
 										<input type="text" name="grp_Title" class="form-control" placeholder="團名" value="${param.grp_Title}">
+										<font style="color:red">&nbsp;${errorMsgs.grp_Title}</font>
 									</div>
 									<div class="form-group">
 										<p><i class="fas fa-map-marker-alt" style="color:red;"></i>&nbsp;想去哪裡呢</p>
-										<font style="color:red">&nbsp;${errorMsgs.trip_Locale}</font>
 										<input type="text" name="trip_Locale" class="form-control" placeholder="地點" value="${param.trip_Locale}">
+										<font style="color:red">&nbsp;${errorMsgs.trip_Locale}</font>
 									</div>
 									<div class="form-group">
 										<p><i class="fas fa-dollar-sign" style="color:red;"></i>&nbsp;大概預算</p>
-										<font style="color:red">&nbsp;${errorMsgs.grp_Price}</font>
 										<input type="text" name="grp_Price" class="form-control" placeholder="預算" value="${param.grp_Price}">
+										<font style="color:red">&nbsp;${errorMsgs.grp_Price}</font>
 									</div>
 									<div class="form-group">
 										<p><i class="fas fa-users" style="color:#483D8B;"></i>&nbsp;報名人數</p>
-										<font style="color:red">&nbsp;${errorMsgs.grp_Cnt}</font>
 										<input type="number" name="grp_Cnt" value="${param.grp_Cnt}" min="1" max="99" size="5" tabindex="2" class="form-control" placeholder="預計報名人數">
+										<font style="color:red">&nbsp;${errorMsgs.grp_Cnt}</font>
 									</div>
 									<div class="form-group">
 										<p><i class="fas fa-users" style="color:#483D8B;"></i>&nbsp;出團人數</p>
+										<input type="number" name="grp_Acpt" value="${param.grp_Acpt}" min="1" max="99" size="5" tabindex="2"  class="form-control" placeholder="成團出發人數">										
 										<font style="color:red">&nbsp;${errorMsgs.grp_Acpt}</font>
-										<input type="number" name="grp_Acpt" value="${param.grp_Acpt}" min="1" max="99" size="5" tabindex="2"  class="form-control" placeholder="成團出發人數">
 									</div>
 									<div class="form-group">
 										<p><i class="fas fa-calendar-alt" style="color:#778899;"></i>&nbsp;揪團結束的日期</p>
-										<font style="color:red">&nbsp;${errorMsgs.grp_End}</font>
 										<input type="text" name="grp_End" value="${param.grp_End}" id="datepicker_grp_end" class="form-control" placeholder="請選擇揪團結束日期">
+										<font style="color:red">&nbsp;${errorMsgs.grp_End}</font>
 									</div>
 									<div class="form-group">
 										<p><i class="fas fa-calendar-alt" style="color:#778899;"></i>&nbsp;啟程日期</p>
-										<font style="color:red">&nbsp;${errorMsgs.trip_Strat}</font>
 										<input type="text" name="trip_Strat" value="${param.trip_Strat}" id="datepicker_trip_start" class="form-control" placeholder="請選擇行程起程日期">
+										<font style="color:red">&nbsp;${errorMsgs.trip_Strat}</font>
 									</div>
 									<div class="form-group">
 										<p><i class="fas fa-calendar-alt" style="color:#778899;"></i>&nbsp;回程日期</p>
-										<font style="color:red">&nbsp;${errorMsgs.trip_End}</font>
 										<input type="text" name="trip_End" value="${param.trip_End}" id="datepicker_trip_end" class="form-control" placeholder="請選擇行程結束日期">
+										<font style="color:red">&nbsp;${errorMsgs.trip_End}</font>
+									</div>
+									<div class="form-group">
+										<p><i style="color:#778899;"></i>&nbsp;行程內容</p>										
+										<textarea class="form-control" rows="4" cols="100" name="trip_Details" value="${param.trip_Details}" placeholder="請輸入個吸引大家來參加的內容吧" ></textarea>
+										<font style="color:red">&nbsp;${errorMsgs.trip_Details}</font>
 									</div>
 									<div class="form-group">
 										<div class="row">

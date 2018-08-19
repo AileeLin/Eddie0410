@@ -264,6 +264,7 @@
 				class="col-lg-4 col-md-4 col-sm-5 col-6 col-lg-offset-8 col-md-offset-8 col-sm-offset-7 col-offset-6">
 				<div class="input-group">
 					<input type="hidden" name="action" value="search">
+					<input type="hidden" name="searchTrigger" value="true">
 					<input type="text" class="form-control" placeholder="輸入關鍵字..." name="keyword"> 
 					<div class="input-group-append">
 						<button class="btn btn-default " type="submit">

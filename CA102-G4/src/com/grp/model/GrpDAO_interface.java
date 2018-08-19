@@ -31,5 +31,8 @@ public interface GrpDAO_interface {
 	
 	// 揪團可報名人數、接受人數 確定參加會減少
 	public void update_mem_plus(GrpVO grpVO);
+	
+	//老大哥的
+	public byte[] getImage(String id);
 
 }

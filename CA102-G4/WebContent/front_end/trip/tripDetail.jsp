@@ -43,7 +43,7 @@
 	AttractionsService attSvc = new AttractionsService();
 	
 	TripVO tripVO = tripSvc.getOneTripByPK(trip_no);
-	
+	tripSvc.updateViews(trip_no);
 	List<TripDaysVO> tdList = tdSvc.getByTrip_no(trip_no);
 	
 	Map<Integer,List<Object>> tripDayMap = new LinkedHashMap<>();
@@ -322,7 +322,7 @@
 				<div class="m-2">
 				<img class="ui avatar image" style="width: 3em;height: 3em;border-radius: 500rem;"
 				 src="<%= request.getContextPath()%>/trip/getPicture.do?mem_id=${tripVO.mem_id}">
-					<a style="text-decoration: none;">${memSvc.getOneMember(tripVO.mem_id).mem_Name}</a>
+					<a href="<%=request.getContextPath()+"/front_end/personal_area/personal_area_public.jsp?uId="%>${tripVO.mem_id}" style="text-decoration: none;">${memSvc.getOneMember(tripVO.mem_id).mem_Name}</a>
 				</div>
 				<div>
 					
@@ -412,7 +412,7 @@
 												
 												<div class="col-lg-12 col-md-12 col-sm-12 col-12">
 													<hr>
-													<%= traTripVO.getTraTrip_note()%>
+													<c:out value="<%= traTripVO.getTraTrip_note()%>"/>
 												</div>
 											</div>
 										</div>
@@ -446,7 +446,7 @@
 												
 												<div class="col-lg-12 col-md-12 col-sm-12 col-12">
 													<hr>
-													<%= attTripVO.getAttTrip_note()%>
+													<c:out value="<%= attTripVO.getAttTrip_note()%>"/>
 												</div>
 											</div>
 										</div>

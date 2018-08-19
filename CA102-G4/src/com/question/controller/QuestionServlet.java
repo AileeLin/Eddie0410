@@ -186,6 +186,18 @@ public class QuestionServlet extends HttpServlet {
 					
 					Integer q_state =0;
 					
+					long token = Long.parseLong(req.getParameter("token")); // input送的token
+				    long tokenSession = Long.parseLong(req.getSession().getAttribute("token") + ""); // session存的token
+
+				    if (token == tokenSession) {
+				     // 如果是第一次送表單，產生新的token
+				     req.getSession().setAttribute("token", System.currentTimeMillis());
+				    } else {
+				    	RequestDispatcher successView = req.getRequestDispatcher("/front_end/question/question.jsp"); 
+						successView.forward(req, res);				
+				     return;
+				    }
+				    
 					QuestionVO questionVO = new QuestionVO();
 					questionVO.setMem_id(mem_id);
 					questionVO.setBuild_date(build_date);

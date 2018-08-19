@@ -9,21 +9,25 @@ CKEDITOR.plugins.add( 'base64imagedrop', {
             e.preventDefault();
             
             //Get dropped file
-            var file = e.dataTransfer.files[0];
+            var file = e.dataTransfer.files;
                         
             //Return if file is not an image
-            var fileType = file["type"];
-
-            var ValidImageTypes = ["image/gif", "image/jpeg", "image/png"];
-            if (ValidImageTypes.indexOf(fileType) < 0){
-            	return;
-            }
+//            var fileType = file["type"];
+//
+//            var ValidImageTypes = ["image/gif", "image/jpeg", "image/png"];
+//            if (ValidImageTypes.indexOf(fileType) < 0){
+//            	return;
+//            }
             //Read file as data url (base64) and insert it as an image
-            var fr = new FileReader();
-            fr.onload = (function(f) { return function(e) {
-				insertImage(e.target.result);
-			}; })(file);
-            fr.readAsDataURL(file);
+            for(var i in file){
+            	if(file[i].type == 'image/jpeg' || file[i].type == 'image/gif' || file[i].type == 'image/png'){
+                    var fr = new FileReader();
+                    fr.onload = (function(f) { return function(e) {
+        				insertImage(e.target.result);
+        			}; })(file[i]);
+                    fr.readAsDataURL(file[i]);
+            	}
+            }
         }
 
         function insertImage(source) {

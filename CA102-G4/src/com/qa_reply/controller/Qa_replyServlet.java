@@ -49,6 +49,18 @@ public class Qa_replyServlet extends HttpServlet {
 				
 				Integer r_state =0;
 				
+				long token = Long.parseLong(req.getParameter("token")); // input送的token
+			    long tokenSession = Long.parseLong(req.getSession().getAttribute("token") + ""); // session存的token
+
+			    if (token == tokenSession) {
+			     // 如果是第一次送表單，產生新的token
+			     req.getSession().setAttribute("token", System.currentTimeMillis());
+			    } else {
+					RequestDispatcher successView = req.getRequestDispatcher("/front_end/qa_reply/qa_reply.jsp"); 
+					successView.forward(req, res);				
+			     return;
+			    }
+				
 				Qa_replyVO qa_replyVO = new Qa_replyVO();
 				qa_replyVO.setQuestion_id(question_id);
 				qa_replyVO.setMem_id(mem_id);

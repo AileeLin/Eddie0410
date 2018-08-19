@@ -578,16 +578,17 @@
 							</div>
 							<div class="modal-footer">
 								<button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-								<button type="submit" class="btn btn-danger">確定</button>
+								<button type="submit" class="btn btn-danger" onclick="send_check();">確定</button>
 							</div>
 						</div>
 					</div>
 				</div>
 				<!-- 同意報名者參加，狀態 (grp_Leader)改成1(已被接受)  -->
-				<input type="hidden" name="mem_Id" value="${mem_Id}"> 
+				<input type="hidden" name="mem_Id" value=""> 
 				<input type="hidden" name="grp_Id" value="${grp_Id}">
 				<input type="hidden" name="grp_Leader" value="1">
 				<input type="hidden" name="action" value="update">
+				 
 			</form>	
 			<form action="<%= request.getContextPath()%>/grp_mem.do" method="post">
 			
@@ -605,7 +606,7 @@
 							</div>
 							<div class="modal-footer">
 								<button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-								<input type="hidden" name="mem_Id" value="${mem_Id}"> 
+								<input type="hidden" name="mem_Id" value=""> 
 								<input type="hidden" name="grp_Id" value="${grp_Id}"> 
 								<input type="hidden" name="action" value="delete">
 								<button type="submit" class="btn btn-danger" >確定</button>
@@ -687,12 +688,25 @@
     <!-- //footer -->
 
 <script>
+	var joinGrpMemId="";
     function getmem_Id(event) {
         var get_mem_Id = event.id;
         $('input[name="mem_Id"]').val(get_mem_Id);
+        joinGrpMemId=$('input[name="mem_Id"]').val();
     }
-</script>
-    
+
+    function send_check(){
+    	
+    var jsonObj = {
+		"title"     :"恭喜您，成功加入揪團囉",		 
+		"sender"    :"${memberVO.mem_Id}",
+		"receiver"  :joinGrpMemId,
+		"message"	:"親愛的，您已經成功報名了${memberVO.mem_Name}的 ${grp_allSvc.findByPrimaryKey(grp_Id).grp_Title}的揪團。"
+	 };
+//      alert(JSON.stringify(jsonObj));
+	 webSocket.send(JSON.stringify(jsonObj));
+    }
+    </script>
 </body>
 
 </html>

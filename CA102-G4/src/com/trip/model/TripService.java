@@ -87,4 +87,8 @@ public class TripService {
 	public List<TripVO> getAll(Map<String, String[]> map){
 		return dao.getAll(map);
 	}
+	
+	public void updateViews(String trip_no) {
+		dao.updateViews(trip_no);
+	}
 }

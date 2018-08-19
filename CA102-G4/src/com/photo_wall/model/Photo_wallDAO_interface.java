@@ -21,5 +21,8 @@ public interface Photo_wallDAO_interface {
 	public void delete(String photo_No);
 
 	//讀取特定會員的照片牆*****
-		List getAll_ByMemID(String mem_Id);
+	public List getAll_ByMemID(String mem_Id);
+	
+	//老大哥的
+	public byte[] getImage(String id);
 }

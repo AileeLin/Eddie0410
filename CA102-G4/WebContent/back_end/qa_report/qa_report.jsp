@@ -67,9 +67,117 @@
         <link href='https://fonts.googleapis.com/css?family=Oswald:400,700,300' rel='stylesheet' type='text/css'>
         <link href='https://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css'>
         <!-- //font字體 -->
+	      <script>
+				//下方Uid 自行改發通知者的id
+				var MyPoint = "/chat/${adminVO.admin_Id}";
+				var host = window.location.host;
+				var path = window.location.pathname;
+				var webCtx = path.substring(0, path.indexOf('/', 1));
+				var endPointURL = "ws://" + window.location.host + webCtx + MyPoint;
+				
+				var webSocket;
+			
+				function connect() {
+					// create a websocket
+					console.log(endPointURL);
+					webSocket = new WebSocket(endPointURL);
+			
+					webSocket.onopen = function(event) {
+					};
+			
+					webSocket.onmessage = function(event) {
+					};
+			
+					webSocket.onclose = function(event) {
+					};
+				}
+			
+/////////////////////////////////////////////     傳送給檢舉人     /////////////////////////////////////////////
+				function sendQuestion(a) {
+						//送標題
+						var title = "檢舉通知";
+						//送發送者名
+						var sender = "${adminVO.admin_Id}";
+						//送接收者名 測試用名為james 搭配indexed.html測試
+						var receiver = a;
+						//送訊息內容
+						var message = "經管理員審查，該問題確實違反了網站規定，我們已將他移除。感謝你的回報，我們會讓被檢舉人知道他的問題已被移除，但不會透漏檢舉人的身份。";
+						
+							var jsonObj = {
+								"title"		:title,
+							  	"sender"	:sender,
+							 	"receiver"	:receiver,
+							 	"message"	:message
+							};
+							webSocket.send(JSON.stringify(jsonObj));
+						}	
+/////////////////////////////////////////////     傳送給檢舉人     /////////////////////////////////////////////
+			function sendQuestionNo(b) {
+							//送標題
+							var title= "檢舉通知";
+							//送發送者名
+							var sender = "${adminVO.admin_Id}";
+							//送接收者名 測試用名為james 搭配indexed.html測試
+							var receiver = b;
+							//送訊息內容
+							var message = "根據管理員的審查，我們判定您檢舉的問題並無違反TravelMaker的網站規定，感謝您的檢舉。";
+							
+								var jsonObj = {
+									"title"		:title,
+								  	"sender"	:sender,
+								 	"receiver"	:receiver,
+								 	"message"	:message
+								};
+								webSocket.send(JSON.stringify(jsonObj));
+								
+							}	
+/////////////////////////////////////////////     傳送給檢舉人     /////////////////////////////////////////////
+			function sendReply(c) {
+							//送標題
+							var title = "檢舉通知";
+							//送發送者名
+							var sender = "${adminVO.admin_Id}";
+							//送接收者名 測試用名為james 搭配indexed.html測試
+							var receiver = c;
+							//送訊息內容
+							var message = "經管理員審查，該回覆確實違反了網站規定，我們已將他移除。感謝你的回報，我們會讓被檢舉人知道他的問題已被移除，但不會透漏檢舉人的身份。";
+							
+								var jsonObj = {
+									"title"		:title,
+								  	"sender"	:sender,
+								 	"receiver"	:receiver,
+								 	"message"	:message
+								};
+								webSocket.send(JSON.stringify(jsonObj));
+						}
+						
+/////////////////////////////////////////////     傳送給檢舉人     /////////////////////////////////////////////
+			function sendReplyNo(d) {
+						//送標題
+						var title = "檢舉通知";
+						//送發送者名
+						var sender = "${adminVO.admin_Id}";
+						//送接收者名 測試用名為james 搭配indexed.html測試
+						var receiver =d;
+						//送訊息內容
+						var message = "根據管理員的審查，我們判定您檢舉的回覆並無違反TravelMaker的網站規定，感謝您的檢舉。";
+						
+							var jsonObj = {
+								"title"		:title,
+							  	"sender"	:sender,
+							 	"receiver"	:receiver,
+							 	"message"	:message
+							};
+							webSocket.send(JSON.stringify(jsonObj));
+					}		
 
+				function disconnect() {
+					webSocket.close();
+				}
+
+	        </script>
     </head>
-    <body>
+    <body onload="connect();" onunload="disconnect();">
          <div class="wrapper">
         <!-- Sidebar  -->
             <nav id="sidebar" class="navbar-fixed-left">
@@ -230,20 +338,19 @@
 											<tr>
 												<td>${memSvc.findByPrimaryKey(qa_reportVO.mem_id).mem_Name}</td>
 												<td>${qsSvc.getOneQuestion(qa_reportVO.question_id).question_content}</td>										
-												
 												<td>
 												 <FORM METHOD="post" ACTION="<%=request.getContextPath()%>/qa_report.do" name="form1" >
 												 	 <input type="hidden" name="action" value="update">
 												 	 <input type="hidden" name="question_id" value="${qa_reportVO.question_id}">
 								          	 		 <input type="hidden" name="mem_id" value="${qa_reportVO.mem_id}">
-													<button type="submit" ><i class="fas fa-edit"></i>通過</button>
+													<button type="submit"  onclick="sendQuestion('${qa_reportVO.mem_id}');"><i class="fas fa-edit"></i>通過</button>
 												</FORM>
 												
 												<FORM METHOD="post" ACTION="<%=request.getContextPath()%>/qa_report.do" name="form1" >
 												 	 <input type="hidden" name="action" value="delete">
 												 	 <input type="hidden" name="question_id" value="${qa_reportVO.question_id}">
 								          	 		 <input type="hidden" name="mem_id" value="${qa_reportVO.mem_id}">
-													<button type="submit" ><i class="fas fa-ban"></i>不通過</button>
+													<button type="submit" onclick="sendQuestionNo('${qa_reportVO.mem_id}');"><i class="fas fa-ban"></i>不通過</button>
 												</FORM>
 												</td>
 		
@@ -277,20 +384,19 @@
 											<tr>
 												<td>${memSvc.findByPrimaryKey(rp_reportVO.mem_id).mem_Name}</td>
 												<td>${rpSvc.getOneQa_reply(rp_reportVO.reply_id).reply_content}</td>										
-												
 												<td>
 												 <FORM METHOD="post" ACTION="<%=request.getContextPath()%>/rp_report.do" name="form1" >
 												 	 <input type="hidden" name="action" value="update">
 												 	 <input type="hidden" name="reply_id" value="${rp_reportVO.reply_id}">
 								          	 		 <input type="hidden" name="mem_Id" value="${rp_reportVO.mem_id}">
-													<button type="submit" ><i class="fas fa-edit"></i>通過</button>
+													<button type="submit" onclick="sendReply('${rp_reportVO.mem_id}');"><i class="fas fa-edit"></i>通過</button>
 												</FORM>
 												
 												<FORM METHOD="post" ACTION="<%=request.getContextPath()%>/rp_report.do" name="form1" >
 												 	 <input type="hidden" name="action" value="delete">
 												 	 <input type="hidden" name="reply_id" value="${rp_reportVO.reply_id}">
 								          	 		 <input type="hidden" name="mem_id" value="${rp_reportVO.mem_id}">
-													<button type="submit" ><i class="fas fa-ban"></i>不通過</button>
+													<button type="submit"  onclick="sendReplyNo('${rp_reportVO.mem_id}');"><i class="fas fa-ban"></i>不通過</button>
 												</FORM>
 												</td>
 		

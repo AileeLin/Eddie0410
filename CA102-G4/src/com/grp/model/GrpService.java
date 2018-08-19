@@ -45,8 +45,8 @@ public class GrpService {
 	
 	//新增揪團
 	 public GrpVO addGrp
-	 (String mem_Id,String grp_Title,String trip_Locale,Timestamp grp_End,Timestamp trip_Start,Timestamp trip_End
-	 ,Integer grp_Status,String grp_Price,Integer grp_Cnt,Integer grp_Acpt,byte[] grp_Photo) {
+	 (String mem_Id,String trip_no,String grp_Title,String trip_Locale,Timestamp grp_End,Timestamp trip_Start,Timestamp trip_End
+	 ,Integer grp_Status,String grp_Price,Integer grp_Cnt,Integer grp_Acpt,String trip_Details,byte[] grp_Photo) {
 		 
 		 System.out.println("123");
 		 
@@ -55,6 +55,7 @@ public class GrpService {
 		 System.out.println("grpVO");
 
 	  grpVO.setMem_Id(mem_Id);
+	  grpVO.setTrip_No(trip_no);
 	  grpVO.setGrp_Title(grp_Title);
 	  grpVO.setTrip_Locale(trip_Locale);
 	  grpVO.setGrp_End(grp_End);
@@ -64,6 +65,7 @@ public class GrpService {
 	  grpVO.setGrp_Price(grp_Price);
 	  grpVO.setGrp_Cnt(grp_Cnt);
 	  grpVO.setGrp_Acpt(grp_Acpt);
+	  grpVO.setTrip_Details(trip_Details);
 	  grpVO.setGrp_Photo(grp_Photo);
 
 

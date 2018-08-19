@@ -830,14 +830,20 @@ public class TripServlet extends HttpServlet {
 				session.setAttribute("tripMap",map1);
 				map = map1;
 			}
-				
+			
+			String searchTrigger = null;
+			searchTrigger = req.getParameter("searchTrigger");
 			/***************************2.開始複合查詢***************************************/
 			TripService tripSvc = new TripService();
 			List<TripVO> list;
 			if(map==null) {
 				list = tripSvc.getPublish();
 			}else {
-				list = tripSvc.getAll(map);
+				if(searchTrigger!=null&&"true".equals(searchTrigger)&&keyword==null) {
+					list = tripSvc.getPublish();
+				}else {
+					list = tripSvc.getAll(map);
+				}
 			}
 			/***************************3.查詢完成,準備轉交(Send the Success view)************/
 			req.setAttribute("list", list);

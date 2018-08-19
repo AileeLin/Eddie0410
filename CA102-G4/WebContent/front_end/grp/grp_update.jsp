@@ -328,68 +328,6 @@ $(document).ready(function(){
                 <a id="dropdown_item" href="#">管理我參加的揪團</a>
 
             </div>
-			
-			<div class="has_children">
-				<li class="fas fa-coins">&nbsp;我的購買</li> <a id="dropdown_item"
-					href="#">管理購買清單</a> <a id="dropdown_item" href="#">管理我的銷售</a>
-
-			</div>
-
-			<div class="has_children">
-				<li class="fas fa-exclamation-circle">&nbsp;我的通知</li> <a
-					id="dropdown_item" href="#">test</a>
-			</div>
-			<!--
-            <div class="has_children">
-                <li class="far fa-calendar-alt">&nbsp;我的行程</li>
-
-                <a id="dropdown_item" href="#">瀏覽我的自助行程</a>
-                <a id="dropdown_item" href="#">瀏覽我收藏的行程</a>
-
-            </div>
--->
-
-			<!--
-            <div class="has_children">
-                <li class="fas fa-user-friends">&nbsp;我的好友</li>
-
-                <a id="dropdown_item" href="#">新增好友</a>
-                <a id="dropdown_item" href="#">瀏覽好友清單</a>
-                <a id="dropdown_item" href="#">瀏覽黑名單</a>
-
-            </div>
--->
-
-			<!--
-            <div class="has_children">
-                <li class="fas fa-question-circle">&nbsp;我的問答</li>
-
-                <a id="dropdown_item" href="#">我發表的討論</a>
-                <a id="dropdown_item" href="#">我參與的討論</a>
-                <a id="dropdown_item" href="#">我收藏的討論</a>
-
-            </div>
--->
-
-			<!--
-            <div class="has_children">
-                <li class="fas fa-book-open">&nbsp;我的旅遊記</li>
-
-                <a id="dropdown_item" href="#">發表旅遊記</a>
-                <a id="dropdown_item" href="#">刪除旅遊記</a>
-                <a id="dropdown_item" href="#">收藏旅遊網誌</a>
-                <a id="dropdown_item" href="#">影片牆</a>
-            </div>
--->
-
-			<!--
-            <div class="has_children">
-                <li class="fas fa-comments">&nbsp;我的聊天室</li>
-
-                <a id="dropdown_item" href="#">test</a>
-
-            </div>
--->
 
 </div>
 

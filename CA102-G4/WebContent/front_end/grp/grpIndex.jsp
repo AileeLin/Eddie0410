@@ -284,7 +284,6 @@
     </div>
 	<!-- //banner -->
    
-
 <!-- 主圖區 -->
     <div>
         <div class="carousel-inner">
@@ -360,7 +359,7 @@
             <div id="cards" class="ui four stackable cards">
                 <c:forEach var="GrpVO" items="${list}">
 				<c:if test="${GrpVO.grp_Status == 1 }">
-				<a class="fluid card" href="<%=request.getContextPath()%>/front_end/grp/grp_oneview.jsp?grp_Id=${GrpVO.grp_Id}" style="margin-top:30px;">
+				<a class="fluid card" href="<%=request.getContextPath()%>/front_end/grp/grp_oneview.jsp?grp_Id=${GrpVO.grp_Id}&trip_no=${GrpVO.trip_No}" style="margin-top:30px;">
 					<div class="image">				
 						<div class="ui image pic" style="height:220px; background-size:cover;">
 						<img style="height:100%;width:100%" src="<%=request.getContextPath()%>/grpPicReader?grp_Id=${GrpVO.grp_Id}">

@@ -166,7 +166,7 @@
 						<i class="fas fa-align-left"></i>
 					</button>
 					<span style="float: right">
-					 
+					<span style="font-size:1.5em;margin-right:10px;vertical-align:sub;">Welcome！${adminVO.admin_Name}</span>
 						<c:choose>
                           <c:when test="<%=login_state_backEnd %>">
                            <a href="<%= request.getContextPath()%>/admin.do?action=logout"><span class=" top_banner btn btn-info"><i class=" fas fa-sign-out-alt" aria-hidden="true"></i></span></a>
@@ -182,7 +182,6 @@
 
 			<div class="row">
 				<div class="col-lg-12">
-					<h1 class="page-header">Welcome ${adminVO.admin_Name}!</h1>
 				</div>
 			</div>
 

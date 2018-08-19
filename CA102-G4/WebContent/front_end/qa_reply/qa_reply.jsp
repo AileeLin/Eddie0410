@@ -27,6 +27,8 @@ boolean login_state = false;
   return;
   }
 
+	long token=System.currentTimeMillis();
+	session.setAttribute("token", token);
 %>
 <%
 	String question_id=request.getParameter("question_id");
@@ -299,6 +301,7 @@ boolean login_state = false;
     	<div class="container">	
 			<textarea style="width:1140px;height:120px" name="reply_content" ${qa_reply.reply_content}></textarea>
          	 <input type="hidden" name="action" value="insert">
+         	 <input type="hidden" name="token" value="${token}">
           	 <input type="hidden" name="question_id" value="${questionVO.question_id}">
           	 <input type="hidden" name="mem_Id" value="${memberVO.mem_Id}">
          	 <input type="submit" value="送出" class="btn btn-success" style="margin-left: 1085px;"> 

@@ -407,7 +407,7 @@
 												
 												<div class="col-lg-12 col-md-12 col-sm-12 col-12">
 													<hr>
-													<%= traTripVO.getTraTrip_note()%>
+													<c:out value="<%= traTripVO.getTraTrip_note()%>"/>
 												</div>
 											</div>
 										</div>
@@ -446,7 +446,7 @@
 												
 												<div class="col-lg-12 col-md-12 col-sm-12 col-12">
 													<hr>
-													<%= attTripVO.getAttTrip_note()%>
+													<c:out value="<%= attTripVO.getAttTrip_note()%>"/>
 												</div>
 											</div>
 										</div>
@@ -631,6 +631,7 @@
 								<div>
 									<div class="input-group input-group-sm">
 										<input type="hidden" name="action" value="tripEditSearch">
+										<input type="hidden" name="searchTrigger" value="true">
 										<input type="text"  placeholder="輸入關鍵字..."
 											name="keyword"> 
 										<span class="input-group-append">
