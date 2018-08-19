@@ -294,7 +294,12 @@ $(document).ready(function(){
   
     //************************聊天對話中，若有傳送圖片，點選圖片時會將照片放大***********************//
     $("body").on("click",".input_chatContext>div>span>span>img",function(){
-    	$("#chatRoomPhoto_Modal .modal-body > img").attr("src",$(this).attr("src"));
+    	$("#chatRoomPhoto_Modal .modal-body img").attr("src",$(this).attr("src"));
+    	if($(this).prev().attr("src") == null){
+    		$("#chatRoomPhoto_Modal .modal-body>a").attr("href",$(this).attr("src"));
+    	}else{
+    		$("#chatRoomPhoto_Modal .modal-body>a").attr("href",$(this).prev().attr("src"));
+    	}
     	$("#chatRoomPhoto_Modal").modal({backdrop:'static'});
     });
     
@@ -404,14 +409,25 @@ function createNode(){
 			var n=files.length;
 
 			for(var i=0;i<n;i++){
-				var jsonObj ={
-						"TYPE":"chat",
-						"TO_CHATROOMID":cr_id,
-						"TO_CRNAME":cr_name,
-						"MEM_ID":loginMemId_Now,
-						"MSG":"<img src='"+files[i]+"' style='width:100px;height:auto'>",
-						"TIME":date_str+" "+time_str
-				 };
+				if(files[i].indexOf("image") != -1 ){
+					var jsonObj ={
+							"TYPE":"chat",
+							"TO_CHATROOMID":cr_id,
+							"TO_CRNAME":cr_name,
+							"MEM_ID":loginMemId_Now,
+							"MSG":"<img src='"+files[i]+"' style='width:100px;height:auto'>",
+							"TIME":date_str+" "+time_str
+					 };
+				}else{
+					var jsonObj ={
+							"TYPE":"chat",
+							"TO_CHATROOMID":cr_id,
+							"TO_CRNAME":cr_name,
+							"MEM_ID":loginMemId_Now,
+							"MSG":"<img src='"+files[i]+"' style='width:0px;height:0px'>檔案:<img src='/CA102G4/front_end/images/all/document.png' style='width:50px;height:auto'>",
+							"TIME":date_str+" "+time_str
+					 };
+				}
 				 webSocket.send(JSON.stringify(jsonObj));
 			 }
 			

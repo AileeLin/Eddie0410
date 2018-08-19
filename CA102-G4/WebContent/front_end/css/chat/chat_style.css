@@ -1,3 +1,20 @@
+    /*引入semantic Icon*/
+    @font-face {
+      font-family: 'Icons';
+      src: url("../../fonts/icons.eot");
+      src: url("../../fonts/icons.eot?#iefix") format('embedded-opentype'), 
+           url("../../fonts/icons.woff2") format('woff2'), 
+           url("../../fonts/icons.woff") format('woff'), 
+           url("../../fonts/icons.ttf") format('truetype'),
+           url("../../fonts/icons.svg#icons") format('svg');
+      font-style: normal;
+      font-weight: normal;
+      font-variant: normal;
+      text-decoration: inherit;
+      text-transform: none;
+    }
+
+
     .chatContainer,
     .input_chatContainer{
        position: fixed;
@@ -202,4 +219,22 @@
     #chat_AddFri_Modal .modal-body .item{
     	border: 0px;
     	width:100%;
+    }
+	
+	/*避免btn字型被改掉*/
+    #chat_AddFri_Modal button.btn{
+    	font-family: 'Oswald','Noto Sans TC', sans-serif !important;
+    }
+    
+    /*揪團頁面搜尋按鈕會變灰色*/
+    #chat_AddFri_Modal i.search.icon{
+    	background-color: #ffffff;
+    	outline: 0px;
+    	outline-offset: 0px;
+    	border: 1px solid rgba(34, 36, 38, 0.15);
+    	padding-top: 0px;
+    }
+    
+    #chat_AddFri_Modal #select_Fri > div{
+    	color:#333;
     }

@@ -114,7 +114,7 @@
     <link href="<%=request.getContextPath()%>/front_end/css/all/index_bootstrap.css" rel="stylesheet" type="text/css" media="all" />
     <script src="<%=request.getContextPath()%>/front_end/js/all/index_bootstrap.js"></script>
     <!-- //bootstrap css及JS檔案 -->
-
+    
     <!-- css -->
     <link href="<%=request.getContextPath()%>/front_end/css/all/index_style.css" rel="stylesheet" type="text/css" media="all" />
     <!-- //css -->
@@ -140,6 +140,7 @@
     <!-- //LogoIcon -->
     
     <!-- 聊天相關CSS及JS -->
+     <link href="<%=request.getContextPath()%>/front_end/css/chat/Semantic_chat.css" rel="stylesheet" type="text/css">
 	 <link href="<%=request.getContextPath()%>/front_end/css/chat/chat_style.css" rel="stylesheet" type="text/css">
 	 <script src="<%=request.getContextPath()%>/front_end/js/chat/vjUI_fileUpload.js"></script>
 	 <script src="<%=request.getContextPath()%>/front_end/js/chat/chat.js"></script>

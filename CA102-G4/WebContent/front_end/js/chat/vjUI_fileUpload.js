@@ -146,14 +146,17 @@ if(!vj_tmp_object){
 		var dt = event.dataTransfer;
 		var files = dt.files;
 		var n = files.length;
-		self.userUploadNum=n;
+		//self.userUploadNum=n;
 		self.loadSuccess=0;
 		self.loadFileing=1;
 		for (var i = 0; i < n; i++) {
 			try {
+				
 				var file = files[i];
+				self.userUploadNum++;
+				console.log('上傳檔案類型:'+i+"-"+file.type);
 				self.debug(file);
-				self.getFile(file);
+				self.getFile(file);		
 			} catch (e) {
 				self.debug(e.message);
 			}

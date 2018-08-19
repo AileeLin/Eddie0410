@@ -1,5 +1,6 @@
 package com.chat.controller;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -189,20 +190,33 @@ public class ChatServlet {
 		if("history".equals(type)) {
 			Jedis jedis = pool.getResource();
 			List<String> historyData = jedis.lrange(chatRoom_id, 0, jedis.llen(chatRoom_id) - 1);
-			String historyMsg = gson.toJson(historyData)
+			String historyMsg="";
+			
+			for(int i=0;i< historyData.size() ;i++) {
+				historyMsg = gson.toJson(historyData.get(i))
+													.replace("\"{","{")
+													.replace("}\"","}")
 													.replace("\\","")
 													.replace("[\"{","[{")
 													.replace("}\",\"{", "},{")
 													.replaceAll("}\"]", "}]");
-			System.out.println("要回傳的歷史訊息:"+historyMsg);
-			Map map = new LinkedHashMap();
-			map.put("TYPE", "history");
-			map.put("HISTORYMSG",historyMsg);
-			JSONObject json = new JSONObject(map);
-			
-			Session receiverSession = sessionsMap.get(sendMemId); 
-			if(receiverSession != null && receiverSession.isOpen()) {
-				receiverSession.getAsyncRemote().sendText(json.toString());				
+				Map map = new LinkedHashMap();
+				map.put("TYPE", "history");
+				map.put("HISTORYMSG",historyMsg);
+				JSONObject json = new JSONObject(map);
+				
+				Session receiverSession = sessionsMap.get(sendMemId); 
+				if(receiverSession != null && receiverSession.isOpen()) {
+					//receiverSession.getAsyncRemote().sendText(json.toString());
+					try {
+						receiverSession.getBasicRemote().sendText(json.toString());
+					} catch (IOException e) {
+						System.out.println("推送歷史訊息發生錯誤"+e.getMessage());
+					}
+					System.out.println("真正推出去的歷史訊息:"+json.toString());
+
+				}
+
 			}
 			jedis.close();
 		}

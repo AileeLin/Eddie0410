@@ -4,7 +4,7 @@
         <div class="chatHeader">
             
                 &nbsp;聊天室
-                <span style="float: right;padding-right: 10px" id="chat_addFri_span">
+                <span style="float: right;padding-right: 10px;" id="chat_addFri_span">
                     <span data-toggle="tooltip" title="建立新對話" data-placement="top" >
                         <i class="fas fa-user-plus"></i>
                     </span>
@@ -216,7 +216,9 @@
           			<button type="button" class="btn" data-dismiss="modal">x</button> 
           		</div>
 	            <div class="modal-body" style="text-align:center;">
-	            	<img id="photoModal" style="width:auto;max-width:500px">         
+	            	<a download>
+	            		<img id="photoModal" style="width:auto;max-width:500px">
+	            	</a>        
 	            </div>
           </div>
           <!-- Modal 顯示圖片視窗content END-->
@@ -437,19 +439,18 @@
 			}else if(msgType.trim() == "history"){
 				var history_jsonObject = JSON.parse(jsonObj.HISTORYMSG);
 
-				for (i in history_jsonObject) {	
-					openChatRoomID = history_jsonObject[i].TO_CHATROOMID;
-					msgTime = history_jsonObject[i].TIME;
-					msgContent = history_jsonObject[i].MSG;
-					
-					//解決圖片部分符號問題
-					msgContent = msgContent.replace(/u003d/g, "=").replace(/u003c/g, "<").replace(/u0027/g, "'").replace(/u003e/g, ">");
-					
-					senderMemId = history_jsonObject[i].MEM_ID;
-					//會把收到的訊息，append到聊天對話內容
-					<%@ include file="/front_end/personal_area/chatContent_div.file" %>
-				}
-					console.log("歷史訊息append2222222222");
+				openChatRoomID = history_jsonObject.TO_CHATROOMID;
+				msgTime = history_jsonObject.TIME;
+				msgContent = history_jsonObject.MSG;
+				console.log(msgContent);
+				//解決圖片部分符號問題
+				msgContent = msgContent.replace(/u003d/g, "=").replace(/u003c/g, "<").replace(/u0027/g, "'").replace(/u003e/g, ">");
+				
+				senderMemId = history_jsonObject.MEM_ID;
+				//會把收到的訊息，append到聊天對話內容
+				<%@ include file="/front_end/personal_area/chatContent_div.file" %>
+
+				console.log("歷史訊息append2222222222");
 			}else if(msgType.trim() == "open"){
 				if(jsonObj.openMemId.trim() != loginMemId_Now){
 					//問題?? 是否再判斷這個人是否封鎖我???
