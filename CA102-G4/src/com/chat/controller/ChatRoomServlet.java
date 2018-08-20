@@ -138,9 +138,30 @@ public class ChatRoomServlet extends HttpServlet {
 					out.println("錯誤：未取到好友的會員ID。");
 					return;
 				}
-
-				/***************************第二步錯誤處理完畢，準備新增新的聊天對話****************/
+				/***************************第二步錯誤處理完畢，新增前先確認是否已存在聊天了****************/
 				ChatRoomService crSvc = new ChatRoomService();
+				ChatRoom_JoinService crjSvc = new ChatRoom_JoinService();
+				
+				List<ChatRoom_JoinVO> login_joinCR =  crjSvc.getMyChatRoom(login_MemId);
+				System.out.println("來這裡了!!!!!!"+login_joinCR.toString());
+				
+				for(ChatRoom_JoinVO crjvo : login_joinCR) {
+					//判斷登入者參加的該聊天對話，為聊聊!再來判斷....這個聊天對話是否有存在賣家
+					if((crSvc.getOne_ByChatRoomID(crjvo.getChatRoom_ID())).getChatRoom_InitCNT() == 666) {		
+						//抓出這個登入者參加聊聊的聊天對話的人員
+						List<ChatRoom_JoinVO> sellerCR = crjSvc.getJoinMem_ByChatRoom(crjvo.getChatRoom_ID());
+						for(ChatRoom_JoinVO sellerCRJvo : sellerCR) {
+							//若賣家存在於這個登入者所參加的聊聊，就代表兩個人早已透過聊聊聊天
+							if(sellerCRJvo.getJoin_MemID().equals(seller_MemId)) {
+								out.println("{\"CRID\":\""+sellerCRJvo.getChatRoom_ID()+"\",\"crName\":\""+(crSvc.getOne_ByChatRoomID(sellerCRJvo.getChatRoom_ID())).getChatRoom_Name()+"\",\"cnt\":\"666\"}");
+								return;
+							}
+						}
+					}
+				}
+				
+				/***************************第二步錯誤處理完畢，準備新增新的聊天對話****************/
+				
 				MemberService memSvc = new MemberService();
 				String sellerName = memSvc.findByPrimaryKey(seller_MemId).getMem_Name();
 				String loginName = memSvc.findByPrimaryKey(login_MemId).getMem_Name();

@@ -781,7 +781,7 @@ function checkIsLogin(memid,seller){
 			}
 			
 	});/**Ajax end**/
-	alert("有登入");
+	console.log("順利執行到開啟賣家與買家的聊天對話");
 	return false;
 }
 
