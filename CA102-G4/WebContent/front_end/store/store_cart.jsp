@@ -190,12 +190,18 @@ if(memberVO != null){
     <link href="<%=request.getContextPath()%>/front_end/css/chat/chat_style.css" rel="stylesheet" type="text/css">
     <script src="<%=request.getContextPath()%>/front_end/js/chat/vjUI_fileUpload.js"></script>
     <script src="<%=request.getContextPath()%>/front_end/js/chat/chat.js"></script>
-    <%@ include file="/front_end/personal_area/chatModal_JS.file" %>
+    
     <style>
     	button {
     		font-family: inherit;
     	}
     </style>
+    
+    <!-- 登入才會有的功能(檢舉、送出或接受交友邀請通知)-->
+	<c:if test="${memberVO != null}">
+	 	<%@ include file="/front_end/personal_area/chatModal_JS.file" %>
+	</c:if>
+   
     <!-- //聊天相關CSS及JS -->
 
  <script>
