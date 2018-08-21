@@ -445,7 +445,7 @@
 								<button type="button" data-toggle="modal" data-target="#myModal"
 									class="fas fa-exclamation-triangle" style="border:0; background-color:white; height: 32px;"></button>
 							</div>
-							<hr class="hr_setting" >
+							<hr class="hr_setting" style="margin-top:33px;">
 						</div>
 						<div class="action">
 
@@ -538,7 +538,7 @@
 				<form class="ui reportMessage form" METHOD="POST" ACTION="<%=request.getContextPath()%>/photo_wall.do">
 				
 				<textarea class="reportReasonContent" name="report_Reason" maxlength="90"></textarea>
-											
+															
 				<!-- 被檢舉人的照片牆ID -->	
 				<input type="hidden" name="photo_No" id="reportPhotoNo" value="${photo_wallVO.photo_No}">
 				

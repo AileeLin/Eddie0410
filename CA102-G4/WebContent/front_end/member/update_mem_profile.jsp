@@ -78,6 +78,9 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="keywords" content="TravelMaker,Travelmaker,自助旅行,登入畫面" />
 <!-- jQuery&ajax -->
+
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <!-- Bootstrap -->
@@ -88,7 +91,6 @@
 <!--自定義的dropdown.js-->
 <script src="<%=request.getContextPath()%>/front_end/js/member/dropdown.js"></script>
 <!--  生日js  -->
-<script src="<%=request.getContextPath()%>/front_end/js/member/birthday.js"></script>
 
 <!-- font字體 -->
 <link href='https://fonts.googleapis.com/css?family=Oswald:400,700,300'
@@ -106,11 +108,8 @@
 <link rel="stylesheet" href="<%=request.getContextPath()%>/front_end/css/member/login.css">
 <link rel="stylesheet" href="<%=request.getContextPath()%>/front_end/css/member/modal.css">
 <link rel="stylesheet" href="<%=request.getContextPath()%>/front_end/css/member/mem_page_v1.css">
-<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-<link rel="stylesheet" href="/resources/demos/style.css">
 
 <!--  css  -->
 <style>
@@ -120,15 +119,19 @@
 	height:200px;
 }
 </style>
+<!-- 日期時間選擇 -->
+<link rel="stylesheet" href="<%=request.getContextPath()%>/back_end/css/ad/jquery.datetimepicker.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js"></script>
 
 <script>
-  $(function() {
-   $( "#datepicker" ).datepicker({
-      showAnim: "slideDown",
-      maxDate: "0d",
-      dateFormat : "yy-mm-dd"
-    });
-  });
+$(document).ready(function(){			
+	$('#datepicker').datetimepicker({
+		value:null,
+		format:'Y-m-d',
+// 		theme:'dark',
+		
+	})
+});
  </script>
  
 	<!-- 聊天相關CSS及JS -->
@@ -247,85 +250,17 @@
 		<div class="container">
 			<div class="sidebar_menu" style="margin-left:0px">
 				<div class="has_children">
-					<li class="fas fa-user">&nbsp;我的帳戶</li> <a id="dropdown_item"
-						href="#">個人檔案</a> 
-						
-						<a id="dropdown_item" href="/CA102G4/front_end/member/update_mem_password.jsp">更改密碼</a>
-	
-						<a id="dropdown_item" href="#">地址</a> 
-						
-				</div>
+				<li class="fas fa-user">&nbsp;我的帳戶</li> <a id="dropdown_item"
+					href="/CA102G4/front_end/member/update_mem_profile.jsp">個人檔案</a> 
+					
+					<a id="dropdown_item" href="/CA102G4/front_end/member/update_mem_password.jsp">更改密碼</a>
+			</div>
+				
 				<div class="has_children">
-					<li class="fas fa-coins">&nbsp;我的購買</li> <a id="dropdown_item"
-						href="#">管理購買清單</a> <a id="dropdown_item" href="#">管理我的銷售</a>
-	
-				</div>
-	
-				<div class="has_children">
-					<li class="fas fa-exclamation-circle">&nbsp;我的通知</li> <a
-						id="dropdown_item" href="#">test</a>
-				</div>
-				<!--
-	            <div class="has_children">
-	                <li class="far fa-calendar-alt">&nbsp;我的行程</li>
-	
-	                <a id="dropdown_item" href="#">瀏覽我的自助行程</a>
-	                <a id="dropdown_item" href="#">瀏覽我收藏的行程</a>
-	
-	            </div>
-	-->
-	
-				<!--
-	            <div class="has_children">
-	                <li class="fas fa-users">&nbsp;我的揪團</li>
-	
-	                <a id="dropdown_item" href="#">管理我發起的揪團</a>
-	                <a id="dropdown_item" href="#">管理我參加的揪團</a>
-	
-	            </div>
-	-->
-	
-				<!--
-	            <div class="has_children">
-	                <li class="fas fa-user-friends">&nbsp;我的好友</li>
-	
-	                <a id="dropdown_item" href="#">新增好友</a>
-	                <a id="dropdown_item" href="#">瀏覽好友清單</a>
-	                <a id="dropdown_item" href="#">瀏覽黑名單</a>
-	
-	            </div>
-	-->
-	
-				<!--
-	            <div class="has_children">
-	                <li class="fas fa-question-circle">&nbsp;我的問答</li>
-	
-	                <a id="dropdown_item" href="#">我發表的討論</a>
-	                <a id="dropdown_item" href="#">我參與的討論</a>
-	                <a id="dropdown_item" href="#">我收藏的討論</a>
-	
-	            </div>
-	-->
-	
-				<!--
-	            <div class="has_children">
-	                <li class="fas fa-book-open">&nbsp;我的旅遊記</li>
-	
-	                <a id="dropdown_item" href="#">發表旅遊記</a>
-	                <a id="dropdown_item" href="#">刪除旅遊記</a>
-	                <a id="dropdown_item" href="#">收藏旅遊網誌</a>
-	                <a id="dropdown_item" href="#">影片牆</a>
-	            </div>
-	-->
-	
-				<!--
-	            <div class="has_children">
-	                <li class="fas fa-comments">&nbsp;我的聊天室</li>
-	
-	                <a id="dropdown_item" href="#">test</a>
-	
-	            </div>
-	-->
+                <li class="fas fa-users">&nbsp;我的揪團</li>
+
+           		</div>
+				
 	
 				</div>
 
@@ -352,10 +287,10 @@
 <%-- 									type="text" value="${memberVO.mem_Id}" name="mem_Id" placeholder="Id" autocomplete="off"> --%>
 						
 							
-							<label style="color:#272727;">姓　　名：</label>
-							
-								<input class="stardust-input_element_my-account_full-input" style="font-color:black ;background-color:white;"
-									type="text" value="${memberVO.mem_Name}" name="mem_Name" placeholder="name" autocomplete="off">
+						<label style="color:#272727;">姓　　名：</label>
+						
+							<input class="stardust-input_element_my-account_full-input" style="font-color:black ;background-color:white;"
+								type="text" value="${memberVO.mem_Name}" name="mem_Name" placeholder="name" autocomplete="off">
 						<br>
 						<br>
 						<label style="color:#272727;">手　　機：</label>
@@ -374,7 +309,7 @@
 								</div>
 							<br>	
 							<br>
-							<label style="color:#272727;">日　　期：<input type="text" id="datepicker" value="${memberVO.mem_Birthday}" size="20" readonly name="mem_Birthday" style="background-color:white; border:1px groove;"></label>	
+							<label style="color:#272727;">生　　日：<input type="text" id="datepicker" value="${memberVO.mem_Birthday}" size="20" readonly name="mem_Birthday" style="background-color:white; border:1px groove;"></label>	
 							<br>
 							<br>
 							<div class="form-group">

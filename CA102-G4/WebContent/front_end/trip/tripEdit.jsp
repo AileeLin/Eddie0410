@@ -420,7 +420,7 @@
 									<div class="card bg-light p-1" id="card-${tripDaysVO.tripDay_days}-<%=i%>">
 										<div class="container-fluid">
 											<div class="row">
-												<div class="col-lg-3 col-md-3 col-sm-3 col-3">
+												<div class="col-lg-3 col-md-3 col-sm-3 col-3 p-0">
 													<div class="polaroid my-auto">
 														<img src="<%= request.getContextPath()%>/trip/getPicture.do?att_no=<%= attTripVO.getAtt_no()%>" style="width: 100%">
 													</div>

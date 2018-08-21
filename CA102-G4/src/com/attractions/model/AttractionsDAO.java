@@ -35,7 +35,7 @@ public class AttractionsDAO implements AttractionsDAO_interface {
 //	private static final String SQL_QUERY_ALL = "select * from ATTRACTIONS";
 	private static final String SQL_QUERY_PICTURE = "select ATT_PICTURE from ATTRACTIONS where ATT_NO = ?";
 	//世銘打的
-	private static final String SQL_QUERY_ALL_RANDOM = "SELECT * FROM(SELECT * FROM ATTRACTIONS ORDER BY DBMS_RANDOM.VALUE) WHERE ROWNUM <=4 AND ATT_STATUS = 1";
+	private static final String SQL_QUERY_ALL_RANDOM = "SELECT * FROM(SELECT * FROM ATTRACTIONS ORDER BY DBMS_RANDOM.VALUE) WHERE ROWNUM <=4 AND ATT_STATUS = 1 AND ATT_PICTURE IS NOT NULL";
 	@Override
 	public int insert(AttractionsVO attVO) {
 		int updateCount = 0;

@@ -1,6 +1,8 @@
 package com.tools;
 
 import java.util.Properties;
+
+import javax.activation.DataHandler;
 import javax.mail.Authenticator;
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -41,7 +43,9 @@ public class JavaMailSender {
 		   //設定信中的主旨  
 		   message.setSubject(subject);
 		   //設定信中的內容 
-		   message.setText(messageText);
+//		   message.setText(messageText);
+		   DataHandler data = new DataHandler(messageText, "text/html;charset=utf-8");
+		   message.setDataHandler(data);
 
 		   Transport.send(message);
 		   System.out.println("傳送成功!");

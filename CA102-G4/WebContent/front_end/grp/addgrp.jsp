@@ -172,6 +172,17 @@
 	.footer{
 		background-color:#1b1c1d; 
 	}
+	.btn-primary-grp{
+	background-color: rgba(0,50,50,0.2);
+    border-color: rgba(0,67,50,0.2);
+	}	
+	.btn-primary-grp:hover{
+		color:unset;
+		background:none !important;
+	}
+	.btn-primary-grp:focus{
+		color:unset;
+	}
 	</style>
 
 	<!-- 聊天相關CSS及JS -->
@@ -278,13 +289,19 @@
     </div>
 	<!-- //banner -->
 
-	<!-- 主圖區 -->
+<!-- 主圖區 -->
     <div>
         <div class="carousel-inner">
             <div class="carousel-images">
                 <img src="<%=request.getContextPath()%>/front_end/images/all/aegean_Sea_2.png" style="width:100% ;height:auto;" alt="">
                 <div class="">
-                    <div class="carousel-caption">											
+                    <div class="carousel-caption">
+                        <h1>揪個合適的夥伴一起旅行</h1>
+                        <p>你揪過了嗎？</p>						
+                     <a href="<%=request.getContextPath()%>/front_end/grp/addgrp.jsp">
+                     <button class="btn btn-lg btn-primary-grp" type="button" style="border:0;color:white;">
+                      	 開始我的揪團</button>
+                      </a>						
                     </div>
                 </div>
             </div>

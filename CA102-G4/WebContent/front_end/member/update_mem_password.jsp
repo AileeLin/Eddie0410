@@ -83,6 +83,8 @@ if( login_state != true){
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="keywords" content="TravelMaker,Travelmaker,自助旅行,登入畫面" />
 <!-- jQuery&ajax -->
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <!-- Bootstrap -->
@@ -92,8 +94,6 @@ if( login_state != true){
 <script src="<%=request.getContextPath()%>/front_end/js/member/modernizr-2.6.2.min.js"></script>
 <!--自定義的dropdown.js-->
 <script src="<%=request.getContextPath()%>/front_end/js/member/dropdown.js"></script>
-<!--  生日js  -->
-<script src="<%=request.getContextPath()%>/front_end/js/member/birthday.js"></script>
 
 <!-- font字體 -->
 <link href='https://fonts.googleapis.com/css?family=Oswald:400,700,300'
@@ -111,13 +111,8 @@ if( login_state != true){
 <link rel="stylesheet" href="<%=request.getContextPath()%>/front_end/css/member/login.css">
 <link rel="stylesheet" href="<%=request.getContextPath()%>/front_end/css/member/modal.css">
 <link rel="stylesheet" href="<%=request.getContextPath()%>/front_end/css/member/mem_page_v1.css">
-<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
-<!-- <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"> -->
-<!-- <link rel="stylesheet" href="/resources/demos/style.css"> -->
 
-<!--  css  -->
 <style>
 
 #update_password_btn{
@@ -250,82 +245,11 @@ margin-top: 50px;
 					href="/CA102G4/front_end/member/update_mem_profile.jsp">個人檔案</a> 
 					
 					<a id="dropdown_item" href="/CA102G4/front_end/member/update_mem_password.jsp">更改密碼</a>
-					
-					<a id="dropdown_item" href="#">地址</a>
-
 			</div>
-			<div class="has_children">
-				<li class="fas fa-coins">&nbsp;我的購買</li> <a id="dropdown_item"
-					href="#">管理購買清單</a> <a id="dropdown_item" href="#">管理我的銷售</a>
-
-			</div>
-
-			<div class="has_children">
-				<li class="fas fa-exclamation-circle">&nbsp;我的通知</li> <a
-					id="dropdown_item" href="#">test</a>
-			</div>
-
-			<!--
-            <div class="has_children">
-                <li class="far fa-calendar-alt">&nbsp;我的行程</li>
-
-                <a id="dropdown_item" href="#">瀏覽我的自助行程</a>
-                <a id="dropdown_item" href="#">瀏覽我收藏的行程</a>
-
-            </div>
--->
-
-			<!--
-            <div class="has_children">
+							<div class="has_children">
                 <li class="fas fa-users">&nbsp;我的揪團</li>
 
-                <a id="dropdown_item" href="#">管理我發起的揪團</a>
-                <a id="dropdown_item" href="#">管理我參加的揪團</a>
-
-            </div>
--->
-
-			<!--
-            <div class="has_children">
-                <li class="fas fa-user-friends">&nbsp;我的好友</li>
-
-                <a id="dropdown_item" href="#">新增好友</a>
-                <a id="dropdown_item" href="#">瀏覽好友清單</a>
-                <a id="dropdown_item" href="#">瀏覽黑名單</a>
-
-            </div>
--->
-
-			<!--
-            <div class="has_children">
-                <li class="fas fa-question-circle">&nbsp;我的問答</li>
-
-                <a id="dropdown_item" href="#">我發表的討論</a>
-                <a id="dropdown_item" href="#">我參與的討論</a>
-                <a id="dropdown_item" href="#">我收藏的討論</a>
-
-            </div>
--->
-
-			<!--
-            <div class="has_children">
-                <li class="fas fa-book-open">&nbsp;我的旅遊記</li>
-
-                <a id="dropdown_item" href="#">發表旅遊記</a>
-                <a id="dropdown_item" href="#">刪除旅遊記</a>
-                <a id="dropdown_item" href="#">收藏旅遊網誌</a>
-                <a id="dropdown_item" href="#">影片牆</a>
-            </div>
--->
-
-			<!--
-            <div class="has_children">
-                <li class="fas fa-comments">&nbsp;我的聊天室</li>
-
-                <a id="dropdown_item" href="#">test</a>
-
-            </div>
--->
+           		</div>
 
 </div>
 
@@ -351,10 +275,6 @@ margin-top: 50px;
 							<td>會　員　帳　號&nbsp;&nbsp;：</td>
 							<td>${memberVO.mem_Account}</td>
 						</tr>	
-						<tr>
-							<td>會員密碼(確認用)：</td>
-							<td>${memberVO.mem_Password}</td>
-						</tr>
 						
 						</table>
 						<br>

@@ -842,6 +842,7 @@ public class TripServlet extends HttpServlet {
 			}else {
 				if(searchTrigger!=null&&"true".equals(searchTrigger)&&keyword==null) {
 					list = tripSvc.getPublish();
+					session.removeAttribute("tripMap");
 				}else {
 					list = tripSvc.getAll(map);
 				}

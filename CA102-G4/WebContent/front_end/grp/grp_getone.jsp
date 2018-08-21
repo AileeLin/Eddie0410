@@ -251,7 +251,7 @@
                             </div>
                             <div class="persent-one less-per">
                                 <i class="fa fa-calendar" aria-hidden="true"></i>
-                                <input type="text" name="GRP_END" class="textboxstyle " id="datepicker_trip_end" placeholder="揪團結束日期">
+                                <input type="text" name="" class="textboxstyle " id="datepicker_trip_end" placeholder="揪團結束日期">
                             </div>
                             <div class="persent-one less-btn">
                                 <input type="Submit" value="Search" class="btn cst-btn" id="srch">

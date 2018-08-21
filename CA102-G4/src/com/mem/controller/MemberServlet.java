@@ -213,7 +213,10 @@ public class MemberServlet extends HttpServlet {
 				}
 
 				/*************************** 2.開始新增資料 ***************************************/
-				String subject = "Travel Maker註冊成功通知信"; // 系統自動生成信件(MailService.java)
+//				String subject = "Travel Maker註冊成功通知信"; // 系統自動生成信件(MailService.java)
+				String subjectMS950 = "InstaBuy註冊成功通知信";
+				byte[] utf8Bytes = subjectMS950.getBytes("UTF-8");
+				String subject = new String(utf8Bytes, "UTF-8");
 				String messageText = "親愛的" + mem_Name + "您好，感謝您加入Travel Maker" + "以下為您的會員密碼: " + mem_Password + " 請小心保管個人資料！";
 				JavaMailSender mailSvc = new JavaMailSender(); // 系統寄信
 				mailSvc.sendMail(mem_Account, subject, messageText);

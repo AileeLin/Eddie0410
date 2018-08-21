@@ -294,7 +294,7 @@
                         <h1>揪個合適的夥伴一起旅行</h1>
                         <p>你揪過了嗎？</p>						
                      <a href="<%=request.getContextPath()%>/front_end/grp/addgrp.jsp">
-                     <button class="btn btn-lg btn-primary-grp" type="button" style="border:0;">
+                     <button class="btn btn-lg btn-primary-grp" type="button" style="border:0;color:white;">
                       	 開始我的揪團</button>
                       </a>						
                     </div>
@@ -338,7 +338,7 @@
                             </div>
                             <div class="persent-one less-per">
                                 <i class="fa fa-calendar" aria-hidden="true"></i>
-                                <input type="text" name="GRP_END" class="textboxstyle" id="datepicker_2" placeholder="結束日期">
+                                <input type="text"  class="textboxstyle" id="datepicker_2" placeholder="結束日期">
                             </div>
                             <div class="persent-one less-btn">
                                 <input type="Submit" value="Search" class="btn cst-btn" id="srch">
