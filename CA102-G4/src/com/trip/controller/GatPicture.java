@@ -58,7 +58,7 @@ public class GatPicture extends HttpServlet {
 			try {
 				String reqPara = req.getParameter("att_no").trim();
 				AttractionsService attSvc = new AttractionsService();
-				BufferedOutputStream bf = new BufferedOutputStream(out,8192);
+				BufferedOutputStream bf = new BufferedOutputStream(out,1024);
 				bf.write(attSvc.getPicture(reqPara));
 				
 //				out.write(attSvc.getPicture(reqPara)); //不透過BufferedOutputStream也可直接output
@@ -95,7 +95,7 @@ public class GatPicture extends HttpServlet {
 			try {
 				String reqPara = req.getParameter("attEdit_no").trim();
 				AttractionsEditService attEditSvc = new AttractionsEditService();
-				BufferedOutputStream bf = new BufferedOutputStream(out,8192);
+				BufferedOutputStream bf = new BufferedOutputStream(out,1024);
 				bf.write(attEditSvc.getPicture(reqPara));
 				
 			} catch (Exception e) {
@@ -125,7 +125,7 @@ public class GatPicture extends HttpServlet {
 				ResultSet rs = stmt.executeQuery(sql);
 				if (rs.next()) {
 					BufferedInputStream in = new BufferedInputStream(rs.getBinaryStream(1));
-					byte[] buf = new byte[4 * 1024]; // 4K buffer
+					byte[] buf = new byte[8 * 1024]; // 4K buffer
 					int len;
 					while ((len = in.read(buf)) != -1) {
 						out.write(buf, 0, len);

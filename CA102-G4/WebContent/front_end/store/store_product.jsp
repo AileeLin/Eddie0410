@@ -178,6 +178,14 @@
 	    <!-- LogoIcon -->
 	    <link href="<%=request.getContextPath()%>/front_end/images/all/Logo_Black_use.png" rel="icon" type="image/png">
 	    <!-- //LogoIcon -->
+	    
+	     <!-- 聊天相關CSS及JS -->
+		 <link href="<%=request.getContextPath()%>/front_end/css/chat/Semantic_chat.css" rel="stylesheet" type="text/css">
+		 <link href="<%=request.getContextPath()%>/front_end/css/chat/chat_style.css" rel="stylesheet" type="text/css">
+		 <script src="<%=request.getContextPath()%>/front_end/js/chat/vjUI_fileUpload.js"></script>
+		 <script src="<%=request.getContextPath()%>/front_end/js/chat/chat.js"></script>
+		 <!-- //聊天相關CSS及JS -->
+	    
 		<style>
 			p{
 				color:#555;
@@ -188,14 +196,11 @@
 			  height: 370px;   
 			  margin: auto;
 			}	
+			textarea,button {
+    		 font-family: inherit;
+    	    }
 		</style>
-	
-		 <!-- 聊天相關CSS及JS -->
-		 <link href="<%=request.getContextPath()%>/front_end/css/chat/chat_style.css" rel="stylesheet" type="text/css">
-		 <script src="<%=request.getContextPath()%>/front_end/js/chat/vjUI_fileUpload.js"></script>
-		 <script src="<%=request.getContextPath()%>/front_end/js/chat/chat.js"></script>
-		 <!-- //聊天相關CSS及JS -->
-		 
+
 		 <!-- 登入才會有的功能(檢舉、送出或接受交友邀請通知)-->
 		 <c:if test="${memberVO != null}">
 		 		<%@ include file="/front_end/personal_area/chatModal_JS.file" %>

@@ -1,4 +1,4 @@
-    /*引入semantic Icon*/
+   /*引入semantic Icon*/
     @font-face {
       font-family: 'Icons';
       src: url("../../fonts/icons.eot");
@@ -90,12 +90,13 @@
     .tooltip.fade.top,.tooltip.fade.top.in{
         width: fit-content;
     }
-    /*��予��”�����＊蝷�*/
+    /*嚙踝蕭��鈭蕭嚙踐��蕭��蕭��蕭嚙踐▽嚙踝嚗嚙�*/
     .avatar {
     vertical-align: middle;
     width: 2em;
     height: 2em;
     border-radius: 50%;
+    margin-left: 0px;
     }
     /*聊天列表小視窗的搜尋輸入盒*/
     .chatFooter>.input-group,
@@ -107,7 +108,7 @@
         border: 0;
     }
     
-     /*聊天列表小視窗的搜尋圖示區塊*/
+    /*聊天列表小視窗的搜尋圖示區塊*/
     .input-group-addon{
         background-color: white;
         border: 0;
@@ -200,7 +201,7 @@
     	cursor:not-allowed;
     }
     
-     /*顯示是否上線的狀態*/
+    /*顯示是否上線的狀態*/
     .online_status{
     	float: right;
     }
@@ -226,7 +227,7 @@
     	font-family: 'Oswald','Noto Sans TC', sans-serif !important;
     }
     
-    /*揪團頁面搜尋按鈕會變灰色*/
+   /*揪團頁面搜尋按鈕會變灰色*/
     #chat_AddFri_Modal i.search.icon{
     	background-color: #ffffff;
     	outline: 0px;
@@ -237,4 +238,16 @@
     
     #chat_AddFri_Modal #select_Fri > div{
     	color:#333;
+    }
+    
+    #chatRoomJoin_Modal .modal-body .item button,
+    #chatRoomJoin_Modal .modal-footer button{
+    	font-family: 'Oswald','Noto Sans TC', sans-serif !important;
+    }
+    #chatRoomJoin_Modal table td{
+    	border:0px;
+    }
+    
+    .chatContainer>.chatContext>ul.list-group{
+    	width:100%;
     }

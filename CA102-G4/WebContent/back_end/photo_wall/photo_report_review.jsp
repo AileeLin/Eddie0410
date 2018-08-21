@@ -103,6 +103,80 @@
 	rel='stylesheet' type='text/css'>
 <!-- //font字體 -->
 
+		<script>
+				//下方Uid 自行改發通知者的id
+				var MyPoint = "/chat/${adminVO.admin_Id}";
+				var host = window.location.host;
+				var path = window.location.pathname;
+				var webCtx = path.substring(0, path.indexOf('/', 1));
+				var endPointURL = "ws://" + window.location.host + webCtx + MyPoint;
+				
+				var webSocket;
+			
+				function connect() {
+					// create a websocket
+					console.log(endPointURL);
+					webSocket = new WebSocket(endPointURL);
+			
+					webSocket.onopen = function(event) {
+					};
+			
+					webSocket.onmessage = function(event) {
+					};
+			
+					webSocket.onclose = function(event) {
+					};
+				}
+			
+/////////////////////////////////////////////     傳送給被檢舉人     /////////////////////////////////////////////
+				function sendQuestion(a) {
+						//送標題
+						var title = "檢舉通知";
+						//送發送者名
+						var sender = "${adminVO.admin_Id}";
+						//送接收者名 測試用名為james 搭配indexed.html測試
+						var receiver = a;
+						//送訊息內容
+						var message = "根據我們審查，您的照片牆有違反了網站規定，因此我們已予以移除。";
+						
+							var jsonObj = {
+								"title"		:title,
+							  	"sender"	:sender,
+							 	"receiver"	:receiver,
+							 	"message"	:message
+							};
+// 							alert(JSON.stringify(jsonObj));	
+							webSocket.send(JSON.stringify(jsonObj));
+						}	
+// /////////////////////////////////////////////     傳送給檢舉人     /////////////////////////////////////////////
+// 			function sendQuestionNo(b) {
+	
+// 							//送標題
+// 							var title= "檢舉通知";
+// 							//送發送者名
+// 							var sender = "${adminVO.admin_Id}";
+// 							//送接收者名 測試用名為james 搭配indexed.html測試
+// 							var receiver = b;
+// 							//送訊息內容
+// 							var message = "根據我們的審查，我們判定您檢舉的照片牆並無違反TravelMaker的網站規定，感謝您的檢舉。";
+							
+// 								var jsonObj = {
+// 									"title"		:title,
+// 								  	"sender"	:sender,
+// 								 	"receiver"	:receiver,
+// 								 	"message"	:message
+// 								};
+// // 								alert(JSON.stringify(jsonObj));
+// 								webSocket.send(JSON.stringify(jsonObj));
+// 							}	
+		
+
+				function disconnect() {
+					webSocket.close();
+				}
+
+	        </script>
+
 <style>
 #showpic>img {
 	width: 150px;
@@ -121,7 +195,7 @@
 </style>
 
 </head>
-<body>
+<body  onload="connect();" onunload="disconnect();">
 	<div class="wrapper">
 		<!-- Sidebar  -->
 		<nav id="sidebar" class="navbar-fixed-left">
@@ -176,13 +250,9 @@
 						<li><a href="Back_ReportBlog.html">旅遊記檢舉</a></li>
 						<li><a href="#">問答區檢舉</a></li>
 						<li><a href="<%=request.getContextPath()%>/back_end/photo_wall/photo_report.jsp">照片牆檢舉</a></li>
-						<li><a href="#">揪團檢舉</a></li>
 						<li><a href="#">商品檢舉</a></li>
 					</ul></li>
 
-				<li><a href="#"> <i class="fas fa-shopping-cart"></i>
-						交易款項管理
-				</a></li>
 
 				<li><a
 					href="<%=request.getContextPath()%>/back_end/ad/back_ad.jsp"> <i
@@ -253,7 +323,7 @@
 							</div>
 							<div class="modal-footer">
 								<button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-								<button type="submit" class="btn btn-danger">確定</button>
+								<button type="submit" onclick="sendQuestionNo('${memberVO.mem_Id}');" class="btn btn-danger">確定</button>
 							</div>
 						</div>
 					</div>
@@ -264,6 +334,7 @@
 				<input type="hidden" name="photo_Sta" value="1">
 				<input type="hidden" name="pho_Rep_Stats" value="1">
 				<input type="hidden" name="action" value="update_State">
+				
 			</form>
 			
 			<form action="<%= request.getContextPath()%>/photo_wall.do" method="post">
@@ -282,7 +353,8 @@
 							<div class="modal-footer">
 		
 								<button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-								<button type="submit" class="btn btn-danger">確定</button>
+								<button type="submit" onclick="sendQuestion('${memberVO.mem_Id}');" class="btn btn-danger">確定</button>
+								
 							</div>
 						</div>
 					</div>
@@ -383,40 +455,7 @@
 		</div>
 
 		<!-- /.row -->
+
 		
-		
-		
-
-
-
-		<script>
-			<script type="text/javascript">
-			function $id(id) {
-				return document.getElementById(id);
-			}
-			document.getElementsByName("member_Photo")[0].onchange = function() {
-				readURL(this, 0)
-			};
-
-			function readURL(input, id) {
-				var parent = $id("showpic");
-				var child = $id(id);
-
-				if (input.files && input.files[0]) { //確認是否有檔案
-					var reader = new FileReader();
-					reader.onload = function(e) {
-						if (!parent.contains(child)) {
-							$id("showpic").innerHTML += "<img src='"+e.target.result+"' id="+id+">";
-						} else {
-							parent.removeChild(child);
-							$id("showpic").innerHTML += "<img src='"+e.target.result+"' id="+id+">";
-						}
-					}
-					reader.readAsDataURL(input.files[0]);
-				} else {
-					parent.removeChild(child); //必須藉由父節點才能刪除底下的子節點
-				}
-			}
-		</script>
 </body>
 </html>

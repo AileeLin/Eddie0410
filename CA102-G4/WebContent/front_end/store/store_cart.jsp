@@ -183,13 +183,19 @@
 <!-- //LogoIcon -->
     	
 	<!-- 聊天相關CSS及JS -->
+	<link href="<%=request.getContextPath()%>/front_end/css/chat/Semantic_chat.css" rel="stylesheet" type="text/css">
     <link href="<%=request.getContextPath()%>/front_end/css/chat/chat_style.css" rel="stylesheet" type="text/css">
     <script src="<%=request.getContextPath()%>/front_end/js/chat/vjUI_fileUpload.js"></script>
     <script src="<%=request.getContextPath()%>/front_end/js/chat/chat.js"></script>
     <%@ include file="/front_end/personal_area/chatModal_JS.file" %>
     <!-- //聊天相關CSS及JS -->
+    <style>
+    	button {
+    		font-family: inherit;
+    	}
+    </style>
     
- <script>
+ 	<script>
     	$(document).ready(function(){
     		
         	/*若有錯誤訊息時，就會跳出視窗.......*/

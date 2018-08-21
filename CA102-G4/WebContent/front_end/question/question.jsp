@@ -125,6 +125,7 @@
 	</style>
 	
 	<!-- 聊天相關CSS及JS -->
+	 <link href="<%=request.getContextPath()%>/front_end/css/chat/Semantic_chat.css" rel="stylesheet" type="text/css">
 	 <link href="<%=request.getContextPath()%>/front_end/css/chat/chat_style.css" rel="stylesheet" type="text/css">
 	 <script src="<%=request.getContextPath()%>/front_end/js/chat/vjUI_fileUpload.js"></script>
 	 <script src="<%=request.getContextPath()%>/front_end/js/chat/chat.js"></script>
@@ -241,7 +242,7 @@
 		<div class="ui hidden divider"></div>
 		<!-- //我是隔板 -->
 		<h1 class="ui header">
-			<span style="margin-left: 40px;"><span style="margin-top: -900px">問答區</span><a href="<%=request.getContextPath()%>/front_end/ask/ask.jsp" style="margin-left: 1020px;margin-top: -100px" type="button" class="btn btn-primary btn-lg">我要提問+</a></span>
+			<span style="margin-left: 40px;"><span style="margin-top: -900px">問答區</span><a href="<%=request.getContextPath()%>/front_end/ask/ask.jsp" style="margin-left: 1020px;margin-top: -100px;-webkit-appearance: none;" type="button" class="btn btn-primary btn-lg">我要提問+</a></span>
 		</h1>
 		
 <%@ include file="page1.file" %> 

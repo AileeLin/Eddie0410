@@ -424,7 +424,7 @@ function createNode(){
 							"TO_CHATROOMID":cr_id,
 							"TO_CRNAME":cr_name,
 							"MEM_ID":loginMemId_Now,
-							"MSG":"<img src='"+files[i]+"' style='width:0px;height:0px'>檔案:<img src='/CA102G4/front_end/images/all/document.png' style='width:50px;height:auto'>",
+							"MSG":"<img src='"+files[i]+"' style='width:0px;height:0px;margin-left: 0px;'>檔案:<img src='/CA102G4/front_end/images/all/document.png' style='width:50px;height:auto'>",
 							"TIME":date_str+" "+time_str
 					 };
 				}

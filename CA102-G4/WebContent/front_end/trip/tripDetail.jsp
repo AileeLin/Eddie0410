@@ -483,7 +483,7 @@
 										</div>
 										<div class="col-lg-12 col-md-12 col-sm-12 col-12">
 										<hr>
-										<%= tdList.get(dayCount-1).getTripDay_hotelNote()%>
+											<c:out value="<%= tdList.get(dayCount-1).getTripDay_hotelNote()%>"/>
 										</div>
 									</div>
 								</div>

@@ -293,7 +293,7 @@
 						行程名稱<font size="2" color=red><b>*</b></font> <input
 							class="form-control mt-1" type="text" name="trip_name"
 							pattern=".{1,20}" required placeholder="您的行程名稱(20字以內)"
-							value="${tripVO.trip_name}">
+							value="${tripVO_edit.trip_name}">
 					</div>
 					<div class="modal-footer bg-light">
 						<div align="center">
@@ -483,7 +483,7 @@
 										</div>
 										<div class="col-lg-12 col-md-12 col-sm-12 col-12">
 										<hr>
-										<%= tdList.get(dayCount-1).getTripDay_hotelNote()%>
+											<c:out value="<%= tdList.get(dayCount-1).getTripDay_hotelNote()%>"/>
 										</div>
 									</div>
 								</div>
@@ -557,7 +557,7 @@
 								}
 							%>
 							<% pageContext.setAttribute("attTripList", attTripList);%>
-							<%System.out.println(attTripList.size()); %>
+<%-- 							<%System.out.println(attTripList.size()); %> --%>
 							<%if(attTripList==null){%>
 							<%}else if(attTripList.size()>2){%>
 								<c:forEach var="attTripGMap" items="${attTripList}" begin="1" end="${attTripList.size()-2}" varStatus="s">
@@ -1480,7 +1480,7 @@
 				}
 			%>
 			<% pageContext.setAttribute("attTripList", attTripList);%>
-			<%System.out.println(attTripList.size()); %>
+<%-- 			<%System.out.println(attTripList.size()); %> --%>
 			<%if(attTripList==null){%>
 			<%}else if(attTripList.size()>2){%>
 				<c:forEach var="attTripGMap" items="${attTripList}" begin="1" end="${attTripList.size()-1}" varStatus="s">

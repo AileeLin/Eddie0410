@@ -13,7 +13,7 @@
 	}else{
 		login = "display:'';";
 		logout = "display:none;";
-		 }
+	}
 	 
 	boolean login_state = false;
 	Object login_state_temp = session.getAttribute("login_state");
@@ -35,7 +35,7 @@
 	list = (List<TripVO>)request.getAttribute("list");
 	String orderType=null;
 	orderType = request.getParameter("orderType");
-	System.out.println(orderType);
+// 	System.out.println(orderType);
 	if(orderType!=null){
 		if("view".equals(orderType)){
 			list = tripSvc.getPublishOrderViews();

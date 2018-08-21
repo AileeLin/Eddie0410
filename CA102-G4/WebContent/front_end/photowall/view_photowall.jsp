@@ -250,6 +250,7 @@
 
 	</style>
 	 <!-- 聊天相關CSS及JS -->
+	 <link href="<%=request.getContextPath()%>/front_end/css/chat/Semantic_chat.css" rel="stylesheet" type="text/css">
 	 <link href="<%=request.getContextPath()%>/front_end/css/chat/chat_style.css" rel="stylesheet" type="text/css">
 	 <script src="<%=request.getContextPath()%>/front_end/js/chat/vjUI_fileUpload.js"></script>
 	 <script src="<%=request.getContextPath()%>/front_end/js/chat/chat.js"></script>
@@ -537,10 +538,12 @@
 				<form class="ui reportMessage form" METHOD="POST" ACTION="<%=request.getContextPath()%>/photo_wall.do">
 				
 				<textarea class="reportReasonContent" name="report_Reason" maxlength="90"></textarea>
-								
-				<input type="hidden" name="photo_No" id="reportPhotoNo" value="${photo_wallVO.photo_No}"> 
+											
+				<!-- 被檢舉人的照片牆ID -->	
+				<input type="hidden" name="photo_No" id="reportPhotoNo" value="${photo_wallVO.photo_No}">
 				
-				<input type="hidden" name="mem_Id" value="<%=memberVO.getMem_Id()%>"> 
+				<!-- 被檢舉人的ID -->
+				<input type="hidden" name="mem_Id" value="${photo_wallVO.mem_Id}"> 
 				
 				<input type="hidden" name="action" value="reportPhoto">
 				

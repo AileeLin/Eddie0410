@@ -602,29 +602,28 @@ public class TripServlet extends HttpServlet {
 		}
 		
 		if("commitEdit".equals(action)) {
-			Map<String,String> errorMsgs = new LinkedHashMap<String,String>();
-			
-			req.setAttribute("errorMsgs", errorMsgs);
-			
+			System.out.println("test1");
 			try {
 				/***********************1.接收請求參數 - 輸入格式的錯誤處理*************************/
 				HttpSession session = req.getSession();
 				TripVO tripVO = (TripVO) session.getAttribute("tripVO_edit");
 				List<TripDaysVO> tdList = (List<TripDaysVO>) session.getAttribute("tdList");
 				Map<Integer,List<Object>> tripDayMap = (Map<Integer,List<Object>>)session.getAttribute("tripDayMap");
+				System.out.println("test2");
 
 				/***************************2.開始新增資料***************************************/
 				TripService tripSvc = new TripService();
 				//如果沒有trip_no代表為新建立的行程
 				if(tripVO.getTrip_no()==null) {
+					System.out.println("test3");
 					tripSvc.insertOneTrip(tripVO, tdList, tripDayMap);
 					
 					//如果有trip_no代表為編輯修改的行程
 				}else {
+					System.out.println("test4");
 					tripSvc.updateByEdit(tripVO, tdList, tripDayMap);
 				}
-				
-				
+				System.out.println("test5");
 				/***************************3.新增或修改完成,準備重導***********/
 				session.removeAttribute("tripVO_edit");
 				session.removeAttribute("tdList");
@@ -633,7 +632,6 @@ public class TripServlet extends HttpServlet {
 				return;
 				/***************************其他可能的錯誤處理**********************************/
 			}catch(Exception e) {
-				errorMsgs.put("errorMsgs",e.getMessage());
 				RequestDispatcher failureView = req.getRequestDispatcher("/front_end/trip/tripEdit.jsp");
 				failureView.forward(req, res);
 //				System.out.println(e.getMessage());
