@@ -385,7 +385,7 @@
 												<%}else if(type==5){%>
 														<i class="fas fa-taxi"></i>
 												<%}else if(type==6){%>
-														<i class="fas fa-car"></i>
+														<i class="fas fa-road"></i>
 												<%} %>
 												</div>
 												<div class="col-lg-9 col-md-9 col-sm-9 col-9">

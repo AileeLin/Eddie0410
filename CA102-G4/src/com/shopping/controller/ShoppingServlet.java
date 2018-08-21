@@ -210,7 +210,7 @@ public class ShoppingServlet extends HttpServlet {
 			
 			List<String> errorMsgs = new LinkedList<String>();
 			req.setAttribute("errorMsgs", errorMsgs);
-			
+			HttpSession session = req.getSession();
 			//1>信用卡2>貨到付款
 		    //1>待付款2>已付款(TM)
 			Integer payment_method = new Integer(req.getParameter("payment"));
@@ -223,10 +223,10 @@ public class ShoppingServlet extends HttpServlet {
 			
 			String addr = req.getParameter("addr");
 			String ord_store_711_name = req.getParameter("storeName");
-			Integer shipment_method = Integer.parseInt(req.getParameter("shipMethod"));
+			Integer shipment_method =(Integer) session.getAttribute("shipMethod");
 			String BuyerMemId = req.getParameter("BuyerMemId");
 			
-			HttpSession session = req.getSession();
+			
 			CartBean cartBean = (CartBean)session.getAttribute("cart");
 			List<CartItem> CartItemList = cartBean.getCartItems();
 			List<CartItem> CheckOutItemList =new ArrayList<CartItem>();
@@ -280,6 +280,7 @@ public class ShoppingServlet extends HttpServlet {
 						
 						// Send the use back to the form, if there were errors
 						if (!errorMsgs.isEmpty()) {
+		
 							RequestDispatcher failureView = req.getRequestDispatcher(requestURL);
 							failureView.forward(req, res);
 							return; // 程式中斷
@@ -287,9 +288,14 @@ public class ShoppingServlet extends HttpServlet {
 					/***************************2.開始修改資料*****************************************/
 						
 						OrdService ordSvc = new OrdService();
+						Map<String, List<CartItem>> sucOrdMap = new HashMap<String, List<CartItem>>();
+						Map<String, List<CartItem>> failOrdMap = new HashMap<String, List<CartItem>>();
+						
+
 						for(Map.Entry<String, List<CartItem>> entry : orderMap.entrySet()) {
 						    String seller_mem_id = entry.getKey();
 						    List<CartItem> list = entry.getValue();
+						  
 						    int order_item = list.size();
 						    int order_total = 0;
 	
@@ -297,21 +303,58 @@ public class ShoppingServlet extends HttpServlet {
 						    	CartItem c=list.get(i);
 						    	order_total = order_total + c.getTotal_price();
 						    }
-						    
-						    OrdVO ordVO = new OrdVO();
-						    ordVO = ordSvc.addOrdWithDetails(BuyerMemId,seller_mem_id,addr,payment_status,payment_method,1,
+					
+						    List failList = ordSvc.addOrdWithDetails(BuyerMemId,seller_mem_id,addr,payment_status,payment_method,1,
 						    		new Timestamp(System.currentTimeMillis()),1,order_total,order_item,shipment_method,ord_store_711_name,list);
-						   //從購物車移除結帳商品 
-						    for(int i = 0;i<list.size();i++) {
-						    	CartItem c=list.get(i);
-						    	cartBean.deleteCartItemById(c.getProduct_id());
+					
+						   
+						    
+						    //如果failList 沒有裝東西，表示這筆賣家的訂單成立，將此訂單中的商品從購物車移除結帳商品 
+						    if(failList.size()==0) {
+						    	for(int i = 0;i<list.size();i++) {
+							    	CartItem c=list.get(i);
+							    	cartBean.deleteCartItemById(c.getProduct_id());
+							    }
+
+						    	sucOrdMap.put(seller_mem_id, list);
+						    }else if(failList.size()>0) {
+
+						    	 //如果failList 有裝東西，表示這筆賣家的訂單中有商品缺貨，只需移除缺貨商品
+						    	for(int i = 0;i<list.size();i++) {
+							    	CartItem c=list.get(i);
+							    	if(failList.contains(c.getProduct_id())){
+							    		c.setQuantity(-1);
+							    		cartBean.deleteCartItemById(c.getProduct_id());
+							    	}
+							    	
+							    }
+						    	failOrdMap.put(seller_mem_id, list);
+	
 						    }
+
 						    int total_items = cartBean.getOrderTotalItems();
 						    session.setAttribute("total_items", total_items);
 						}
 								
 					/*************************** 3.接收完成,準備轉交(Send the Success view) ***********/
 					String url = "/front_end/store/store_checkout_3.jsp";
+					int totalPrice = 0;
+					int totalQty = 0;
+					for(String s:sucOrdMap.keySet()) {
+						for(CartItem c:sucOrdMap.get(s)) {
+							int qty = c.getQuantity();
+							int price = c.getTotal_price();
+							totalPrice = totalPrice+price;
+							totalQty = totalQty +qty;
+						}
+					}
+
+					req.setAttribute("sucOrdMap", sucOrdMap);
+					req.setAttribute("failOrdMap", failOrdMap);
+					req.setAttribute("totalPrice", totalPrice);
+					req.setAttribute("totalQty", totalQty);
+				
+					
 					RequestDispatcher successView = req.getRequestDispatcher(url);
 					successView.forward(req, res);
 					
@@ -369,6 +412,10 @@ public class ShoppingServlet extends HttpServlet {
 		req.setAttribute("errorMsgs", errorMsgs);
 		List<CartItem> orderItemList = new Vector<>();
 		String requestURL = req.getParameter("requestURL");
+		String token = (String)session.getAttribute("token");
+		String judgeDuplicate = req.getParameter("judgeDuplicate");
+		System.out.println(token);
+		System.out.println(judgeDuplicate);
 		int ord_total_prie = 0;
 		int ord_total_items = 0;
 		String[] productIdList = null;
@@ -421,6 +468,9 @@ public class ShoppingServlet extends HttpServlet {
 			req.setAttribute("ord_total_prie", ord_total_prie);
 			req.setAttribute("ord_total_items", ord_total_items);
 			req.setAttribute("productIdList", productIdList);
+			
+			
+			session.removeAttribute("token");
 			
 			UUID uuid = UUID.randomUUID();
 		    session.setAttribute("token",uuid.toString());//給下訂單按鈕用的token
@@ -477,11 +527,11 @@ public class ShoppingServlet extends HttpServlet {
 	
 				/*************************** 3.接收完成,準備轉交(Send the Success view) ***********/
 				
-				req.setAttribute("storeName", storeName);
-				req.setAttribute("addr", addr);
-				req.setAttribute("shipMethod", shipMethod);
-				req.setAttribute("productIdListStr", productIdListStr);
-				req.setAttribute("sellerListStr", sellerListStr);
+				session.setAttribute("storeName", storeName);
+				session.setAttribute("addr", addr);
+				session.setAttribute("shipMethod", shipMethod);
+				session.setAttribute("productIdListStr", productIdListStr);
+				session.setAttribute("sellerListStr", sellerListStr);
 				
 				session.removeAttribute("token");
 	

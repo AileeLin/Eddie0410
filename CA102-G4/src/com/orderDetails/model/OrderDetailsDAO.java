@@ -228,7 +228,7 @@ public class OrderDetailsDAO implements OrderDetailsDAO_interface {
 	}
 
 	@Override
-	synchronized public void insert2(OrderDetailsVO orderDetailsVO, Connection con) {
+	synchronized public int insert2(OrderDetailsVO orderDetailsVO, Connection con) {
 		
 		ProductService prodSvc = new ProductService();
 		ProductVO prodVO= prodSvc.getOneProduct(orderDetailsVO.getDetails_product_id());
@@ -238,6 +238,7 @@ public class OrderDetailsDAO implements OrderDetailsDAO_interface {
     			System.err.print("Transaction is being ");
 				System.err.println("rolled back-由-OrderDetails new stock <0");
 				con.rollback();
+			
 			} catch (SQLException e) {
 				throw new RuntimeException("rollback error occured. " + e.getMessage());
 			}
@@ -280,7 +281,9 @@ public class OrderDetailsDAO implements OrderDetailsDAO_interface {
 					}
 				}
 			}
+		
     	}
+		return newstock;
 	}
 
 	@Override

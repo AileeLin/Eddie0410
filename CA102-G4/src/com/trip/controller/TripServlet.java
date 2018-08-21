@@ -609,21 +609,24 @@ public class TripServlet extends HttpServlet {
 				TripVO tripVO = (TripVO) session.getAttribute("tripVO_edit");
 				List<TripDaysVO> tdList = (List<TripDaysVO>) session.getAttribute("tdList");
 				Map<Integer,List<Object>> tripDayMap = (Map<Integer,List<Object>>)session.getAttribute("tripDayMap");
-				System.out.println("test2");
-
+				
+				for(Map.Entry<Integer, List<Object>> entry : tripDayMap.entrySet()) {
+					System.out.println("第"+entry.getKey()+"天有"+entry.getValue().size()+"個行程");
+					System.out.println(tdList.get(entry.getKey()-1).getTripDay_no());
+					for(Object obj : entry.getValue()) {
+						System.out.println(obj.toString());
+					}
+				}
 				/***************************2.開始新增資料***************************************/
 				TripService tripSvc = new TripService();
 				//如果沒有trip_no代表為新建立的行程
 				if(tripVO.getTrip_no()==null) {
-					System.out.println("test3");
 					tripSvc.insertOneTrip(tripVO, tdList, tripDayMap);
 					
 					//如果有trip_no代表為編輯修改的行程
 				}else {
-					System.out.println("test4");
 					tripSvc.updateByEdit(tripVO, tdList, tripDayMap);
 				}
-				System.out.println("test5");
 				/***************************3.新增或修改完成,準備重導***********/
 				session.removeAttribute("tripVO_edit");
 				session.removeAttribute("tdList");

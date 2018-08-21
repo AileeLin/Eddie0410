@@ -30,7 +30,7 @@ public class blog_message_reportDAO implements blog_message_reportDAO_interface 
 	// 修改部落格留言檢舉狀態
 	private static final String UPDATE_STMT = "UPDATE BLOG_MESSAGE_REPORT SET BMR_STATUS = ? WHERE MEM_ID = ? AND MESSAGE_ID = ?";
 	// 傳回全部檢舉清單根據檢舉處理狀況排序，未處理的排上面
-	private static final String GET_ALL_STMT = "SELECT * FROM BLOG_MESSAGE_REPORT ORDER BY BMR_STATUS";
+	private static final String GET_ALL_STMT = "SELECT * FROM BLOG_MESSAGE_REPORT ORDER BY BMR_STATUS,BMR_TIME DESC";
 	// 傳回單筆
 	private static final String GET_ONE_STMT ="SELECT * FROM BLOG_MESSAGE_REPORT WHERE MEM_ID = ? AND MESSAGE_ID = ?";
 		

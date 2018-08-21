@@ -332,10 +332,11 @@ public class Qa_replyJDBCDAO implements Qa_replyDAO_interface{
 		// TODO Auto-generated method stub
 		return null;
 	}
+
 	@Override
-	public int updateR(Qa_replyVO Qa_replyVO) {
+	public void updateR(Qa_replyVO Qa_replyVO, String reply_id, String mem_id) {
 		// TODO Auto-generated method stub
-		return 0;
+		
 	}
 
 }

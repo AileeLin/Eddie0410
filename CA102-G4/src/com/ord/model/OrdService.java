@@ -3,6 +3,7 @@ package com.ord.model;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.orderDetails.model.OrderDetailsVO;
 import com.shopping.model.CartItem;
@@ -15,7 +16,7 @@ public class OrdService {
 	public OrdService() {
 		dao = new OrdDAO();
 	}
-	public OrdVO addOrdWithDetails(String buyer_mem_id,String seller_mem_id,String order_address,Integer payment_status,Integer payment_method,Integer shipment_status,
+	public List addOrdWithDetails(String buyer_mem_id,String seller_mem_id,String order_address,Integer payment_status,Integer payment_method,Integer shipment_status,
 			Timestamp order_date,Integer order_status,Integer order_total,Integer order_item,Integer shipment_method,String ord_store_711_name,List<CartItem> orderItemList) {
 
 		OrdVO ordVO = new OrdVO();	
@@ -43,9 +44,9 @@ public class OrdService {
 			list.add(ordDetail);
 		}
 
-		dao.insertWithOrderDetails(ordVO,list);
+		List failList = dao.insertWithOrderDetails(ordVO,list);
 
-		return ordVO;
+		return failList;
 	}
 
 

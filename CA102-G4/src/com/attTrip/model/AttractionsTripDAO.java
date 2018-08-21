@@ -359,7 +359,6 @@ public class AttractionsTripDAO implements AttractionsTripDAO_interface {
 		PreparedStatement pstmt = null;
 
 		try {
-			con = ds.getConnection();
 			pstmt = con.prepareStatement(SQL_DELETE2);
 			pstmt.setString(1, tripDay_no);
 

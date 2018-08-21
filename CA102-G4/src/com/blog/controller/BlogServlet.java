@@ -566,7 +566,7 @@ public class BlogServlet extends HttpServlet {
 			}
 		}
 
-		/*************************** 旅遊記文章依照發文日期由新到舊排列 ********************************/
+		/*************************** 增加旅遊記文章瀏覽次數 ********************************/
 		if ("article".equals(action)) {
 			List<String> errorMsgs = new LinkedList<String>();
 			req.setAttribute("errorMsgs", errorMsgs);

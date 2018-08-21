@@ -389,7 +389,7 @@ media="all" />
 														<div class="p-b-50">
 															<!-- 賣家名稱 -->
 															<div class="cart-store-header">
-																<i class="fas fa-store-alt p-l-20"></i><a href="#"
+																<i class="fas fa-store-alt p-l-20"></i><a href=""<%=request.getContextPath()%>/front_end/personal_area/personal_area_public_sell.jsp?uId=${sellerId}""
 																	class="s-text3 p-l-10">${memSvc.getOneMember(sellerId).mem_Name}</a>
 															</div>
 															<!-- //賣家名稱 end -->
@@ -402,7 +402,7 @@ media="all" />
 																		</td>
 																		<td class="col-sm-6 col-md-4">
 																			<div class="media">
-																				<div class="pull-left m-b-10 m-t-10" href="#">
+																				<div class="pull-left m-b-10 m-t-10">
 																					<img class="media-object"
 																						src="data:image/jpeg;base64,${productSvc.getOneProduct(cartItem.product_id).product_photo_1_base}"
 																						style="width: 72px; height: 72px;">
@@ -431,7 +431,7 @@ media="all" />
 																
 																<!-- 一個賣家的購物車商品table end -->
 																</c:if>
-															</c:forEach>
+																</c:forEach>
 													  		</tbody>
 														</table>
 													</div>

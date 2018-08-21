@@ -45,6 +45,25 @@
 	ProductService productSvc = new ProductService();
 	pageContext.setAttribute("productSvc", productSvc);
 	
+	//取得訂單資訊
+	
+	Map<String, List<CartItem>> sucOrdMap = (HashMap<String, List<CartItem>>) request.getAttribute("sucOrdMap");
+	Map<String, List<CartItem>> failOrdMap =  (HashMap<String, List<CartItem>>) request.getAttribute("failOrdMap");
+	String storeName = (String)session.getAttribute("storeName");
+	String addr = (String)session.getAttribute("addr");
+	Integer shipMethod=(Integer)session.getAttribute("shipMethod");
+	
+	int totalPrice = (Integer)request.getAttribute("totalPrice");
+	int totalQty = (Integer)request.getAttribute("totalQty");
+	pageContext.setAttribute("sucOrdMap", sucOrdMap);
+	pageContext.setAttribute("failOrdMap", failOrdMap);
+	pageContext.setAttribute("storeName", storeName);
+	pageContext.setAttribute("addr", addr);
+	pageContext.setAttribute("shipMethod", shipMethod);
+	pageContext.setAttribute("totalPrice", totalPrice);
+	pageContext.setAttribute("totalQty", totalQty);
+
+	
 	//取得購物車商品數量
 	Object total_items_temp = session.getAttribute("total_items");
 	int total_items = 0;
@@ -324,23 +343,207 @@ media="all" />
 							</ul>
 						</div>
 						<!-- //上方 Tab END-->
-						
-						<form role="form" action="shopping.do" method="post">
 							<div class="tab-content">
 								<!-- Step 3 tab 內容-->
 								<div class="tab-pane active" role="tabpanel" id="complete">
-									<div class="p-t-50">
-										<h3>感謝您的訂購</h3>
-										<p>您已經完成下單流程，點擊按鈕可跳轉至購買清單管理頁面</p>
-									</div>
-									<ul class="list-inline pull-right p-t-80">
-										
-										<li><a href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_buy.jsp"><button id="order-list" type="button" class="btn order-list-mgt">購買清單管理</button></a></li>
+									<section class="page-module-content module module-cart-bottom">
+										<div class="container">
+											<div class="row">
+												<!-- Content column start -->
+												<div class="col-sm-12 col-md-10 col-md-offset-1">
+													<!-- Step 1 tab 內容表頭-->
+													<h3 class="p-b-40 p-t-20">交易成功</h3>
+												<c:if test="${sucOrdMap.size() eq 0 }"><h2>沒有交易成功的訂單</h2></c:if>
+												<c:if test="${sucOrdMap.size() ne 0 }">
+												<div>
+											            <table class="table table-hover">
+											                <thead>
+											                    <tr>
+											                        <th class="col-sm-1 col-md-1"> </th>
+											                        <th class="col-sm-6 col-md-4">訂單
+											                        	商品</th>
+											                        <th class="col-sm-1 col-md-1 text-center">數量</th>
+											                        <th class="col-sm-1 col-md-1 text-center">單價</th>
+											                        <th class="col-sm-1 col-md-1 text-center">總計</th>
+											                        <th class="col-sm-1 col-md-1 text-center"> </th>
+											                    </tr>
+											                </thead>
+											            </table>
+										            </div>
+										            <!-- //Step 1 tab 內容表頭 END-->
+										            <!-- Step 1 tab 訂單內容-->
+												<c:forEach var="sellerId" items="${sucOrdMap.keySet()}">
+													<!-- 一個賣家的購物車商品table -->
+													
+														<div class="p-b-50">
+															<!-- 賣家名稱 -->
+															<div class="cart-store-header">
+																<i class="fas fa-store-alt p-l-20"></i><a href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_public_sell.jsp?uId=${sellerId}"
+																	class="s-text3 p-l-10">${memSvc.getOneMember(sellerId).mem_Name}</a>
+															</div>
+															<!-- //賣家名稱 end -->
+															<table class="table table-hover p-t-100">
+																<tbody>
+															<c:forEach var="cartItem" items="${sucOrdMap.get(sellerId)}" varStatus="counter">
+															 <c:if test="${cartItem.product_mem_id eq sellerId }">
+																	<tr>
+																		<td class="col-sm-1 col-md-1">
+																		</td>
+																		<td class="col-sm-6 col-md-4">
+																			<div class="media">
+																				<div class="pull-left m-b-10 m-t-10">
+																					<img class="media-object"
+																						src="data:image/jpeg;base64,${productSvc.getOneProduct(cartItem.product_id).product_photo_1_base}"
+																						style="width: 72px; height: 72px;">
+																				</div>
+																				<div class="media-body">
+																					<h4 class="media-heading p-l-20 p-t-40 s-text3">
+																						<a
+																							href="<%=request.getContextPath()%>/front_end/store/store_product.jsp?prod_id=${cartItem.product_id}"
+																							target="_blank" class="s-text3">${cartItem.product_name}</a>
+																					</h4>
+																				</div>
+																			</div>
+																		</td>
+																		<td class="col-sm-1 col-md-1" style="text-align: center">
+																			${cartItem.quantity}
+																		</td>
+																		<td class="col-sm-1 col-md-1 text-center">$
+																			<span id="prod_price_${cartItem.product_id}">${cartItem.product_price}</span>
+																		</td>
+																		<td class="col-sm-1 col-md-1 text-center">$
+																			<span id="total_price_${cartItem.product_id}">${cartItem.total_price}</span>
+																		</td>
+																		<td class="col-sm-1 col-md-1">
+																		</td>
+																	</tr>
+																
+																<!-- 一個賣家的購物車商品table end -->
+																</c:if>
+																</c:forEach>
+													  		</tbody>
+														</table>
+													</div>
+													</c:forEach>
+											         <!-- //Step 1 tab 訂單內容-->
+													<hr class="divider-w pt-20">
+													 <!-- Step 1 tab 物流選擇-->
+													<div class="checkout-shipping">
+														<div class="checkout-shipping-title">寄送資訊
+															<div class="checkout-shipping-price">$ 0</div>
+														</div>
+														<div class="checkout-shipping-details" style="display:inline-block">
+															<div class="checkout-shipping-details-selected-method" style="display:inline-block" id="checkout-ship-method">${shipMethod eq 1?"宅配":"7-11"}</div>
+															<div class="checkout-shipping-details-selected-address">
+																<div class="checkout-store-name" id="checkout-store-name"><c:if test="${shipMethod eq 2}">${storeName}</c:if></div>
+																<div class="checkout-shipping-details-name" style="display:inline-block">${memberVO.mem_Name}</div>
+																<div class="checkout-shipping-details-phone" style="display:inline-block">${memberVO.mem_Phone}</div>
+																<div class="checkout-shipping-details-address" style="display:inline-block" id="checkout-addr">${addr}</div>
+															</div>
+														</div>
+													</div>
+														
+													 <!-- //Step 1 tab 物流選擇-->
+													<hr class="divider-w pt-20">
+													<div class="checkout-review" align="right">
+														<div class="checkout-review-title" style="display:inline-block">訂單金額 (${totalQty} 商品):</div>
+														<div class="checkout-review-price" style="display:inline-block">$ ${totalPrice}</div>
+													</div>
+													</c:if>
+												</div>
+											</div>
+										</div>
+									</section>
+									<c:if test="${failOrdMap.size() ne 0}">
+										<div class="container">
+											<div class="row">
+												<!-- Content column start -->
+												<div class="col-sm-12 col-md-10 col-md-offset-1">
+													<!-- Step 1 tab 內容表頭-->
+												<h3 class="p-b-20">交易失敗</h3>
+													<div>
+											            <table class="table table-hover">
+											                <thead>
+											                    <tr>
+											                        <th class="col-sm-1 col-md-1"> </th>
+											                        <th class="col-sm-6 col-md-4">訂單
+											                        	商品</th>
+											                        <th class="col-sm-1 col-md-1 text-center">數量</th>
+											                        <th class="col-sm-1 col-md-1 text-center">單價</th>
+											                        <th class="col-sm-1 col-md-1 text-center">總計</th>
+											                        <th class="col-sm-1 col-md-1 text-center"> </th>
+											                    </tr>
+											                </thead>
+											            </table>
+										            </div>
+										            <!-- //Step 1 tab 內容表頭 END-->
+										            <!-- Step 1 tab 訂單內容-->
+												<c:forEach var="sellerId" items="${failOrdMap.keySet()}">
+													<!-- 一個賣家的購物車商品table -->
+													
+														<div class="p-b-50">
+															<!-- 賣家名稱 -->
+															<div class="cart-store-header">
+																<i class="fas fa-store-alt p-l-20"></i><a href="#"
+																	class="s-text3 p-l-10">${memSvc.getOneMember(sellerId).mem_Name}</a>
+															</div>
+															<!-- //賣家名稱 end -->
+															<table class="table table-hover p-t-100">
+																<tbody>
+															<c:forEach var="cartItem" items="${failOrdMap.get(sellerId)}" varStatus="counter">
+															 <c:if test="${cartItem.product_mem_id eq sellerId }">
+																	<tr>
+																		<td class="col-sm-1 col-md-1">
+																		</td>
+																		<td class="col-sm-6 col-md-4">
+																			<div class="media">
+																				<div class="pull-left m-b-10 m-t-10" href="#">
+																					<img class="media-object"
+																						src="data:image/jpeg;base64,${productSvc.getOneProduct(cartItem.product_id).product_photo_1_base}"
+																						style="width: 72px; height: 72px;">
+																				</div>
+																				<div class="media-body">
+																					<h4 class="media-heading p-l-20 p-t-40 s-text3">
+																						<a
+																							href="<%=request.getContextPath()%>/front_end/store/store_product.jsp?prod_id=${cartItem.product_id}"
+																							target="_blank" class="s-text3">${cartItem.product_name}</a>
+																					</h4>
+																				</div>
+																			</div>
+																		</td>
+																		<td class="col-sm-1 col-md-1" style="text-align: center">
+																			<c:if test="${cartItem.quantity <0}"><span style="color:red">商品缺貨</span></c:if>
+																			<c:if test="${cartItem.quantity >0}">${cartItem.quantity}</c:if>
+																		</td>
+																		<td class="col-sm-1 col-md-1 text-center">$
+																			<span id="prod_price_${cartItem.product_id}">${cartItem.product_price}</span>
+																		</td>
+																		<td class="col-sm-1 col-md-1 text-center">$
+																			<span id="total_price_${cartItem.product_id}">${cartItem.total_price}</span>
+																		</td>
+																		<td class="col-sm-1 col-md-1">
+																		</td>
+																	</tr>
+																
+																<!-- 一個賣家的購物車商品table end -->
+																</c:if>
+																</c:forEach>
+													  		</tbody>
+														</table>
+													</div>
+													</c:forEach>
+											         <!-- //Step 1 tab 訂單內容-->
+													<hr class="divider-w pt-20">
+												</div>
+											</div>
+										</div>
+									</c:if>
+									<ul class="list-inline pull-right p-t-80">		
+										<li><a href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_buy_PSIList.jsp"><button id="order-list" type="button" class="btn order-list-mgt">購買清單管理</button></a></li>
 									</ul>
 								</div>
 								<!-- //Step 3 tab 內容-->
 							</div>
-						</form>
 					</div>
 				</section>
 			</div>

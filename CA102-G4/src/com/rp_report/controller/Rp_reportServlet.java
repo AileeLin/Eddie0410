@@ -107,7 +107,7 @@ public class Rp_reportServlet  extends HttpServlet {
 			try {
 				/***************************1.接收請求參數 - 輸入格式的錯誤處理**********************/
 				String reply_id = req.getParameter("reply_id");
-	
+				String mem_id = req.getParameter("mem_id");
 				Integer r_state = 1;
 				
 
@@ -120,7 +120,7 @@ public class Rp_reportServlet  extends HttpServlet {
 				
 				/***************************2.開始修改資料*****************************************/
 				Qa_replyService qa_replySvc = new Qa_replyService();
-				qa_replySvc.updateR(reply_id,r_state);
+				qa_replySvc.updateR(reply_id,r_state,mem_id);
 				
 				/***************************3.修改完成,準備轉交(Send the Success view)*************/
 				RequestDispatcher successView = req.getRequestDispatcher("/back_end/qa_report/qa_report.jsp"); 

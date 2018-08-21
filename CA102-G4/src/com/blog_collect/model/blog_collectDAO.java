@@ -28,7 +28,7 @@ public class blog_collectDAO implements blog_collectDAO_interface {
 	// 刪除收藏部落格文章
 	private static final String DELETE_STMT = "DELETE FROM BLOG_COLLECT WHERE MEM_ID = ? AND BLOG_ID = ?";
 	// 取得某個會員的收藏列表
-	private static final String GET_ALL_BY_MEMID_STMT = "SELECT BLOG_ID FROM BLOG_COLLECT WHERE MEM_ID = ?";
+	private static final String GET_ALL_BY_MEMID_STMT = "SELECT BC.BLOG_ID FROM BLOG B , BLOG_COLLECT BC WHERE B.BLOG_ID = BC.BLOG_ID AND B.BLOG_STATUS = 0 AND BC.MEM_ID = ?";
 	// 取得某篇文章的收藏次數
 	private static final String GET_ALL_BY_BLOGID_STMT = "SELECT * FROM BLOG_COLLECT WHERE BLOG_ID = ?";
 	// 取得某會員是否收藏過此篇文章

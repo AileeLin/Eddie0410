@@ -8,6 +8,8 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
+import com.question.model.QuestionVO;
+
 public class Qa_replyJNDI implements Qa_replyDAO_interface{
 	
 	private static DataSource ds = null;
@@ -23,11 +25,15 @@ public class Qa_replyJNDI implements Qa_replyDAO_interface{
 			 +  "values ('RE'||LPAD(TO_CHAR(QA_REPLY_SEQ.NEXTVAL), 9, '0'),?,?,?,?,0)";
 		
 	private static final String UPDATE_STMT = "UPDATE QA_REPLY SET QUESTION_ID=?, MEM_ID=?, REPLY_CONTENT=? ,REPLY_DATE=? R_STATE=? WHERE REPLY_ID = ?";
-		
+	
+	private static final String UPDATE = "UPDATE QA_REPLY SET R_STATE=? WHERE REPLY_ID = ?";
+	private static final String DELETE_STMT1 = "DELETE FROM RP_REPORT WHERE REPLY_ID = ? AND MEM_ID=?";		
 	private static final String DELETE_STMT = "DELETE FROM QA_REPLY WHERE REPLY_ID = ?";
 	private static final String FIND_BY_PK = "SELECT * FROM QA_REPLY WHERE REPLY_ID = ?";
-	private static final String FIND_BY_PK1 = "SELECT * FROM QA_REPLY WHERE QUESTION_ID = ?";
+	private static final String FIND_BY_PK1 = "SELECT * FROM QA_REPLY WHERE QUESTION_ID = ? AND R_STATE =0";
 	private static final String GET_ALL = "SELECT * FROM QA_REPLY";
+	
+	private static final String FIND_BY_STATE = "SELECT * FROM QA_REPLY WHERE R_STATE =0";
 		@Override
 		public int insert(Qa_replyVO Qa_replyVO) {
 			int updateCount = 0;
@@ -45,7 +51,7 @@ public class Qa_replyJNDI implements Qa_replyDAO_interface{
 				pstmt.setString(2, Qa_replyVO.getMem_id());
 				pstmt.setString(3, Qa_replyVO.getReply_content());
 				pstmt.setDate(4, Qa_replyVO.getReply_date());
-				pstmt.setInt(5, Qa_replyVO.getR_state());
+				
 				updateCount = pstmt.executeUpdate();
 
 
@@ -331,14 +337,125 @@ public class Qa_replyJNDI implements Qa_replyDAO_interface{
 			return list;
 
 		}
+		
 		@Override
 		public List<Qa_replyVO> find_by_State() {
-			// TODO Auto-generated method stub
-			return null;
+			List<Qa_replyVO> list = new ArrayList<Qa_replyVO>();
+			Qa_replyVO qa_reply = null;
+			Connection con = null;
+			PreparedStatement pstmt = null;
+			ResultSet rs = null;
+
+			try {
+		
+				con = ds.getConnection();
+				pstmt = con.prepareStatement(FIND_BY_STATE);
+				
+				rs = pstmt.executeQuery();
+				
+				while (rs.next()) {
+					qa_reply = new Qa_replyVO();
+					qa_reply.setReply_id(rs.getString("reply_id"));
+					qa_reply.setMem_id(rs.getString("mem_id"));
+					qa_reply.setReply_content(rs.getString("reply_content"));
+					qa_reply.setReply_date(rs.getDate("reply_date"));
+					qa_reply.setQuestion_id(rs.getString("question_id"));
+					qa_reply.setR_state(rs.getInt("r_state"));
+					list.add(qa_reply);
+				}
+				
+				// Handle any SQL errors
+			} catch (SQLException se) {
+				throw new RuntimeException("A database error occured. "
+						+ se.getMessage());
+				// Clean up JDBC resources
+			} finally {
+				if (rs != null) {
+					try {
+						rs.close();
+					} catch (SQLException se) {
+						se.printStackTrace(System.err);
+					}
+				}
+				if (pstmt != null) {
+					try {
+						pstmt.close();
+					} catch (SQLException se) {
+						se.printStackTrace(System.err);
+					}
+				}
+				if (con != null) {
+					try {
+						con.close();
+					} catch (Exception e) {
+						e.printStackTrace(System.err);
+					}
+				}
+			}
+			return list;
 		}
+		
 		@Override
-		public int updateR(Qa_replyVO Qa_replyVO) {
-			// TODO Auto-generated method stub
-			return 0;
+		public void updateR(Qa_replyVO Qa_replyVO,String reply_id, String mem_id) {
+			int updateCount = 0;
+			Connection con = null;
+			PreparedStatement pstmt = null;
+			
+			try {
+				
+
+				con = ds.getConnection();
+				
+				// 1●設定於 pstm.executeUpdate()之前
+				con.setAutoCommit(false);
+				// 先修改
+				pstmt = con.prepareStatement(UPDATE);
+				
+				
+				pstmt.setInt(1, Qa_replyVO.getR_state());
+				pstmt.setString(2, Qa_replyVO.getReply_id());
+
+				
+				updateCount = pstmt.executeUpdate();
+				
+				// 再刪除
+				pstmt = con.prepareStatement(DELETE_STMT1);
+				pstmt.setString(1,reply_id);
+				pstmt.setString(2,mem_id);
+				pstmt.executeUpdate();
+				
+				con.commit();
+				con.setAutoCommit(true);
+
+				// Handle any SQL errors
+			} catch (SQLException se) {
+				if (con != null) {
+					try {
+						// 3●設定於當有exception發生時之catch區塊內
+						con.rollback();
+					} catch (SQLException excep) {
+						throw new RuntimeException("rollback error occured. "
+								+ excep.getMessage());
+					}
+				}
+				throw new RuntimeException("A database error occured. "
+						+ se.getMessage());
+			} finally {
+				if (pstmt != null) {
+					try {
+						pstmt.close();
+					} catch (SQLException se) {
+						se.printStackTrace(System.err);
+					}
+				}
+				if (con != null) {
+					try {
+						con.close();
+					} catch (Exception e) {
+						e.printStackTrace(System.err);
+					}
+				}
+			}
+
 		}
 }

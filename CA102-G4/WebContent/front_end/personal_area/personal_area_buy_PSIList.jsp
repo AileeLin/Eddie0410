@@ -66,7 +66,51 @@
   		total_items= (Integer) total_items_temp;
   	}
   	pageContext.setAttribute("total_items",total_items);
+  	
+  	//取得買家購買清單
+  	OrdService ordSvc = new OrdService();
 
+	List<OrdVO> buyList = ordSvc.getForAllBuy(memId);
+	
+	//待出貨買家訂單
+    List<OrdVO> PSIList = new ArrayList<OrdVO>();
+	
+	//待收貨買家訂單 Pending receipt
+	List<OrdVO> PRList = new ArrayList<OrdVO>();
+	
+	//已完成 買家訂單 complete
+	List<OrdVO> COMList = new ArrayList<OrdVO>();
+
+	//取消  買家訂單 cancel
+	List<OrdVO> CLList = new ArrayList<OrdVO>();
+	
+	//有賣家評價的  買家訂單
+	List<OrdVO> ratingList = new ArrayList<OrdVO>();
+		
+    for(int i = 0 ;i<buyList.size();i++){
+    	if(buyList.get(i).getStob_rating()!=0){
+    		ratingList.add(buyList.get(i));
+    	}
+    	
+    	if(buyList.get(i).getShipment_status()==1 && buyList.get(i).getOrder_status()==1){
+    		PSIList.add(buyList.get(i));
+    	}else if((buyList.get(i).getShipment_status()==2 || buyList.get(i).getShipment_status()== 3 )&& buyList.get(i).getOrder_status()==2){
+    		PRList.add(buyList.get(i));
+    	}else if(buyList.get(i).getOrder_status()==3){
+    		COMList.add(buyList.get(i));
+    	}else if(buyList.get(i).getOrder_status()==4){
+    		CLList.add(buyList.get(i));
+    	}
+    }
+    pageContext.setAttribute("ordSvc",ordSvc); 
+    pageContext.setAttribute("PSIList",PSIList); 
+    pageContext.setAttribute("PRList",PRList); 
+    pageContext.setAttribute("COMList",COMList); 
+    pageContext.setAttribute("CLList",CLList); 
+    pageContext.setAttribute("ratingList",ratingList); 
+
+    OrderDetailsService ordDetailsSvc = new OrderDetailsService();
+    pageContext.setAttribute("ordDetailsSvc",ordDetailsSvc); 
 %>
 
 <%@ page import="com.fri.model.*" %>
@@ -232,9 +276,29 @@
     <link href="<%=request.getContextPath()%>/front_end/css/chat/chat_style.css" rel="stylesheet" type="text/css">
     <script src="<%=request.getContextPath()%>/front_end/js/chat/vjUI_fileUpload.js"></script>
     <script src="<%=request.getContextPath()%>/front_end/js/chat/chat.js"></script>
-    <%@ include file="/front_end/personal_area/chatModal_JS.file" %>
     <!-- //聊天相關CSS及JS -->
-    
+     <!-- 登入才會有的功能(買家取消訂單通知)-->
+	<c:if test="${memberVO != null}">
+		<script>
+		
+			function cancelSellOrdMessage(buyer_id,seller_id,order_id){
+
+				var jsonObj = {
+					"title"		:"訂單取消",
+				  	"sender"	: buyer_id,
+				 	"receiver"	: seller_id,
+				 	"message"	:"您的訂單編號:"+order_id+"已被買家取消",
+				};
+				webSocket.send(JSON.stringify(jsonObj));
+				
+				return true;
+			}
+			
+		</script>
+		
+		<%@ include file="/front_end/personal_area/chatModal_JS.file" %>
+		
+	</c:if>
 </head>
 
 <body>
@@ -387,7 +451,14 @@
             <!--會員訊息--> 
             <div class="mem_ind_info"> 
                 <div class="mem_ind_img">
-                    <img src="<%=request.getContextPath()%>/front_end/readPic?action=member&id=${memberVO.mem_Id}">
+                   	<c:choose>
+                  		<c:when test="${memberVO.mem_Photo == null}">
+                  			<img src='<%=request.getContextPath()%>/front_end/images/all/mem_nopic.jpg'>
+                  		</c:when>
+                  		<c:otherwise>
+                  			<img src='<%=request.getContextPath()%>/front_end/readPic?action=member&id=${memberVO.mem_Id}'>
+                  		</c:otherwise>
+                  	</c:choose>
                 </div>
                 <div class="mem_ind_name">
                     <p>${memberVO.mem_Name}
@@ -408,7 +479,7 @@
         <div class="mem_ind_content">
           <!-- 頁籤項目 -->
           <ul class="nav nav-tabs" role="tablist">
-        <li class="nav-item">
+               <li class="nav-item">
               <a href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_home.jsp">
                   <i class="fas fa-home"></i>首頁
               </a>
@@ -474,8 +545,8 @@
                 <div id="sell_management">
                    <div style="width: 70%;float: left">
                        <ul class="nav nav-tabs" id="sell_tab">
-                          <li class="active"><a data-toggle="tab" href="#wishlist_mgt">收藏商品</a></li>
-                          <li><a href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_buy_PSIList.jsp">購買清單</a></li>
+                          <li><a href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_buy.jsp">收藏商品</a></li>
+                          <li class="active"><a href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_buy_PSIList.jsp">購買清單</a></li>
                           <li><a href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_buy_ratingList.jsp">購買評價</a></li>
                         </ul>
                    </div>
@@ -483,116 +554,133 @@
                 
                 <div class="tab-content">
                   <!--收藏商品-->
-                  <div id="wishlist_mgt" class="tab-pane fade in active"> 
-                   <!--內容-->  
-                    <div class="main" style="min-height: 1px;">
-                    	<section class="bgwhite p-t-55 p-b-65">
-							<div class="container">
-								<div class="row">
-							<div class="col-sm-6 col-md-8 col-lg-11 p-b-50">
-								<div class="row">
-									<div class="col-sm-10 col-md-10 col-lg-12">
-										<%@ include file="page1.file" %>
-										<div class="page-top flex-sb-m flex-w p-b-35 p-t-40" style="display: inline-block;">
-											<span class="s-text8 p-t-5 p-b-5">
-												第<%=whichPage%>/<%=pageNumber%>頁  共<span id="rowno"><%=rowNumber%></span>筆
-											</span>
-										</div>
-									</div>
-								</div>
-								<!-- Product -->
-								<jsp:useBean id="productSvc" scope="page" class="com.product.model.ProductService" />
-								<div class="row">
-								<c:forEach var="productWishlistVO" items="${list}" begin="<%=pageIndex%>" end="<%=pageIndex+rowsPerPage-1%>">
-										<div class="col-sm-12 col-md-6 col-lg-4 p-b-50">
-											<!-- Block2 -->
-											<div class="block2">
-												<div class="block2-img wrap-pic-w of-hidden pos-relative" style="height:16rem;width: 100%;">
-													<img class="prod-img" src="data:image/jpeg;base64,${productSvc.getOneProduct(productWishlistVO.wishlist_product_id).product_photo_1_base}" onerror="this.src='<%=request.getContextPath()%>/front_end/images/store/no-image-icon-15.png'"  alt="IMG-PRODUCT">
-													<div class="block2-overlay trans-0-4" style="width: 100%;">
-														<div class="block2-btn-addcart w-size1 trans-0-4">
-															<button type="button" onclick="addById(this,'${productWishlistVO.wishlist_product_id}','${productSvc.getOneProduct(productWishlistVO.wishlist_product_id).product_name}','${productSvc.getOneProduct(productWishlistVO.wishlist_product_id).product_mem_id}','${productSvc.getOneProduct(productWishlistVO.wishlist_product_id).product_price}','${login_state}')" class="add-to-cart add-prod-btn flex-c-m size1 bg4 hov1 s-text1 trans-0-4">
-																加入購物車
-															</button>											
-														</div>
-													</div>
-												</div>
-				
-												<div class="block2-txt p-t-20">
-													<a href="<%=request.getContextPath()%>/front_end/store/store_product.jsp?prod_id=${productWishlistVO.wishlist_product_id}" class="block2-name dis-block s-text3 p-b-5 prod-title">
-														${productSvc.getOneProduct(productWishlistVO.wishlist_product_id).product_name}
-													</a>
-													<div class="p-t-10">
-													
-														<span class="wish-add m-text6 p-r-5 p-l-5" style="float: lefft;">
-															<a href="#" class="wish-add-btn added" data-login_state="${login_state}" data-memId="${memId}" data-prodId="${productWishlistVO.wishlist_product_id}">
-															<i class="far fa-heart" aria-hidden="true"></i>
-															<i class="fas fa-heart dis-none" aria-hidden="true"></i></a>
-														</span>
-												
-														<span class="wish-like-text m-text6 p-r-5" id="wish-${productWishlistVO.wishlist_product_id}" style="float: lefft;">
-															${productWishlistSvc.getLikesByProductid(productWishlistVO.wishlist_product_id).size()}
-														</span>
-														<span class="block2-price m-text6 p-r-5" style="float: right;">
-															$ ${productSvc.getOneProduct(productWishlistVO.wishlist_product_id).product_price}
-														</span>
-													</div>
-												</div>
-											</div>
-										</div>
-									</c:forEach>
-								</div>
-								<!-- //Product -->
-								
-								<div class="row">
-									<div class="col-sm-12 col-md-6 col-lg-12 p-b-50">
-										<nav aria-label="Page navigation">
-											  <ul class="pagination" name="whichPage">
-											  <%if (rowsPerPage<rowNumber) {%>
-											      <%if(pageIndex>=rowsPerPage){%> 
-											       <li><a href="<%=request.getRequestURI()%>?whichPage=<%=whichPage-1%>" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
-											    <%}%>
-											      <%}%> 
-											  
-											    
-										  		  <%if (pageNumber>=1) {%>
-											         <%for (int i=1; i<=pageNumber; i++){%>
-													         <%if(pageIndex==(i*rowsPerPage-rowsPerPage)){%>
-													          <li class="active"><a href="<%=request.getRequestURI()%>?whichPage=<%=i%>"><%=i%></a></li>
-													         <%}else{%>
-												            	<li><a href="<%=request.getRequestURI()%>?whichPage=<%=i%>"><%=i%></a></li>
-												         	<%}%> 
-											         	 <%}%> 
-													  <%}%>
-													  
-												 <%if (rowsPerPage<rowNumber) {%>
-													 
-													    <%if(pageIndex<pageIndexArray[pageNumber-1]){%>
-													        <li><a href="<%=request.getRequestURI()%>?whichPage=<%=whichPage+1%>" aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>
-													    <%}%>
-												  <%}%>  
-											  </ul>
-										</nav>
-								</div>
-							</div>
-							</div>
-						</div>
-					 </div>
-					</section>
-                    </div>
-                    <!--內容--> 
+                  <div id="wishlist_mgt" class="tab-pane fade"> 
+                 
                   </div>
                   <!--//收藏商品-->
                   
                   <!--購買清單列表-->
-                  <div id="orderlist_buy" class="tab-pane fade">
-                  
+                  <div id="orderlist_buy" class="tab-pane fade in active">
+                      <div class="container">
+						<div class="row">	
+							<div class="col-md-10 col-lg-10"  style="padding-top:20px;padding-bottom: 100px;">
+								<div class="tabbable-panel">
+									<div class="tabbable-line">
+										<ul class="nav nav-tabs">
+											<li class="active">
+												<a href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_buy_PSIList.jsp">
+													待出貨 </a>
+											</li>
+											<li>
+												<a href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_buy_PRList.jsp">
+													待收貨 </a>
+											</li>
+											<li>
+												<a href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_buy_COMList.jsp">
+													完成 </a>
+											</li>
+											<li>
+												<a href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_buy_CLList.jsp" id="tabs">
+													取消</a>
+											</li>
+										</ul>
+										<div class="tab-content">
+										<!-- 待出貨  tab1-->
+											<div class="tab-pane active" id="tab_1">
+												<c:forEach var="ordVO" items="${PSIList}">
+													<div id="ord_block_${ordVO.order_id}">
+														<div class="host p-t-20">
+															<a href="#" target="_blank" class="photo" style="background-image: url(<%=request.getContextPath()%>/front_end/readPic?action=member&id=${ordVO.seller_mem_id})">
+															</a>
+															<span class="text" style="display:inline-block">	
+																<a href="#" target="_blank" style="display:inline-block">${memSvc.getOneMember(ordVO.seller_mem_id).mem_Name}</a>	
+															</span>
+														</div>
+														<div class="text order_id">訂單編號： ${ordVO.order_id}</div>
+														<hr class="divider-w pt-20">
+														
+														<c:forEach var="ordDetailsVO" items="${ordDetailsSvc.getOrderDetialsByOrdId(ordVO.order_id)}">
+															<div class="order-content" style="display:inline-block">
+																<div class="order-content-product">
+																	<div class="order-content-img" style="display:inline-block">
+																		<div class="prod-img-wrap">
+																			<div class="prod-img-content" style="background-image: url(data:image/jpeg;base64,${prodSvc.getOneProduct(ordDetailsVO.details_product_id).product_photo_1_base})">
+																			</div>
+																		</div>
+																	</div>
+																	<div class="order-content-detail" style="display:inline-block">
+																		<div class="order-content-prod-name">${prodSvc.getOneProduct(ordDetailsVO.details_product_id).product_name}</div>
+																		<div class="order-content-prod-qty">x ${ordDetailsVO.details_order_qty}</div>
+																	</div>
+																	<div class="order-content-prod-price" style="display:inline-block;float:right">
+																			<div class="order-content-prod-price-text" style="display:inline-block">
+																				$ ${ordDetailsVO.details_order_total}
+																			</div>
+																	</div>
+																</div>
+															</div>
+														</c:forEach>
+														<hr class="divider-w pt-20">
+														<div class="checkout-shipping">
+															<div class="checkout-shipping-title">寄送資訊								
+															</div>
+															<div class="checkout-shipping-details" style="display:inline-block">
+																<div class="checkout-shipping-details-selected-method" style="display:inline-block" id="checkout-ship-method">${ordVO.shipment_method eq 1?"宅配":"7-11"}</div>
+																<div class="checkout-shipping-details-selected-address">
+																 <c:if test="${ordVO.shipment_method eq 2}">
+																	<div class="checkout-store-name" id="checkout-store-name">${ordVO.ord_store_711_name}</div>
+																</c:if>
+																	<div class="checkout-shipping-details-name" style="display:inline-block">${memSvc.getOneMember(ordVO.buyer_mem_id).mem_Name}</div>
+																	<div class="checkout-shipping-details-phone" style="display:inline-block">${memSvc.getOneMember(ordVO.buyer_mem_id).mem_Phone}</div>
+																	<div class="checkout-shipping-details-address" style="display:inline-block" id="checkout-addr">${ordVO.order_address}</div>
+																</div>
+															</div>
+														</div>
+														<div class="order-list-review" align="right">
+															<div class="order-list-review-title" style="display:inline-block">訂單金額 ( ${ordVO.order_item} 商品):</div>
+															<div class="order-list-review-price" style="display:inline-block">$ ${ordVO.order_total}</div>
+														</div>
+														<p class="form-submit p-b-20">
+															<button type="button" class="btn cancel-order" data-sellerid ="${ordVO.seller_mem_id}" data-id="${ordVO.order_id}" data-toggle="modal" data-target="#cancelOrderModal">取消訂單</button>
+														</p>
+														<hr class="divider-w p-t-10" style="border-color:#313438">
+													</div>
+												</c:forEach>
+											</div>
+										<!-- 待出貨  tab1 END-->	
+										
+										<!-- 待收貨  tab2 -->	
+											<div class="tab-pane" id="tab_2">
+										
+											</div>
+										<!-- 待收貨  tab2 END-->	
+										
+										
+										<!-- 已完成  tab3 -->	
+											<div class="tab-pane" id="tab_3">
+											
+											</div>
+										<!-- 已完成  tab3 END-->	
+											
+										<!-- 取消 tab4 -->		
+											<div class="tab-pane" id="tab_4">
+										
+											</div>
+										<!-- 取消 tab4 END-->	
+											
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
                   </div>
                   <!--//購買清單列表-->
                   
                   <!--購買評價-->
                   <div id="rating_buy" class="tab-pane fade">
-                  
+                 
                   </div>
                   <!--//購買評價-->
                 </div>
@@ -666,107 +754,73 @@
         </div>
     </div>
     <!-- //footer -->
-   
-<!--===============================================================================================-->
-<!--加入購物車-->
-<script>
-		function addById(e, product_id,product_name,product_mem_id,product_price,login_state){
-			var action = "ADD";
-			$.ajax({ 
-				url:"${pageContext.request.contextPath}/front_end/store/shopping.do",
-				method:"POST",
-				data:{action:action,product_id:product_id,product_name:product_name,product_mem_id:product_mem_id,product_price:product_price,quantity:"1",login_state:login_state},
-				success:function(data){
-					if(data === 'not log in'){
-						console.log("轉跳!");
-						window.location.replace("${pageContext.request.contextPath}/front_end/member/mem_login.jsp");
-					}else{
-						console.log("添加成功!");
-						$('.badge').text(data);
-					}
-					
-				} 
-			})
-		}
+
+<!--待出貨 取消訂單  Modal -->
+  <div class="modal fade" id="cancelOrderModal" role="dialog">
+    <div class="modal-dialog modal-lg">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">取消原因</h4>
+        </div>
+        <div class="modal-body">
+        	<div>請選擇取消原因</div>
+         <select class="selectpicker" id="cancelOrdSelect">
+		  <option value="11">賣家不回應</option>
+		  <option value="12">賣家要求取消訂單</option>
+		  <option value="13">修改訂單內容(地址，姓名，電話等等)</option>
+		  <option value="14">賣家出貨速度太慢</option>
+		  <option value="15">對賣家行為有疑慮(例如要求私下交易)</option>
+		  <option value="16">其他(例如 不想買了)</option>
+		 </select>
+
+        </div>
+        <div class="modal-footer">
+          <input type="hidden" name="sellerId" id="sellerId" value=""/>
+          <input type="hidden" name="ordId" id="ordId" value=""/>
+          <button type="button" class="btn btn-default" data-dismiss="modal">離開</button>
+          <button type="button" class="btn btn-info" data-dismiss="modal" onclick="cancelOrderById()">取消訂單</button>
+        </div>
+      </div>
+<!--待出貨 取消訂單  Modal CONTENT END -->       
+    </div>
+  </div>
+<!--待出貨 取消訂單  Modal END -->   
   
-</script>
-<!--========================收藏商品=======================================================================-->
 
+<!--==============================================================================================-->
+<!--管理的取消訂單按鈕-->   
 <script>
+$(document).on("click", ".cancel-order", function () {
+    var ordId = $(this).data('id');
+    var sellerId = $(this).data('sellerid');
+    $(".modal-footer #ordId").val( ordId );
+    $(".modal-footer #sellerId").val( sellerId );
+   
+});
 
-	  	$('.wish-add-btn').on('click', function(e) {
-		  e.preventDefault();
-			var memId = $(this).attr("data-memId");
-			var prodId = $(this).attr("data-prodId");
-			var login_state = $(this).attr("data-login_state");
-			var removeEle = $(this).parent().parent().parent().parent().parent();
-			console.log(login_state=="true");
-			
-	     if(login_state=="true"){
-			 if($(this).hasClass('added')){
-				 $(this).removeClass('added');
-				 var action = "delete";
-				 $.ajax({
-					 url:"${pageContext.request.contextPath}/front_end/store/productWishlist.do",
-					 method:"POST",
-					 data:{wishlist_mem_id:memId, action:action,wishlist_product_id:prodId,login_state:login_state},
-					 success:function(data){ 
-						// alert("刪除成功!");
-						removeEle.remove();
-						var oldrowno = $('#rowno').html();
-						$('#rowno').html(oldrowno-1);
-						console.log(data.wishlikesize);
-					 }
-				 })
-			 }
+function cancelOrderById(){
+	var ordId =  $(".modal-footer #ordId").val();
+	var sellerId =  $(".modal-footer #sellerId").val();
+	var action = "updateOrdCancel";
+	var reason = $("#cancelOrdSelect").val();
+	$.ajax({
+		url:"${pageContext.request.contextPath}/front_end/store/shopping.do",
+		method:"POST",
+		async: false,
+		data:{action:action,ordId:ordId,reason:reason},
+		success:function(data){
+			console.log("買家取消訂單成功");
+			cancelSellOrdMessage("${memId}",sellerId,ordId);
+			$('#ord_block_'+ordId).remove();
+			window.location.replace("${pageContext.request.contextPath}/front_end/personal_area/personal_area_buy_CLList.jsp");
 		}
-	  	})
+	})
+}
 
 </script>
-
-<!--========================購物車動畫=======================================================================-->
-<script src="https://static.codepen.io/assets/common/stopExecutionOnTimeout-41c52890748cd7143004e05d3c5f786c66b19939c4500ce446314d1748483e13.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
-	<script>
-	$(document).ready(function () {
-	$('.add-to-cart').on('click', function () {
-        var cart = $('.shopping-cart');
-        console.log(cart.offset())
-        var imgtodrag = $(this).parent().parent().parent().find("img").eq(0);
-        if (imgtodrag) {
-            var imgclone = imgtodrag.clone()
-                .offset({
-                top: imgtodrag.offset().top,
-                left: imgtodrag.offset().left
-            }).css({
-					'opacity': '0.5',
-                    'position': 'absolute',
-                    'height': '150px',
-                    'width': '150px',
-                    'z-index': '100'
-            }).appendTo($('body'))
-            .animate({
-               		'top': cart.offset().top + 10,
-                    'left': cart.offset().left + 10,
-                    'width': 75,
-                    'height': 75
-            }, 1000, 'easeInOutExpo');
-            
-            
-
-            imgclone.animate({
-                'width': 0,
-                    'height': 0
-            }, function () {
-                $(this).detach()
-            });
-        }
-    });
-	
-	});
-</script>	
-
 </body>
 
 </html>

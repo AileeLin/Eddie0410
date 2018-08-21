@@ -13,7 +13,7 @@
 
 	// 紀錄捲動軸位置
 	String scroll = request.getParameter("scroll");
- 
+
 	MemberVO memberVO = (MemberVO)session.getAttribute("memberVO");
 	String login,logout;
 	if(memberVO != null){		
@@ -49,7 +49,14 @@
 <jsp:useBean id="blogMessageSvc" scope="page" class="com.blog_message.model.blogMessageService"></jsp:useBean>
 <jsp:useBean id="blogSvc" scope="page" class="com.blog.model.blogService"></jsp:useBean>
 <jsp:useBean id="memSvc" scope="page" class="com.mem.model.MemberService"></jsp:useBean>
-
+<%
+	//如果文章被隱藏的話還嘗試查看此篇文章把他轉導到首頁
+	blogVO getBlog = blogSvc.findByPrimaryKey(request.getParameter("blogID"));
+	if(getBlog==null){
+		response.sendRedirect(request.getContextPath()+"/blog.index");
+		return;
+	}
+%>
 <%@ page import="com.fri.model.*,com.chat.model.*" %>
 <jsp:useBean id="chatRoomSvc" scope="page" class="com.chat.model.ChatRoomService"></jsp:useBean>
 <jsp:useBean id="chatRoomJoinSvc" scope="page" class="com.chat.model.ChatRoom_JoinService"></jsp:useBean>
@@ -172,15 +179,15 @@
 		    });
 	    });
 
-		document.addEventListener('DOMContentLoaded', function() {
-		    setTimeout(function() {
-		        window.scrollTo(0, "${param.scroll}");
-		    }, 30);
-		});
+// 		document.addEventListener('DOMContentLoaded', function() {
+// 		    setTimeout(function() {
+// 		        window.scrollTo(0, "${param.scroll}");
+// 		    }, 30);
+// 		});
 		
-//     	$('html,body').animate({
-//             scrollTop: "${param.scroll}"
-//         });
+    	$('html,body').animate({
+            scrollTop: "${param.scroll}"
+        });
 
     </script>
     
@@ -416,11 +423,11 @@
                     </div>
 				</c:forEach>
                     <div class="comment">
-                        <!-- 留言區-看更多 -->
-                        <li class="comment_next_page_btn" data-next_page="1">
-                            <i class="loader"></i>看更多
-                        </li>
-                        <!-- //留言區-看更多 -->
+<!--                         留言區-看更多 -->
+<!--                         <li class="comment_next_page_btn" data-next_page="1"> -->
+<!--                             <i class="loader"></i>看更多 -->
+<!--                         </li> -->
+<!--                         //留言區-看更多 -->
                         <!-- 留言區輸入內容的地方 -->
                         <form class="ui reply form" METHOD="POST" ACTION="<%=request.getContextPath()%>/blog.do">
                             <div class="field">

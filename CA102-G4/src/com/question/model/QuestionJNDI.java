@@ -31,12 +31,12 @@ public class QuestionJNDI implements QuestionDAO_interface{
 		private static final String UPDATE_STMT = "UPDATE QUESTION SET MEM_ID=?, QUESTION_CONTENT=?, BUILD_DATE=? Q_STATE=? WHERE QUESTION_ID = ?";
 		
 		private static final String UPDATE = "UPDATE QUESTION SET  Q_STATE=? WHERE QUESTION_ID = ?";
-		
-		private static final String DELETE_STMT = "DELETE FROM QUESTION WHERE QUESTION_ID=? ";
+		private static final String DELETE_STMT1 = "DELETE FROM QA_REPORT WHERE QUESTION_ID=? AND MEM_ID=?";
+		private static final String DELETE_STMT = "DELETE FROM QUESTION WHERE QUESTION_ID =? ";
 		private static final String FIND_BY_PK = "SELECT * FROM QUESTION WHERE QUESTION_ID = ?";
-		private static final String GET_ALL = "SELECT * FROM QUESTION";
+		private static final String GET_ALL = "SELECT * FROM QUESTION ORDER BY QUESTION_ID DESC";
 		
-		private static final String FIND_BY_STATE = "SELECT * FROM QUESTION WHERE Q_STATE= 0";
+		private static final String FIND_BY_STATE = "SELECT * FROM QUESTION WHERE Q_STATE= 0 ORDER BY QUESTION_ID DESC";
 		
 		// 世銘打的
 		private static final String FIND_BY_KEYWORD_STMT = "SELECT * FROM QUESTION WHERE UPPER(QUESTION_CONTENT) LIKE UPPER(?)";
@@ -46,7 +46,7 @@ public class QuestionJNDI implements QuestionDAO_interface{
 			int updateCount = 0;
 			Connection con = null;
 			PreparedStatement pstmt = null;
-			System.out.println("Connecting to database successfully! (連線成功！)");
+			System.out.println("Connecting to database successfully! (��蝺����)");
 
 			try {
 
@@ -57,7 +57,7 @@ public class QuestionJNDI implements QuestionDAO_interface{
 				pstmt.setString(1, questionVO.getMem_id());
 				pstmt.setString(2, questionVO.getQuestion_content());
 				pstmt.setDate(3, questionVO.getBuild_date());
-				pstmt.setInt(4, questionVO.getQ_state());
+				
 				updateCount = pstmt.executeUpdate();
 
 				// Handle any SQL errors
@@ -292,17 +292,17 @@ public class QuestionJNDI implements QuestionDAO_interface{
 
 				con = ds.getConnection();
 
-				// 1●設定於 pstm.executeUpdate()之前
+				// 1��身摰 pstm.executeUpdate()銋��
 				con.setAutoCommit(false);
 
-				// 先新增問題
+				// ��憓���
 				String[] colname= {"QUESTION_ID"};
 				pstmt = con.prepareStatement(INSERT_STMT,colname);
 				
 				pstmt.setString(1, questionVO.getMem_id());
 				pstmt.setString(2, questionVO.getQuestion_content());
 				pstmt.setDate(3, questionVO.getBuild_date());
-				pstmt.setInt(4, questionVO.getQ_state());
+
 				
 				updateCount = pstmt.executeUpdate();
 				ResultSet rs = pstmt.getGeneratedKeys();
@@ -311,7 +311,7 @@ public class QuestionJNDI implements QuestionDAO_interface{
 					questionVOkey = rs.getString(1);
 				}
 				System.out.println(questionVOkey);
-				// 再新增分類清單
+				// ��憓���
 				for(Qa_classificationVO qa_classificationVO :list) {
 					pstmt = con.prepareStatement(INSERT_STMT1);
 					pstmt.setString(1,qa_classificationVO.getList_id());
@@ -320,7 +320,7 @@ public class QuestionJNDI implements QuestionDAO_interface{
 				}
 				
 
-				// 2●設定於 pstm.executeUpdate()之後
+				// 2��身摰 pstm.executeUpdate()銋��
 				con.commit();
 				con.setAutoCommit(true);
 
@@ -329,7 +329,7 @@ public class QuestionJNDI implements QuestionDAO_interface{
 			} catch (SQLException se) {
 				if (con != null) {
 					try {
-						// 3●設定於當有exception發生時之catch區塊內
+						// 3��身摰���xception�����atch��憛
 						con.rollback();
 					} catch (SQLException excep) {
 						throw new RuntimeException("rollback error occured. "
@@ -416,7 +416,7 @@ public class QuestionJNDI implements QuestionDAO_interface{
 		}
 		
 		@Override
-		public int updateQ(QuestionVO questionVO) {
+		public void updateQ(QuestionVO questionVO,String question_id, String mem_id) {
 			int updateCount = 0;
 			Connection con = null;
 			PreparedStatement pstmt = null;
@@ -425,6 +425,10 @@ public class QuestionJNDI implements QuestionDAO_interface{
 				
 
 				con = ds.getConnection();
+				
+				// 1●設定於 pstm.executeUpdate()之前
+				con.setAutoCommit(false);
+				// 先修改
 				pstmt = con.prepareStatement(UPDATE);
 				
 				
@@ -432,14 +436,31 @@ public class QuestionJNDI implements QuestionDAO_interface{
 				pstmt.setString(2, questionVO.getQuestion_id());
 
 				
-				updateCount = pstmt.executeUpdate();
+				updateCount= pstmt.executeUpdate();
+				
+				// 再刪除
+				pstmt = con.prepareStatement(DELETE_STMT1);
+				pstmt.setString(1,question_id);
+				pstmt.setString(2,mem_id);
+				pstmt.executeUpdate();
+				
+				con.commit();
+				con.setAutoCommit(true);
 
 				// Handle any SQL errors
 			} catch (SQLException se) {
-				throw new RuntimeException("A database error occured. " + se.getMessage());
-				// Clean up JDBC resources
-			}
-			finally {
+				if (con != null) {
+					try {
+						// 3●設定於當有exception發生時之catch區塊內
+						con.rollback();
+					} catch (SQLException excep) {
+						throw new RuntimeException("rollback error occured. "
+								+ excep.getMessage());
+					}
+				}
+				throw new RuntimeException("A database error occured. "
+						+ se.getMessage());
+			} finally {
 				if (pstmt != null) {
 					try {
 						pstmt.close();
@@ -455,7 +476,7 @@ public class QuestionJNDI implements QuestionDAO_interface{
 					}
 				}
 			}
-			return updateCount;
+
 		}
 		
 		// 世銘打的
@@ -472,6 +493,7 @@ public class QuestionJNDI implements QuestionDAO_interface{
 				con = ds.getConnection();
 				pstmt = con.prepareStatement(FIND_BY_KEYWORD_STMT);
 				pstmt.setString(1, "%"+keyword+"%");
+				
 				rs = pstmt.executeQuery();
 				
 				while (rs.next()) {

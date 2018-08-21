@@ -370,7 +370,7 @@
         </div>
         <!-- //Menu -->
             <c:if test="${empty list}">
-            	<div>你還沒有收藏文章哦!!</div>
+				<img src="<%=request.getContextPath()%>/front_end/images/all/nothing.png" class="nothing">尚未收藏
             </c:if>
             <!-- 卡片 -->
             <c:if test="${not empty list}">

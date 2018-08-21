@@ -1,6 +1,7 @@
 package com.ord.model;
 
 import java.util.List;
+import java.util.Map;
 
 import com.orderDetails.model.OrderDetailsVO;
 
@@ -17,7 +18,7 @@ public interface OrdDAO_interface {
 	 public List<OrdVO> getForAllSell(String seller_mem_id);
 	 
 	//同時新增訂單與訂單明細 (用在訂單主檔與明細檔一次新增成功)
-     public void insertWithOrderDetails(OrdVO ordVO , List<OrderDetailsVO> list);
+     public List insertWithOrderDetails(OrdVO ordVO , List<OrderDetailsVO> list);
      
    //查詢賣家平均評價
      public int getRatingBySellerId(String seller_mem_id);

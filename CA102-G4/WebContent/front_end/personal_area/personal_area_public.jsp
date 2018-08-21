@@ -13,7 +13,7 @@
 <jsp:useBean id="qaSvc" scope="page" class="com.question.model.QuestionService"></jsp:useBean>
 <jsp:useBean id="memberSvc" scope="page" class="com.mem.model.MemberService"></jsp:useBean>
 
-<%	 
+<%
 	//因為沒有登入也可以查看他人的個人頁面，但無法顯示加入好友的按鈕
 	MemberVO memberVO = (MemberVO)session.getAttribute("memberVO");
 	String memId = null;

@@ -367,10 +367,8 @@ public class TrafficTripDAO implements TrafficTripDAO_interface {
 		PreparedStatement pstmt = null;
 
 		try {
-			con = ds.getConnection();
 			pstmt = con.prepareStatement(SQL_DELETE2);
 			pstmt.setString(1, tripDay_no);
-
 			updateCount = pstmt.executeUpdate();
 			// Handle any driver errors
 		} catch (SQLException se) {

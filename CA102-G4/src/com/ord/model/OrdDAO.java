@@ -7,7 +7,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -48,11 +50,11 @@ public class OrdDAO implements OrdDAO_interface {
 
 	private static final String GET_ONE_ALL_BUY = "SELECT ORDER_ID,BUYER_MEM_ID,SELLER_MEM_ID,ORDER_ADDRESS,PAYMENT_STATUS,PAYMENT_METHOD,"
 			+ "SHIPMENT_STATUS,ORDER_DATE,ORDER_STATUS,ORDER_TOTAL,ORDER_ITEM,CANCEL_REASON,STOB_RATING,"
-			+ "STOB_RATING_DESCR,BTOS_RATING,BTOS_RATING_DESCR,SHIPMENT_ID,SHIPMENT_METHOD,ORD_STORE_711_NAME" + " FROM ORD where BUYER_MEM_ID = ? order by ORDER_DATE";
+			+ "STOB_RATING_DESCR,BTOS_RATING,BTOS_RATING_DESCR,SHIPMENT_ID,SHIPMENT_METHOD,ORD_STORE_711_NAME" + " FROM ORD where BUYER_MEM_ID = ? order by ORDER_DATE desc";
 
 	private static final String GET_ONE_ALL_SELL = "SELECT ORDER_ID,BUYER_MEM_ID,SELLER_MEM_ID,ORDER_ADDRESS,PAYMENT_STATUS,PAYMENT_METHOD,"
 			+ "SHIPMENT_STATUS,ORDER_DATE,ORDER_STATUS,ORDER_TOTAL,ORDER_ITEM,CANCEL_REASON,STOB_RATING,"
-			+ "STOB_RATING_DESCR,BTOS_RATING,BTOS_RATING_DESCR,SHIPMENT_ID,SHIPMENT_METHOD,ORD_STORE_711_NAME" + " FROM ORD where SELLER_MEM_ID = ? order by ORDER_DATE";
+			+ "STOB_RATING_DESCR,BTOS_RATING,BTOS_RATING_DESCR,SHIPMENT_ID,SHIPMENT_METHOD,ORD_STORE_711_NAME" + " FROM ORD where SELLER_MEM_ID = ? order by ORDER_DATE desc";
 
 	
 	private static final String GET_RATING_BY_SELLERID ="SELECT AVG(STOB_RATING) \"Average\" FROM ord where SELLER_MEM_ID = ?";
@@ -468,10 +470,11 @@ public class OrdDAO implements OrdDAO_interface {
 	}
 
 	@Override
-	synchronized public void insertWithOrderDetails(OrdVO ordVO, List<OrderDetailsVO> list) {
+	synchronized public List insertWithOrderDetails(OrdVO ordVO, List<OrderDetailsVO> list) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
-
+		int newstock = 0;
+		List failList = new ArrayList();
 		try {
 			con = ds.getConnection();
 			pstmt = con.prepareStatement(INSERT_STMT);
@@ -510,9 +513,13 @@ public class OrdDAO implements OrdDAO_interface {
 			// 再同時新增訂單明細
 			OrderDetailsDAO dao = new OrderDetailsDAO();
 			System.out.println("list.size()-A=" + list.size());
+			
 			for (OrderDetailsVO orderDetail : list) {
 				orderDetail.setDetails_order_id(next_order_id);
-				dao.insert2(orderDetail, con);
+				newstock = dao.insert2(orderDetail, con);
+				if(newstock<0) {
+					failList.add(orderDetail.getDetails_product_id());
+				}
 			}
 
 			// 2●設定於 pstm.executeUpdate()之後
@@ -520,10 +527,7 @@ public class OrdDAO implements OrdDAO_interface {
 			con.setAutoCommit(true);
 			System.out.println("list.size()-B=" + list.size());
 			System.out.println("新增訂單編號" + next_order_id + "時,共有訂單明細" + list.size() + "個同時被新增");
-			
-			
-			
-			
+
 
 			// Handle any driver errors
 		} catch (SQLException se) {
@@ -558,6 +562,7 @@ public class OrdDAO implements OrdDAO_interface {
 				}
 			}
 		}
+		return failList;
 
 	}
 

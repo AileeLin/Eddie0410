@@ -57,6 +57,7 @@ public class AttractionsServlet extends HttpServlet{
 			}else {
 				if(searchTrigger!=null&&"true".equals(searchTrigger)&&keyword==null) {
 					list = attSvc.getAll();
+					session.removeAttribute("attMap");
 				}else {
 					list = attSvc.getAll(map);
 				}
@@ -106,6 +107,7 @@ public class AttractionsServlet extends HttpServlet{
 				}else {
 					if(searchTrigger!=null&&"true".equals(searchTrigger)&&keyword==null) {
 						list = attSvc.getAll();
+						session.removeAttribute("map_tripEdit");
 					}else {
 						list = attSvc.getAll(map);
 					}

@@ -334,11 +334,7 @@ public class QuestionJDBCDAO implements QuestionDAO_interface{
 		// TODO Auto-generated method stub
 		return null;
 	}
-	@Override
-	public int updateQ(QuestionVO questionVO) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+
 
 	// 世銘打的
 	@Override
@@ -400,6 +396,11 @@ public class QuestionJDBCDAO implements QuestionDAO_interface{
 			}
 		}
 		return list;
+	}
+	@Override
+	public void updateQ(QuestionVO questionVO, String question_id, String mem_id) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

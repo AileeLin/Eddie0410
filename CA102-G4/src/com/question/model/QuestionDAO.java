@@ -31,7 +31,7 @@ public class QuestionDAO implements QuestionDAO_interface{
 		private static final String UPDATE_STMT = "UPDATE QUESTION SET MEM_ID=?, QUESTION_CONTENT=?, BUILD_DATE=? Q_STATE=? WHERE QUESTION_ID = ?";
 		
 		private static final String UPDATE = "UPDATE QUESTION SET  Q_STATE=? WHERE QUESTION_ID = ?";
-		
+		private static final String DELETE_STMT1 = "DELETE FROM QA_REPORT WHERE QUESTION_ID=? AND MEM_ID=?";
 		private static final String DELETE_STMT = "DELETE FROM QUESTION WHERE QUESTION_ID =? ";
 		private static final String FIND_BY_PK = "SELECT * FROM QUESTION WHERE QUESTION_ID = ?";
 		private static final String GET_ALL = "SELECT * FROM QUESTION ORDER BY QUESTION_ID DESC";
@@ -416,7 +416,7 @@ public class QuestionDAO implements QuestionDAO_interface{
 		}
 		
 		@Override
-		public int updateQ(QuestionVO questionVO) {
+		public void updateQ(QuestionVO questionVO,String question_id, String mem_id) {
 			int updateCount = 0;
 			Connection con = null;
 			PreparedStatement pstmt = null;
@@ -425,6 +425,10 @@ public class QuestionDAO implements QuestionDAO_interface{
 				
 
 				con = ds.getConnection();
+				
+				// 1●設定於 pstm.executeUpdate()之前
+				con.setAutoCommit(false);
+				// 先修改
 				pstmt = con.prepareStatement(UPDATE);
 				
 				
@@ -432,14 +436,31 @@ public class QuestionDAO implements QuestionDAO_interface{
 				pstmt.setString(2, questionVO.getQuestion_id());
 
 				
-				updateCount = pstmt.executeUpdate();
+				updateCount= pstmt.executeUpdate();
+				
+				// 再刪除
+				pstmt = con.prepareStatement(DELETE_STMT1);
+				pstmt.setString(1,question_id);
+				pstmt.setString(2,mem_id);
+				pstmt.executeUpdate();
+				
+				con.commit();
+				con.setAutoCommit(true);
 
 				// Handle any SQL errors
 			} catch (SQLException se) {
-				throw new RuntimeException("A database error occured. " + se.getMessage());
-				// Clean up JDBC resources
-			}
-			finally {
+				if (con != null) {
+					try {
+						// 3●設定於當有exception發生時之catch區塊內
+						con.rollback();
+					} catch (SQLException excep) {
+						throw new RuntimeException("rollback error occured. "
+								+ excep.getMessage());
+					}
+				}
+				throw new RuntimeException("A database error occured. "
+						+ se.getMessage());
+			} finally {
 				if (pstmt != null) {
 					try {
 						pstmt.close();
@@ -455,7 +476,7 @@ public class QuestionDAO implements QuestionDAO_interface{
 					}
 				}
 			}
-			return updateCount;
+
 		}
 		
 		// 世銘打的

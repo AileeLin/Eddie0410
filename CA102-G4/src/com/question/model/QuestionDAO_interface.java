@@ -15,8 +15,8 @@ public interface QuestionDAO_interface {
     public List<QuestionVO> getAll();    
     public List<QuestionVO> find_by_State();
     
-    public int updateQ(QuestionVO questionVO);
+    public void updateQ(QuestionVO questionVO, String question_id, String mem_id);
     
-  	// ¥@»Ê¥´ªº
+  	// ï¿½@ï¿½Ê¥ï¿½ï¿½ï¿½
   	public List<QuestionVO> findByKeyword(String keyword);
 }

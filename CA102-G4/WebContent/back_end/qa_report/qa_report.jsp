@@ -35,6 +35,7 @@
 	pageContext.setAttribute("listrp", listrp);
 	
 %>
+<jsp:useBean id="quSvc" scope="page" class="com.question.model.QuestionService"/>
 <jsp:useBean id="memSvc" scope="page" class="com.mem.model.MemberService"/>
 <jsp:useBean id="qsSvc" scope="page" class="com.question.model.QuestionService"/>
 <jsp:useBean id="rpSvc" scope="page" class="com.qa_reply.model.Qa_replyService"/>
@@ -375,6 +376,7 @@
 									<thead>
 										<tr class="active">
 										<th>檢舉人</th>
+										<th>問題</th>
 										<th>被檢舉的回覆</th>
 										<th>審核</th>
 										</tr>	
@@ -383,12 +385,13 @@
 										<c:forEach var="rp_reportVO" items="${listrp}">
 											<tr>
 												<td>${memSvc.findByPrimaryKey(rp_reportVO.mem_id).mem_Name}</td>
+												<td>${quSvc.getOneQuestion(rpSvc.getOneQa_reply(rp_reportVO.reply_id).question_id).question_content}</td>
 												<td>${rpSvc.getOneQa_reply(rp_reportVO.reply_id).reply_content}</td>										
 												<td>
 												 <FORM METHOD="post" ACTION="<%=request.getContextPath()%>/rp_report.do" name="form1" >
 												 	 <input type="hidden" name="action" value="update">
 												 	 <input type="hidden" name="reply_id" value="${rp_reportVO.reply_id}">
-								          	 		 <input type="hidden" name="mem_Id" value="${rp_reportVO.mem_id}">
+								          	 		 <input type="hidden" name="mem_id" value="${rp_reportVO.mem_id}">
 													<button type="submit" onclick="sendReply('${rp_reportVO.mem_id}');"><i class="fas fa-edit"></i>通過</button>
 												</FORM>
 												

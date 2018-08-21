@@ -248,7 +248,7 @@ public class OrderDetailsJDBCDAO implements OrderDetailsDAO_interface{
 	}
 
 	@Override
-	public void insert2(OrderDetailsVO orderDetailsVO, Connection con) {
+	public int insert2(OrderDetailsVO orderDetailsVO, Connection con) {
 		PreparedStatement pstmt = null;
 
 		try {
@@ -290,7 +290,8 @@ public class OrderDetailsJDBCDAO implements OrderDetailsDAO_interface{
 					e.printStackTrace(System.err);
 				}
 			}
-		}	
+		}
+		return 0;	
 		
 	}
 

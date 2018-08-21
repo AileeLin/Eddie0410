@@ -406,9 +406,7 @@ public class TripDaysDAO implements TripDaysDAO_interface {
 				pstmt.setNull(6, Types.INTEGER);
 			}
 			pstmt.setString(7, tripDaysVO.getTripDay_no());
-
 			pstmt.executeUpdate();
-			
 			TrafficTripDAO ttDAO = new TrafficTripDAO();
 			AttractionsTripDAO atDAO = new AttractionsTripDAO();
 			//先刪除原本行程

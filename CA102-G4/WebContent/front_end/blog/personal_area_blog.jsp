@@ -357,7 +357,7 @@
         </div>
         <!-- //Menu -->
             <c:if test="${empty list}">
-            	<div>你還沒有發文章哦!!快去發文吧~</div>
+				<img src="<%=request.getContextPath()%>/front_end/images/all/nothing.png" class="nothing">尚未發表
             </c:if>
             <!-- 卡片 -->
             <c:if test="${not empty list}">

@@ -66,14 +66,14 @@ public class QuestionService {
 		return dao.find_by_State();
 	}
 	
-	public	QuestionVO updateQ(String question_id,Integer q_state) {
+	public	QuestionVO updateQ(String question_id,Integer q_state,String mem_id) {
 		
 		QuestionVO QuestionVO = new QuestionVO();
 		
 		QuestionVO.setQuestion_id(question_id);
 		QuestionVO.setQ_state(q_state);
 		
-		dao.updateQ(QuestionVO);
+		dao.updateQ(QuestionVO, question_id, mem_id);
 		
 		return QuestionVO;
 	}

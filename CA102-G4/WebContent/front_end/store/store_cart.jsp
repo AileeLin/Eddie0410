@@ -67,7 +67,10 @@
 
 	pageContext.setAttribute("sellerList", sellerList);
 	
-	
+	//給去買單按鈕用的token
+	UUID uuid = UUID.randomUUID();
+	session.setAttribute("token", uuid.toString());
+	pageContext.setAttribute("token", uuid.toString());
 	
 %>
 
@@ -77,7 +80,7 @@
 <jsp:useBean id="chatRoomJoinSvc" scope="page" class="com.chat.model.ChatRoom_JoinService"></jsp:useBean>
 <jsp:useBean id="memberSvc" scope="page" class="com.mem.model.MemberService"></jsp:useBean>
 <%
-
+if(memberVO != null){
 	//*****************聊天用：取得登錄者所參與的群組聊天*************/
 	List<ChatRoom_JoinVO> myCRList =chatRoomJoinSvc.getMyChatRoom(memberVO.getMem_Id());
 	Set<ChatRoom_JoinVO> myCRGroup = new HashSet<>(); //裝著我參與的聊天對話為群組聊天時
@@ -98,7 +101,7 @@
 	
 	/**************避免聊天-新增群組重新整理後重複提交********/
 	session.setAttribute("addCR_token",new Date().getTime());
-
+}
 
 %>
 
@@ -188,14 +191,14 @@
     <script src="<%=request.getContextPath()%>/front_end/js/chat/vjUI_fileUpload.js"></script>
     <script src="<%=request.getContextPath()%>/front_end/js/chat/chat.js"></script>
     <%@ include file="/front_end/personal_area/chatModal_JS.file" %>
-    <!-- //聊天相關CSS及JS -->
     <style>
     	button {
     		font-family: inherit;
     	}
     </style>
-    
- 	<script>
+    <!-- //聊天相關CSS及JS -->
+
+ <script>
     	$(document).ready(function(){
     		
         	/*若有錯誤訊息時，就會跳出視窗.......*/
@@ -447,6 +450,7 @@
 							</table>
 						</div>
 						</c:forEach>
+						<input type="hidden" name="judgeDuplicate" value="${token}"/>
 						<input type="hidden" name="action" value="CHECKOUT"/>
 						<input type="hidden" name="requestURL" value="<%=request.getServletPath()%>"><!--送出本網頁的路徑給Controller-->
 							<div>
@@ -459,7 +463,7 @@
 									class="box-footer d-flex justify-content-between align-items-center"
 									style="display: block">
 									<div class="left-col">
-										<a href="shop-category.html" class="btn btn-secondary mt-0">
+										<a href="<%=request.getContextPath()%>/front_end/store/store.jsp" class="btn btn-secondary mt-0">
 											<i class="fa fa-chevron-left"></i> 繼續購買
 										</a>
 									</div>

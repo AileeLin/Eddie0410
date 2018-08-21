@@ -63,14 +63,14 @@ public class Qa_replyService {
 		return dao.find_by_State();
 	}
 	
-	public	Qa_replyVO updateR(String reply_id,Integer r_state) {
+	public	Qa_replyVO updateR(String reply_id,Integer r_state,String mem_id) {
 		
 		Qa_replyVO Qa_replyVO = new Qa_replyVO();
 		
 		Qa_replyVO.setReply_id(reply_id);
 		Qa_replyVO.setR_state(r_state);
 		
-		dao.updateR(Qa_replyVO);
+		dao.updateR(Qa_replyVO,reply_id,mem_id);
 		
 		return Qa_replyVO;
 	}

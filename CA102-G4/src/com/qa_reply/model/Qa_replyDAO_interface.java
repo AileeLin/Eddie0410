@@ -14,5 +14,5 @@ public interface Qa_replyDAO_interface {
     public List<Qa_replyVO> findByPrimaryKey1(String question_id);
     public List<Qa_replyVO> find_by_State();
     
-    public int updateR(Qa_replyVO Qa_replyVO);
+    public void updateR(Qa_replyVO Qa_replyVO, String reply_id, String mem_id);
 }

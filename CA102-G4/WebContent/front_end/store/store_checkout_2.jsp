@@ -58,11 +58,11 @@
 <%
 
 
-String storeName = (String)request.getAttribute("storeName");
-String addr = (String)request.getAttribute("addr");
+String storeName = (String)session.getAttribute("storeName");
+String addr = (String)session.getAttribute("addr");
 Integer shipMethod = (Integer)session.getAttribute("shipMethod");
-String productIdListStr = (String)request.getAttribute("productIdListStr");
-String sellerListStr = (String)request.getAttribute("sellerListStr");
+String productIdListStr = (String)session.getAttribute("productIdListStr");
+String sellerListStr = (String)session.getAttribute("sellerListStr");
 //給結帳按鈕用的token
 UUID uuid = UUID.randomUUID();
 session.setAttribute("token", uuid.toString());

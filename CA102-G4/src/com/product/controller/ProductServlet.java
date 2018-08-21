@@ -427,7 +427,7 @@ public class ProductServlet extends HttpServlet {
 								
 				/***************************3.查詢完成,準備轉交(Send the Success view)************/
 				req.setAttribute("productVO", productVO);         // 資料庫取出的productVO物件,存入req
-				if(requestURL.equals("/front_end/personal_area/personal_area_sell.jsp")) {
+				if(requestURL.equals("/front_end/personal_area/personal_area_sell.jsp")||requestURL.equals("/front_end/personal_area/personal_area_sell_inactive.jsp")||requestURL.equals("/front_end/personal_area/personal_area_sell_sold.jsp")) {
 					String url = "/front_end/store/store_update_product.jsp";
 					RequestDispatcher successView = req.getRequestDispatcher(url); // 資料庫取出的list物件,存入request
 					successView.forward(req, res);
@@ -677,13 +677,20 @@ public class ProductServlet extends HttpServlet {
 				req.setAttribute("productVO", productVO); // 資料庫update成功後,正確的的productVO物件,存入req
 			
 				if(requestURL.equals("/front_end/store/store_update_product.jsp")) {
-					String url = "/front_end/personal_area/personal_area_sell.jsp";
-					RequestDispatcher successView = req.getRequestDispatcher(url); // 資料庫取出的list物件,存入request
-					successView.forward(req, res);
-				}else if(requestURL.equals("/product/update_product_input.js")) {
-					String url = "/product/listOneProduct.jsp";
-					RequestDispatcher successView = req.getRequestDispatcher(url); // 修改成功後,轉交listOneProduct.jsp
-					successView.forward(req, res);
+					if(product_status==1) {
+						String url = "/front_end/personal_area/personal_area_sell.jsp";
+						RequestDispatcher successView = req.getRequestDispatcher(url); // 資料庫取出的list物件,存入request
+						successView.forward(req, res);
+					}else if(product_status==2) {
+						String url = "/front_end/personal_area/personal_area_sell_inactive.jsp";
+						RequestDispatcher successView = req.getRequestDispatcher(url); // 資料庫取出的list物件,存入request
+						successView.forward(req, res);
+					}else if(product_status==3) {
+						String url = "/front_end/personal_area/personal_area_sell_sold.jsp";
+						RequestDispatcher successView = req.getRequestDispatcher(url); // 資料庫取出的list物件,存入request
+						successView.forward(req, res);
+					}
+					
 				}
 
 				/***************************其他可能的錯誤處理*************************************/
