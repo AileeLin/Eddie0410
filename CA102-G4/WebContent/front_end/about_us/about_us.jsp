@@ -111,6 +111,10 @@
 	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 	<script src="<%=request.getContextPath()%>/front_end/js/all/index_bootstrap.js"></script>
 	
+	<!-- LogoIcon -->
+	<link href="<%=request.getContextPath()%>/front_end/images/all/Logo_Black_use.png" rel="icon" type="image/png">
+	<!-- //LogoIcon -->
+	
 	<!-- 聊天相關CSS及JS -->
     <link href="<%=request.getContextPath()%>/front_end/css/chat/chat_style.css" rel="stylesheet" type="text/css">
     <script src="<%=request.getContextPath()%>/front_end/js/chat/vjUI_fileUpload.js"></script>

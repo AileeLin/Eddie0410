@@ -127,20 +127,31 @@
 						</li>
 					</ul></li>
 
-				<li><a href="#"> <i class="fas fa-newspaper"></i> 最新消息管理
-				</a></li>
-
-				<li><a href="#"> <i class="fas fa-image"></i> 景點管理
-				</a></li>
+				 <li>
+                            <a href="<%=request.getContextPath()%>/back_end/news/news.jsp">
+                                <i class="fas fa-newspaper"></i>最新消息管理
+                            </a>
+                        </li>
+                        
+                        <li>
+                            <a href="<%=request.getContextPath()%>/back_end/attEdit/back_attEdit.jsp">
+                                <i class="fas fa-image"></i>景點管理
+                            </a>
+                        </li>
 
 				<li class="dropdown"><a href="#category_Submenu"
 					data-toggle="collapse" aria-expanded="false"
 					class="dropdown-toggle"> <i class="fas fa-tag"></i> 標籤管理
 				</a>
 					<ul class="dropdown-menu" id="category_Submenu">
-						<li><a href="Back_TagBlog.html">旅遊記</a></li>
-						<li><a href="#">問答區</a></li>
-					</ul></li>
+                                <li>
+                                    <a href="<%=request.getContextPath()%>/back_end/blog/blog_tag.jsp">旅遊記</a>
+                                </li>
+                                <li>
+                                    <a href="<%=request.getContextPath()%>/back_end/qa_list/qa_list.jsp">問答區</a>
+                                </li>
+                            </ul>
+                            </li>
 
 				<li class="dropdown"><a href="#report_Submenu"
 					data-toggle="collapse" aria-expanded="false"
@@ -148,12 +159,23 @@
 						class="fas fa-comment-dots"></i> 檢舉管理
 				</a>
 					<ul class="dropdown-menu" id="report_Submenu">
-						<li><a href="#">會員檢舉</a></li>
-						<li><a href="Back_ReportBlog.html">旅遊記檢舉</a></li>
-						<li><a href="#">問答區檢舉</a></li>
-						<li><a href="<%=request.getContextPath()%>/back_end/photo_wall/photo_report.jsp">照片牆檢舉</a></li>
-						<li><a href="#">商品檢舉</a></li>
-					</ul></li>
+                                <li>
+                                    <a href="<%=request.getContextPath()%>/back_end/member/member_report.jsp">會員檢舉</a>
+                                </li>
+                                <li>
+                                    <a href="<%=request.getContextPath()%>/blog.do?action=blogReportManage">旅遊記檢舉</a>
+                                </li>
+                                <li>
+                                    <a href="<%=request.getContextPath()%>/back_end/qa_report/qa_report.jsp">問答區檢舉</a>
+                                </li>
+                                <li>
+                                    <a href="<%=request.getContextPath()%>/back_end/photo_wall/photo_report.jsp">照片牆檢舉</a>
+                                </li>
+                                <li>
+                                    <a href="<%=request.getContextPath()%>/back_end/store/product_report.jsp">商品檢舉</a>
+                                </li>
+                            </ul>
+                            </li>
 
 
 

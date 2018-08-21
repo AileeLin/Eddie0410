@@ -27,8 +27,8 @@ public class blog_reportDAO implements blog_reportDAO_interface {
 	private static final String INSERT_STMT = "INSERT INTO BLOG_REPORT(BLOG_ID,MEM_ID,BR_REASON,BR_TIME,BR_STATUS) VALUES(?,?,?,SYSDATE,0)";
 	// 修改檢舉處理狀態
 	private static final String UPDATE_STMT = "UPDATE BLOG_REPORT SET BR_STATUS = ? WHERE BLOG_ID = ? AND MEM_ID = ?";
-	// 傳回全部檢舉清單根據檢舉處理狀況排序，未處理的排上面
-	private static final String GET_ALL_STMT = "SELECT * FROM BLOG_REPORT ORDER BY BR_STATUS,BR_TIME DESC";
+	// 傳回未處理檢舉清單
+	private static final String GET_ALL_STMT = "SELECT * FROM BLOG_REPORT WHERE BR_STATUS = 0 ORDER BY BR_TIME DESC";
 	// 傳回單筆
 	private static final String GET_ONE_STMT ="SELECT * FROM BLOG_REPORT WHERE BLOG_ID = ? AND MEM_ID = ?";
 	

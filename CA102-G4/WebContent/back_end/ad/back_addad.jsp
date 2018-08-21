@@ -309,7 +309,7 @@
 							</tr>
 						</table>
 					</form>
-					
+					<button id="fastInset">快速新增</button>
 					<%-- 錯誤表列 --%>
 					<c:if test="${not empty errorMsgs}">
 						<div class="modal fade" id="errorModal">
@@ -350,6 +350,7 @@
            	$('#errorModal').modal();
         	
             
+			
             /*為了圖片的顯示................*/
             function $id(id){
         		return document.getElementById(id);
@@ -376,6 +377,12 @@
        	        }
        	    } 
  
+       	   //快速新增小按鈕
+       	   $("#fastInset").on("click",function(){
+       		   $("input[name='ad_Title']").val("在這裡，每個洞都藏有秘密");
+       		   $("textarea[name='ad_Text']").val("古老空間充滿魅力，自然而然能將懷念的過去，以及想要傾訴的話語，包容進自己的秘密與思緒，而吳哥窟，便是如此。");
+       		   $("input[name='ad_Link']").val("https://www.everfuntravel.com/GroupTravel/Promotion/cambodia/");
+       	   });
         </script>
 
     </body>

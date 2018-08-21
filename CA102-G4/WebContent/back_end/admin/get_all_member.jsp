@@ -146,13 +146,10 @@ if(login_state_backEnd!=true){
 						<li><a href="Back_ReportBlog.html">旅遊記檢舉</a></li>
 						<li><a href="#">問答區檢舉</a></li>
 						<li><a href="#">照片牆檢舉</a></li>
-						<li><a href="#">揪團檢舉</a></li>
 						<li><a href="#">商品檢舉</a></li>
 					</ul></li>
 
-				<li><a href="#"> <i class="fas fa-shopping-cart"></i>
-						交易款項管理
-				</a></li>
+
 
 				<li><a
 					href="<%=request.getContextPath()%>/back_end/ad/back_ad.jsp"> <i

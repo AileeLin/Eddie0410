@@ -127,7 +127,8 @@
 						var receiver = $("#blogReportDialogMemID").val();
 						//送訊息內容
 						var message = "我們審查了你檢舉的旅遊記文章。因為該文章確實違反了網站規定，我們已將他移除。感謝你的回報，我們會讓被檢舉人知道他的文章已被移除，但不會透漏檢舉人的身份。";
-						
+						alert(receiver);
+
 							var jsonObj = {
 								"title"		:title,
 							  	"sender"	:sender,
@@ -143,6 +144,7 @@
 							var sender2 = "${adminVO.admin_Id}";
 							//送接收者名 測試用名為james 搭配indexed.html測試
 							var receiver2 = $("#blogOwner").val();
+							alert(receiver2);
 							//送訊息內容
 							var message2 = "根據我們的審查，由於您檢舉的旅遊記文章未遵循網站規定，因此我們已予以移除";
 							
@@ -436,7 +438,7 @@
                                              	   	</c:if>
                                                 </c:forEach>
                                                 <td><p class="br_reason">${blogReportVO.br_reason}</p></td>
-                                                <input type="hidden" name="hidden_blogOwner" value="${blogReportVO.mem_id}">
+                                                <input type="hidden" name="hidden_blogOwner" value="${blogSvc.findByPrimaryKey(blogReportVO.blog_id).mem_id}">
                                                 <input type="hidden" name="hidden_blog_reason" value="${blogReportVO.br_reason}">
                                                 <td><p class="br_time">
                                                 		<fmt:formatDate value="${blogReportVO.br_time}" type="both"/>
