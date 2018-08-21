@@ -398,7 +398,7 @@
 
 							</div>
 							<div class="profile_photo_hr">
-								<a href="#" class="product-title" style="color:black;">${memberSvc.findByPrimaryKey(photo_wallVO.mem_Id).mem_Name}</a>
+								<a href="<%=request.getContextPath()%>/front_end/personal_area/personal_area_public.jsp?uId=${photo_wallVO.mem_Id}" class="product-title" style="color:black;">${memberSvc.findByPrimaryKey(photo_wallVO.mem_Id).mem_Name}</a>
 
 								<%-- 							<a href="#" class="product-title">${memVO.mem_Name}</a> --%>
 							</div>

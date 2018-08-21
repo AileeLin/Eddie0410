@@ -489,6 +489,7 @@ public class GrpServlet extends HttpServlet {
 				String[] tel = {memberVO.getMem_Phone()};
 				String message = memberVO.getMem_Name() + "您好，您參加的揪團，揪團團名為：" + grpVO_Title.getGrp_Title() + "，已經成功出團" ;
 
+				
 				sendSvc.sendMessage(tel,message);
 			   		    
 			}

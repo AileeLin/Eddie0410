@@ -114,6 +114,9 @@ public class ShoppingServlet extends HttpServlet {
 			
 			ProductReportService productReportSvc = new ProductReportService();
 			productReportSvc.addProductReport(product_id,memId,reportDescr,new Timestamp(System.currentTimeMillis()),1);
+			res.setContentType("text/html;charset=Big5");
+			PrintWriter w = res.getWriter();
+			w.print(1);
 		}catch(Exception e) {
 			res.setContentType("text/html;charset=Big5");
 			PrintWriter w = res.getWriter();

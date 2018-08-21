@@ -178,7 +178,7 @@
 	    <!-- LogoIcon -->
 	    <link href="<%=request.getContextPath()%>/front_end/images/all/Logo_Black_use.png" rel="icon" type="image/png">
 	    <!-- //LogoIcon -->
-	   	 <!-- 聊天相關CSS及JS -->
+	     <!-- 聊天相關CSS及JS -->
 		 <link href="<%=request.getContextPath()%>/front_end/css/chat/Semantic_chat.css" rel="stylesheet" type="text/css">
 		 <link href="<%=request.getContextPath()%>/front_end/css/chat/chat_style.css" rel="stylesheet" type="text/css">
 		 <script src="<%=request.getContextPath()%>/front_end/js/chat/vjUI_fileUpload.js"></script>
@@ -195,10 +195,10 @@
 			.carousel-inner > .item > a > img {
 			  height: 370px;   
 			  margin: auto;
-			}
+			}	
 			/*育萱加的*/
 			textarea,button {
-    		  font-family: inherit;
+				font-family: inherit;
     	    }	
 		</style>
 	 
@@ -738,7 +738,7 @@
 				method:"POST",
 				data:{action:action,product_id:product_id,memId:memId,reportDescr:reportDescr},
 				success:function(data){
-					if(data == null){
+					if(data == 1){
 						window.alert('Travel Maker 收到您的檢舉囉!');
 					}else{
 						window.alert(data);
@@ -788,7 +788,7 @@ function checkIsLogin(memid,seller){
 			}
 			
 	});/**Ajax end**/
-	console.log("順利執行到開啟賣家與買家的聊天對話");
+	console.log("有登入");
 	return false;
 }
 

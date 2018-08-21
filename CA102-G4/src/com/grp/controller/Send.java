@@ -13,7 +13,7 @@ public class Send {
       String user    = "85559671"; //帳號
       String passwd  = "2irioiai"; //密碼
       String messageBig5 = new String(message.getBytes(),"UTF-8"); //簡訊內容
-
+      
       //----建立連線 and 檢查帳號密碼是否錯誤
       sock2air mysms = new sock2air();
       int ret_code = mysms.create_conn(server,port,user,passwd) ;

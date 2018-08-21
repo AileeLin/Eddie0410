@@ -757,6 +757,24 @@
         </div>
     </div>
     <!-- //footer -->
+<script type="text/javascript">
+	function deleteById(e, prod_id){
+		var action = "deleteByAjax";
+		var removeEle = $("#block-"+prod_id);
+		 if(confirm('確定要刪除商品嗎?')){
+			$.ajax({
+				url:"${pageContext.request.contextPath}/front_end/store/product.do",
+				method:"POST",
+				async: false,
+				data:{action:action,product_id:prod_id},
+				success:function(data){
+					console.log(removeEle.html());
+					removeEle.remove();				
+				}
+			})
+		 }
+	}
+</script>
 
 
 </body>
