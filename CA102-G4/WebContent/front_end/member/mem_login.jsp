@@ -52,7 +52,11 @@
     <link rel="stylesheet" href="<%=request.getContextPath()%>/front_end/css/member/modal.css">
     <script src="<%=request.getContextPath()%>/front_end/js/member/modernizr-2.6.2.min.js"></script>
     <link href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" rel="stylesheet" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
-
+	
+	<!-- LogoIcon -->
+	<link href="<%=request.getContextPath()%>/front_end/images/all/Logo_Black_use.png" rel="icon" type="image/png">
+	<!-- //LogoIcon -->
+	
 	 <!-- jQuery -->
     <script src="<%=request.getContextPath()%>/front_end/js/member/jquery.min.js"></script>
     <!-- Bootstrap -->

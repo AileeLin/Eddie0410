@@ -156,7 +156,9 @@
     <link href='https://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css'>
     <!-- //font字體 -->
    
-
+	<!-- LogoIcon -->
+	<link href="<%=request.getContextPath()%>/front_end/images/all/Logo_Black_use.png" rel="icon" type="image/png">
+	<!-- //LogoIcon -->
 
     <!-- 套首頁herder和footer css -->
     <link href="<%=request.getContextPath()%>/front_end/css/all/index_style_header_footer.css" rel="stylesheet" type="text/css" media="all" />

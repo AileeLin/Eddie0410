@@ -319,7 +319,9 @@
 		                                    </div>
 		                                    <div class="extra attractionsExtra">
 			                                    <c:set var="att_information" value="${attractionsVO.att_information}"/> 
-			                                    <%= ((String)pageContext.getAttribute("att_information")).replaceAll("<[^>]*>","").trim()%>
+			                                    <c:if test="${att_information ne null}">
+			                                  	  <%= ((String)pageContext.getAttribute("att_information")).replaceAll("<[^>]*>","").trim()%>
+			                                    </c:if>
 		                                    </div>
 		                                </div>
 		                            </div>

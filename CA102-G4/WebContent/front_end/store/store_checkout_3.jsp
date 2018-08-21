@@ -161,6 +161,10 @@
 	rel='stylesheet' type='text/css'>
 <!-- //font字體 -->
 
+<!-- LogoIcon -->
+<link href="<%=request.getContextPath()%>/front_end/images/all/Logo_Black_use.png" rel="icon" type="image/png">
+<!-- //LogoIcon -->
+
 <!--store 自定義的css -->
 <link rel="stylesheet" type="text/css"
 	href="<%=request.getContextPath()%>/front_end/css/store/store_step.css">

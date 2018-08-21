@@ -98,6 +98,9 @@
 <link href='https://fonts.googleapis.com/css?family=Pacifico'
 	rel='stylesheet' type='text/css'>
 <!-- font字體 -->
+<!-- LogoIcon -->
+<link href="<%=request.getContextPath()%>/front_end/images/all/Logo_Black_use.png" rel="icon" type="image/png">
+<!-- //LogoIcon -->
 <!--  css  -->
 <link rel="stylesheet" href="<%=request.getContextPath()%>/front_end/css/member/blog_semantic.min.css" rel="stylesheet" type="text/css">
 <link rel="stylesheet" href="<%=request.getContextPath()%>/front_end/css/member/google_icon.css" rel="stylesheet" type="text/css">

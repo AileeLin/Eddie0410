@@ -157,6 +157,10 @@
 	rel='stylesheet' type='text/css'>
 <!-- //font字體 -->
 
+<!-- LogoIcon -->
+<link href="<%=request.getContextPath()%>/front_end/images/all/Logo_Black_use.png" rel="icon" type="image/png">
+<!-- //LogoIcon -->
+
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <script
 	src="<%=request.getContextPath()%>/front_end/js/all/index_bootstrap.js"></script>

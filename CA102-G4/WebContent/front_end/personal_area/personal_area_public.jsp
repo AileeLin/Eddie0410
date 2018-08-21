@@ -196,6 +196,10 @@
     <link href='https://fonts.googleapis.com/css?family=Oswald:400,700,300' rel='stylesheet' type='text/css'>
     <link href='https://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css'>
     <!-- //font字體 -->
+    
+    <!-- LogoIcon -->
+	<link href="<%=request.getContextPath()%>/front_end/images/all/Logo_Black_use.png" rel="icon" type="image/png">
+	<!-- //LogoIcon -->
         
     <!-- AD_Page/personal_area_public相關CSS及JS -->
     <link href="<%=request.getContextPath()%>/front_end/css/ad/ad_page.css" rel="stylesheet" type="text/css"><!--共用頁籤及頁尾style-->

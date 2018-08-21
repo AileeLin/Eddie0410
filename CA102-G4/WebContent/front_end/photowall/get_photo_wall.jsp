@@ -106,6 +106,10 @@
     <link href='https://fonts.googleapis.com/css?family=Oswald:400,700,300' rel='stylesheet' type='text/css'>
     <link href='https://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css'>
     <!-- //font字體 -->
+    
+    <!-- LogoIcon -->
+	<link href="<%=request.getContextPath()%>/front_end/images/all/Logo_Black_use.png" rel="icon" type="image/png">
+	<!-- //LogoIcon -->
 
 </head>
 
