@@ -4438,7 +4438,7 @@ div.ui.image {
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
     position: relative;
     margin-bottom: 2.5rem;
-    background: url(/CA102G4/front_end/images/all/8.jpg) no-repeat 0px 0px;
+    background: url(../../images/all/8.jpg) no-repeat 0px 0px;
     background-size: cover;
     position: relative;
 }

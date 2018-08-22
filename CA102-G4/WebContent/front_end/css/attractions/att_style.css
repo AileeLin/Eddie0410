@@ -859,7 +859,7 @@ body > div.footer.navbar-fixed-bottom {
 }
 
 .about-bg {
-    background: url(/CA102G4/front_end/images/all/8.jpg) no-repeat 0px 0px;
+    background: url(../../images/all/8.jpg) no-repeat 0px 0px;
     background-size: cover;
     position: inherit;
     min-height: 125px;
